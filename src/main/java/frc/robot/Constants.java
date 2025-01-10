@@ -35,5 +35,5 @@ public final class Constants {
     REPLAY
   }
 
-  public static final double loopPeriodSecs = 0.02;
+  public static final double loopPeriodSecs = Robot.defaultPeriodSecs;
 }

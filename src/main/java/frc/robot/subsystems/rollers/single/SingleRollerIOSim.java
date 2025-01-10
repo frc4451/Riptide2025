@@ -27,8 +27,9 @@ public class SingleRollerIOSim implements SingleRollerIO {
     inputs.connected = true;
     sim.update(Constants.loopPeriodSecs);
 
-    inputs.positionRads = sim.getAngularPositionRad();
-    inputs.velocityRadsPerSec = sim.getAngularVelocityRadPerSec();
+    inputs.positionRad = sim.getAngularPositionRad();
+    inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec();
+
     inputs.appliedVoltage = appliedVoltage;
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
   }
