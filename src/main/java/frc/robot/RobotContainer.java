@@ -120,6 +120,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    elevatorSubsystem.setDefaultCommand(elevatorSubsystem.runTrapezoidProfileCommand());
   }
 
   /**
@@ -169,6 +171,10 @@ public class RobotContainer {
     operatorController.povDown().whileTrue(pivotSubsystem.runRoller(-6.0));
     operatorController.povUp().whileTrue(pivotSubsystem.runRoller(6.0));
     operatorController.x().whileTrue(elevatorSubsystem.runRoller(1));
+
+    operatorController.b().onTrue(elevatorSubsystem.setGoalInchesCommand(0));
+    operatorController.y().onTrue(elevatorSubsystem.setGoalInchesCommand(5));
+    operatorController.a().onTrue(elevatorSubsystem.setGoalInchesCommand(10));
   }
 
   /**

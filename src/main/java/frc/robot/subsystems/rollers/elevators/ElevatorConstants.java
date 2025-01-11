@@ -2,16 +2,18 @@ package frc.robot.subsystems.rollers.elevators;
 
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 public class ElevatorConstants {
   public static final PIDConstants pidConstants = new PIDConstants(1.0);
   public static final DCMotor gearbox = DCMotor.getFalcon500Foc(1);
-  public static final double reduction = 5;
-  public static final double moi = 1;
+  public static final double reduction = 18.0 / 12.0;
+  public static final double moi = 0.001;
 
-  public static final Constraints constraints = new Constraints(1.0, 1.0);
+  public static final double minHeightInches = 1.0;
+  public static final double maxHeightInches = 10.0;
+  public static final double inchesPerRad = 3.0; // equal to radius
 
-  public static final double minHeight = 1.0;
-  public static final double maxHeight = 1.0;
+  public static final TrapezoidProfile.Constraints constraints =
+      new TrapezoidProfile.Constraints(1.0 * inchesPerRad, 1.0 * inchesPerRad);
 }
