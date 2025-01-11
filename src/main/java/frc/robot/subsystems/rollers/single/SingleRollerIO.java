@@ -20,6 +20,9 @@ public interface SingleRollerIO {
   /** Run roller at set voltage */
   public default void runVolts(double volts) {}
 
+  /** Run roller at set position */
+  public default void runPosition(double positionRad) {}
+
   /** Stop roller */
   public default void stop() {}
 }

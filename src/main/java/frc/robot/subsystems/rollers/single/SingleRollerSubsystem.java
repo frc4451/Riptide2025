@@ -36,6 +36,10 @@ public class SingleRollerSubsystem extends SubsystemBase {
     return startEnd(() -> io.runVolts(inputsVolts), () -> io.stop());
   }
 
+  public Command runPosition(double positionRad) {
+    return run(() -> io.runPosition(positionRad));
+  }
+
   public Command stop() {
     return runOnce(io::stop);
   }

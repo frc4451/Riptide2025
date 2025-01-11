@@ -6,9 +6,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.rollers.setpoint.SetpointRollerSubsystem;
+import frc.robot.subsystems.rollers.single.SingleRollerSubsystem;
 
-public class ElevatorSubsystem extends SetpointRollerSubsystem {
+public class ElevatorSubsystem extends SingleRollerSubsystem {
   private final TrapezoidProfile trapezoidProfile;
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
   private TrapezoidProfile.State goal = new TrapezoidProfile.State();

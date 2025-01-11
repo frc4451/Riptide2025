@@ -1,5 +1,5 @@
 package frc.robot.subsystems.rollers.elevators;
 
-import frc.robot.subsystems.rollers.setpoint.SetpointRollerIO;
+import frc.robot.subsystems.rollers.single.SingleRollerIO;
 
-public interface ElevatorIO extends SetpointRollerIO {}
+public interface ElevatorIO extends SingleRollerIO {}
