@@ -1,6 +1,7 @@
 package frc.robot.subsystems.rollers.single;
 
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -25,6 +26,10 @@ public class SingleRollerSubsystem extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs(name, inputs);
     disconnected.set(!inputs.connected);
+
+    if (DriverStation.isDisabled()) {
+        io.stop();
+    }
   }
 
   public Command runRoller(double inputsVolts) {
