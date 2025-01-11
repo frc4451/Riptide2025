@@ -8,7 +8,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class SingleRollerSubsystem extends SubsystemBase {
   private final String name;
-  private final SingleRollerIO io;
+  protected final SingleRollerIO io;
 
   protected final SingleRollerIOInputsAutoLogged inputs = new SingleRollerIOInputsAutoLogged();
 
@@ -28,7 +28,7 @@ public class SingleRollerSubsystem extends SubsystemBase {
     disconnected.set(!inputs.connected);
 
     if (DriverStation.isDisabled()) {
-        io.stop();
+      io.stop();
     }
   }
 

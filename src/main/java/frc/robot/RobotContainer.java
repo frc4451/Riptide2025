@@ -29,6 +29,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.rollers.elevators.ElevatorIO;
+import frc.robot.subsystems.rollers.elevators.ElevatorIOSim;
+import frc.robot.subsystems.rollers.elevators.ElevatorSubsystem;
 import frc.robot.subsystems.rollers.pivot.PivotIO;
 import frc.robot.subsystems.rollers.pivot.PivotIOSim;
 import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
@@ -44,6 +47,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final PivotSubsystem pivotSubsystem;
+  private final ElevatorSubsystem elevatorSubsystem;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -65,6 +69,7 @@ public class RobotContainer {
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
         pivotSubsystem = new PivotSubsystem(new PivotIO() {});
+        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
         break;
 
       case SIM:
@@ -77,6 +82,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         pivotSubsystem = new PivotSubsystem(new PivotIOSim());
+        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
         break;
 
       default:
@@ -89,6 +95,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         pivotSubsystem = new PivotSubsystem(new PivotIO() {});
+        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
         break;
     }
 
@@ -130,6 +137,10 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
 
+    // elevatorSubsystem.setDefaultCommand(
+    //     // TODO
+    // );
+
     // Lock to 0° when A button is held
     driverController
         .a()
@@ -157,6 +168,7 @@ public class RobotContainer {
     // TEMP -> Test Pivot Subsystem
     operatorController.povDown().whileTrue(pivotSubsystem.runRoller(-6.0));
     operatorController.povUp().whileTrue(pivotSubsystem.runRoller(6.0));
+    operatorController.x().whileTrue(elevatorSubsystem.runRoller(1));
   }
 
   /**
