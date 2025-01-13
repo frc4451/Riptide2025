@@ -20,16 +20,18 @@ public class ElevatorSubsystem extends SingleRollerSubsystem {
   @AutoLogOutput private TrapezoidProfile.State goal = new TrapezoidProfile.State();
 
   private final double inchesPerRad;
+  private final ElevatorConstraints elevatorConstraints;
 
   public ElevatorSubsystem(
-      String name, ElevatorIO io, TrapezoidProfile.Constraints constraints, double inchesPerRad) {
+      String name, ElevatorIO io, TrapezoidProfile.Constraints trapezoidConstraints, double inchesPerRad, ElevatorConstraints elevatorConstraints) {
     super(name, io);
-    trapezoidProfile = new TrapezoidProfile(constraints);
+    trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
     this.inchesPerRad = inchesPerRad;
+    this.elevatorConstraints = elevatorConstraints;
   }
 
   public ElevatorSubsystem(ElevatorIO io) {
-    this("Elevator", io, ElevatorConstants.constraints, ElevatorConstants.inchesPerRad);
+    this("Elevator", io, ElevatorConstants.trapezoidConstraints, ElevatorConstants.inchesPerRad, ElevatorConstants.elevatorConstraints);
   }
 
   public void periodic() {
@@ -73,8 +75,8 @@ public class ElevatorSubsystem extends SingleRollerSubsystem {
     double clampedPosition =
         MathUtil.clamp(
             positionInches / inchesPerRad,
-            ElevatorConstants.minHeightInches / inchesPerRad,
-            ElevatorConstants.maxHeightInches / inchesPerRad);
+            elevatorConstraints.minHeightInches() / inchesPerRad,
+            elevatorConstraints.maxHeightInches() / inchesPerRad);
     goal = new TrapezoidProfile.State(clampedPosition, 0.0);
   }
 

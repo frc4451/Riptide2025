@@ -9,11 +9,10 @@ public class ElevatorConstants {
   public static final DCMotor gearbox = DCMotor.getFalcon500Foc(1);
   public static final double reduction = 18.0 / 12.0;
   public static final double moi = 0.001;
-
-  public static final double minHeightInches = 1.0;
-  public static final double maxHeightInches = 10.0;
   public static final double inchesPerRad = 3.0; // equal to radius
 
-  public static final TrapezoidProfile.Constraints constraints =
+  public static final ElevatorConstraints elevatorConstraints = new ElevatorConstraints(0, 10);
+
+  public static final TrapezoidProfile.Constraints trapezoidConstraints =
       new TrapezoidProfile.Constraints(1.0 * inchesPerRad, 1.0 * inchesPerRad);
 }
