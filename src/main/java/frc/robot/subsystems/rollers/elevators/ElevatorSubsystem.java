@@ -41,6 +41,8 @@ public class ElevatorSubsystem extends SingleRollerSubsystem {
       resetController();
     }
 
+    Logger.recordOutput(getName() + "/IsMoving", this.isElevatorMoving());
+
     Logger.recordOutput(
         getName() + "/Profile/Setpoint",
         new LoggedTrapezoidState(
@@ -60,6 +62,10 @@ public class ElevatorSubsystem extends SingleRollerSubsystem {
   @AutoLogOutput()
   private double getHeightInches() {
     return inputs.positionRad * inchesPerRad;
+  }
+
+  public boolean isElevatorMoving() {
+    return !MathUtil.isNear(0.0, inputs.velocityRadPerSec, 0.1);
   }
 
   private void runTrapezoidProfile() {

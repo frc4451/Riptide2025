@@ -1,0 +1,1 @@
+Do we have a pivot? Idk, we may go fixed shooter. In that case, this folder won't be needed

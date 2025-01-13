@@ -30,159 +30,187 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.rollers.elevators.ElevatorIO;
-import frc.robot.subsystems.rollers.elevators.ElevatorIOSim;
-import frc.robot.subsystems.rollers.elevators.ElevatorSubsystem;
-import frc.robot.subsystems.rollers.pivot.PivotIO;
-import frc.robot.subsystems.rollers.pivot.PivotIOSim;
-import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
+import frc.robot.subsystems.rollers.single.SingleRollerIO;
+import frc.robot.subsystems.superstructures.corel.CorelSuperstructure;
+import frc.robot.subsystems.superstructures.corel.conveyor.CorelConveyor;
+import frc.robot.subsystems.superstructures.corel.conveyor.CorelConveyorIOSim;
+import frc.robot.subsystems.superstructures.corel.elevator.CorelElevator;
+import frc.robot.subsystems.superstructures.corel.elevator.CorelElevatorIOSim;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Subsystems
-  private final Drive drive;
-  private final PivotSubsystem pivotSubsystem;
-  private final ElevatorSubsystem elevatorSubsystem;
+    // Subsystems
+    private final Drive drive;
+    // private final PivotSubsystem pivotSubsystem;
+    // private final ElevatorSubsystem elevatorSubsystem;
+    private final CorelSuperstructure corelSuperstructure;
 
-  // Controller
-  private final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+    // Controller
+    private final CommandXboxController driverController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
 
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+    // Dashboard inputs
+    private final LoggedDashboardChooser<Command> autoChooser;
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    switch (Constants.currentMode) {
-      case REAL:
-        // Real robot, instantiate hardware IO implementations
-        drive =
-            new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOSpark(0),
-                new ModuleIOSpark(1),
-                new ModuleIOSpark(2),
-                new ModuleIOSpark(3));
-        pivotSubsystem = new PivotSubsystem(new PivotIO() {});
-        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
-        break;
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
+        // Superstructure subsystems are only used in the RobotContainer constructor
+        // and then passed to their respective Superstructure constructors.
+        CorelElevator corelElevator = null;
+        CorelConveyor corelConveyor = null;
 
-      case SIM:
-        // Sim robot, instantiate physics sim IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim(),
-                new ModuleIOSim());
-        pivotSubsystem = new PivotSubsystem(new PivotIOSim());
-        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
-        break;
+        switch (Constants.currentMode) {
+            case REAL:
+                // Real robot, instantiate hardware IO implementations
+                drive = new Drive(
+                        new GyroIOPigeon2(),
+                        new ModuleIOSpark(0),
+                        new ModuleIOSpark(1),
+                        new ModuleIOSpark(2),
+                        new ModuleIOSpark(3));
+                // pivotSubsystem = new PivotSubsystem(new PivotIO() {});
+                // elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
+                corelElevator = new CorelElevator(new ElevatorIO() {
+                });
+                corelConveyor = new CorelConveyor(new SingleRollerIO() {
+                });
+                break;
 
-      default:
-        // Replayed robot, disable IO implementations
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-        pivotSubsystem = new PivotSubsystem(new PivotIO() {});
-        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
-        break;
+            case SIM:
+                // Sim robot, instantiate physics sim IO implementations
+                drive = new Drive(
+                        new GyroIO() {
+                        },
+                        new ModuleIOSim(),
+                        new ModuleIOSim(),
+                        new ModuleIOSim(),
+                        new ModuleIOSim());
+                // pivotSubsystem = new PivotSubsystem(new PivotIOSim());
+                // elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
+                corelElevator = new CorelElevator(new CorelElevatorIOSim());
+                corelConveyor = new CorelConveyor(new CorelConveyorIOSim());
+                break;
+
+            default:
+                // Replayed robot, disable IO implementations
+                drive = new Drive(
+                        new GyroIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        new ModuleIO() {
+                        },
+                        new ModuleIO() {
+                        });
+                // pivotSubsystem = new PivotSubsystem(new PivotIO() {});
+                // elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
+                corelElevator = new CorelElevator(new ElevatorIO() {
+                });
+                corelConveyor = new CorelConveyor(new SingleRollerIO() {
+                });
+                break;
+        }
+
+        // Assuming that the superstructure dependencies have been created, create the
+        // superstructure.
+        corelSuperstructure = new CorelSuperstructure(corelElevator, corelConveyor);
+
+        // Set up auto routines
+        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+        // Set up SysId routines
+        autoChooser.addOption(
+                "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+        autoChooser.addOption(
+                "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+        autoChooser.addOption(
+                "Drive SysId (Quasistatic Forward)",
+                drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Drive SysId (Quasistatic Reverse)",
+                drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+        // Configure the button bindings
+        configureButtonBindings();
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    /**
+     * Use this method to define your button->command mappings. Buttons can be
+     * created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+     * it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+    private void configureButtonBindings() {
+        // Default command, normal field-relative drive
+        drive.setDefaultCommand(
+                DriveCommands.joystickDrive(
+                        drive,
+                        () -> -driverController.getLeftY(),
+                        () -> -driverController.getLeftX(),
+                        () -> -driverController.getRightX()));
 
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // elevatorSubsystem.setDefaultCommand(
+        // // TODO
+        // );
 
-    // Configure the button bindings
-    configureButtonBindings();
+        // Lock to 0° when A button is held
+        driverController
+                .a()
+                .whileTrue(
+                        DriveCommands.joystickDriveAtAngle(
+                                drive,
+                                () -> -driverController.getLeftY(),
+                                () -> -driverController.getLeftX(),
+                                () -> new Rotation2d()));
 
-    elevatorSubsystem.setDefaultCommand(elevatorSubsystem.runTrapezoidProfileCommand());
-  }
+        // Switch to X pattern when X button is pressed
+        driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+        // Reset gyro to 0° when B button is pressed
+        driverController
+                .b()
+                .onTrue(
+                        Commands.runOnce(
+                                () -> drive.setPose(
+                                        new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                                drive)
+                                .ignoringDisable(true));
 
-    // elevatorSubsystem.setDefaultCommand(
-    //     // TODO
-    // );
+        operatorController.povUp().onTrue(this.corelSuperstructure.raiseElevatorToL4());
+        operatorController.povLeft().onTrue(this.corelSuperstructure.raiseElevatorToL3());
+        operatorController.povRight().onTrue(this.corelSuperstructure.raiseElevatorToL2());
+        operatorController.povDown().onTrue(this.corelSuperstructure.raiseElevatorToL1());
 
-    // Lock to 0° when A button is held
-    driverController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> new Rotation2d()));
+        operatorController.a()
+                .and(this.corelSuperstructure.isElevatorMoving().negate())
+                .whileTrue(this.corelSuperstructure.shootCorel());
+    }
 
-    // Switch to X pattern when X button is pressed
-    driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Reset gyro to 0° when B button is pressed
-    driverController
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-
-    // TEMP -> Test Pivot Subsystem
-    operatorController.povDown().whileTrue(pivotSubsystem.runRoller(-6.0));
-    operatorController.povUp().whileTrue(pivotSubsystem.runRoller(6.0));
-    operatorController.x().whileTrue(elevatorSubsystem.runRoller(1));
-
-    operatorController.b().onTrue(elevatorSubsystem.setGoalInchesCommand(0));
-    operatorController.y().onTrue(elevatorSubsystem.setGoalInchesCommand(5));
-    operatorController.a().onTrue(elevatorSubsystem.setGoalInchesCommand(10));
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return autoChooser.get();
-  }
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        return autoChooser.get();
+    }
 }
