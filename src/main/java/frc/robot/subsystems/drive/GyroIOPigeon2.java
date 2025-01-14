@@ -24,7 +24,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import java.util.OptionalDouble;
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
@@ -42,9 +41,7 @@ public class GyroIOPigeon2 implements GyroIO {
     yawVelocity.setUpdateFrequency(50.0);
     pigeon.optimizeBusUtilization();
     yawTimestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
-    yawPositionQueue =
-        SparkOdometryThread.getInstance()
-            .registerSignal(() -> OptionalDouble.of(yaw.getValueAsDouble()));
+    yawPositionQueue = SparkOdometryThread.getInstance().registerSignal(yaw::getValueAsDouble);
   }
 
   @Override

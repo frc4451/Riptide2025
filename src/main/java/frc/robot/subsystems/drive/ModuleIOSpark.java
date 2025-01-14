@@ -171,11 +171,9 @@ public class ModuleIOSpark implements ModuleIO {
     // Create odometry queues
     timestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
     drivePositionQueue =
-        SparkOdometryThread.getInstance()
-            .registerSignal(driveSpark, () -> getIfOk(driveSpark, driveEncoder::getPosition));
+        SparkOdometryThread.getInstance().registerSignal(driveSpark, driveEncoder::getPosition);
     turnPositionQueue =
-        SparkOdometryThread.getInstance()
-            .registerSignal(turnSpark, () -> getIfOk(turnSpark, turnEncoder::getPosition));
+        SparkOdometryThread.getInstance().registerSignal(turnSpark, turnEncoder::getPosition);
   }
 
   @Override
