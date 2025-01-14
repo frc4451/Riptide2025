@@ -13,15 +13,15 @@
 
 package frc.robot.subsystems.drive;
 
-import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkBase;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 /**
  * Provides an interface for asynchronously reading high-frequency measurements to a set of queues.
@@ -31,8 +31,8 @@ import java.util.function.DoubleSupplier;
  */
 public class SparkOdometryThread {
   private final List<SparkBase> sparks = new ArrayList<>();
-  private final List<DoubleSupplier> sparkSignals = new ArrayList<>();
-  private final List<DoubleSupplier> genericSignals = new ArrayList<>();
+  private final List<Supplier<OptionalDouble>> sparkSignals = new ArrayList<>();
+  private final List<Supplier<OptionalDouble>> genericSignals = new ArrayList<>();
   private final List<Queue<Double>> sparkQueues = new ArrayList<>();
   private final List<Queue<Double>> genericQueues = new ArrayList<>();
   private final List<Queue<Double>> timestampQueues = new ArrayList<>();
@@ -58,7 +58,7 @@ public class SparkOdometryThread {
   }
 
   /** Registers a Spark signal to be read from the thread. */
-  public Queue<Double> registerSignal(SparkBase spark, DoubleSupplier signal) {
+  public Queue<Double> registerSignal(SparkBase spark, Supplier<OptionalDouble> signal) {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
     Drive.odometryLock.lock();
     try {
@@ -72,7 +72,7 @@ public class SparkOdometryThread {
   }
 
   /** Registers a generic signal to be read from the thread. */
-  public Queue<Double> registerSignal(DoubleSupplier signal) {
+  public Queue<Double> registerSignal(Supplier<OptionalDouble> signal) {
     Queue<Double> queue = new ArrayBlockingQueue<>(20);
     Drive.odometryLock.lock();
     try {
@@ -105,21 +105,33 @@ public class SparkOdometryThread {
 
       // Read Spark values, mark invalid in case of error
       double[] sparkValues = new double[sparkSignals.size()];
-      boolean isValid = true;
+      boolean sparksAreValid = true;
       for (int i = 0; i < sparkSignals.size(); i++) {
-        sparkValues[i] = sparkSignals.get(i).getAsDouble();
-        if (sparks.get(i).getLastError() != REVLibError.kOk) {
-          isValid = false;
+        if (sparkSignals.get(i).get().isEmpty()) {
+          sparksAreValid = false;
+          break;
         }
+        sparkValues[i] = sparkSignals.get(i).get().getAsDouble();
+      }
+
+      // Read generic values, mark invalid in case of error
+      boolean genericsAreValid = true;
+      double[] genericValues = new double[genericSignals.size()];
+      for (int i = 0; i < genericSignals.size(); i++) {
+        if (genericSignals.get(i).get().isEmpty()) {
+          genericsAreValid = false;
+          break;
+        }
+        genericValues[i] = genericSignals.get(i).get().getAsDouble();
       }
 
       // If valid, add values to queues
-      if (isValid) {
+      if (sparksAreValid && genericsAreValid) {
         for (int i = 0; i < sparkSignals.size(); i++) {
           sparkQueues.get(i).offer(sparkValues[i]);
         }
         for (int i = 0; i < genericSignals.size(); i++) {
-          genericQueues.get(i).offer(genericSignals.get(i).getAsDouble());
+          genericQueues.get(i).offer(genericValues[i]);
         }
         for (int i = 0; i < timestampQueues.size(); i++) {
           timestampQueues.get(i).offer(timestamp);

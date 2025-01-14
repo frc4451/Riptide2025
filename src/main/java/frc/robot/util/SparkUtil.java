@@ -15,6 +15,7 @@ package frc.robot.util;
 
 import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkBase;
+import java.util.OptionalDouble;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
@@ -46,6 +47,17 @@ public class SparkUtil {
       }
     }
     consumer.accept(values);
+  }
+
+  /** Gets a value from a Spark only if the value is valid. */
+  public static OptionalDouble getIfOk(SparkBase spark, DoubleSupplier supplier) {
+    double value = supplier.getAsDouble();
+    if (spark.getLastError() == REVLibError.kOk) {
+      return OptionalDouble.of(value);
+    } else {
+      sparkStickyFault = true;
+      return OptionalDouble.empty();
+    }
   }
 
   /** Attempts to run the command until no error is produced. */
