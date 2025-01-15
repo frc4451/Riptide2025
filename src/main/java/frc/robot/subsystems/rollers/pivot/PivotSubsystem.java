@@ -2,16 +2,16 @@ package frc.robot.subsystems.rollers.pivot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.single.SingleRollerSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class PivotSubsystem extends SingleRollerSubsystem {
-  private static final record LoggedTrapezoidState(double positionRad, double velocityRadPerSec) {}
-
   private final TrapezoidProfile trapezoidProfile;
 
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
@@ -42,16 +42,29 @@ public class PivotSubsystem extends SingleRollerSubsystem {
     }
 
     Logger.recordOutput(
-        getName() + "/Profile/Setpoint",
+        getName() + "/Profile/Setpoint/Rad",
         new LoggedTrapezoidState(setpoint.position, setpoint.velocity));
+    Logger.recordOutput(
+        getName() + "/Profile/Setpoint/Deg",
+        new LoggedTrapezoidState(
+            Units.radiansToDegrees(setpoint.position), Units.radiansToDegrees(setpoint.velocity)));
 
     Logger.recordOutput(
-        getName() + "/Profile/Goal", new LoggedTrapezoidState(goal.position, goal.velocity));
+        getName() + "/Profile/Goal/Rad", new LoggedTrapezoidState(goal.position, goal.velocity));
+    Logger.recordOutput(
+        getName() + "/Profile/Goal/Deg",
+        new LoggedTrapezoidState(
+            Units.radiansToDegrees(goal.position), Units.radiansToDegrees(goal.velocity)));
   }
 
   @AutoLogOutput()
-  private double getPositionRadians() {
-    return inputs.positionRad;
+  private double getPositionDegrees() {
+    return Units.radiansToDegrees(inputs.positionRad);
+  }
+
+  @AutoLogOutput()
+  private double getVelocityDegreesPerSec() {
+    return Units.radiansToDegrees(inputs.velocityRadPerSec);
   }
 
   private void runTrapezoidProfile() {

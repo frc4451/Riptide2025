@@ -2,17 +2,16 @@ package frc.robot.subsystems.rollers.elevators;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.single.SingleRollerSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class ElevatorSubsystem extends SingleRollerSubsystem {
-  private static final record LoggedTrapezoidState(
-      double position, double positionInches, double velocity, double velocityInches) {}
-
   private final TrapezoidProfile trapezoidProfile;
 
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
@@ -51,19 +50,19 @@ public class ElevatorSubsystem extends SingleRollerSubsystem {
     }
 
     Logger.recordOutput(
-        getName() + "/Profile/Setpoint",
-        new LoggedTrapezoidState(
-            setpoint.position,
-            setpoint.position * inchesPerRad,
-            setpoint.velocity,
-            setpoint.velocity * inchesPerRad));
+        getName() + "/Profile/Setpoint/Rad",
+        new LoggedTrapezoidState(setpoint.position, setpoint.velocity));
     Logger.recordOutput(
-        getName() + "/Profile/Goal",
+        getName() + "/Profile/Setpoint/In",
         new LoggedTrapezoidState(
-            goal.position,
-            goal.position * inchesPerRad,
-            goal.velocity,
-            goal.velocity * inchesPerRad));
+            Units.radiansToDegrees(setpoint.position), Units.radiansToDegrees(setpoint.velocity)));
+
+    Logger.recordOutput(
+        getName() + "/Profile/Goal/Rad", new LoggedTrapezoidState(goal.position, goal.velocity));
+    Logger.recordOutput(
+        getName() + "/Profile/Goal/In",
+        new LoggedTrapezoidState(
+            Units.radiansToDegrees(goal.position), Units.radiansToDegrees(goal.velocity)));
   }
 
   @AutoLogOutput()

@@ -122,6 +122,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     elevatorSubsystem.setDefaultCommand(elevatorSubsystem.runTrapezoidProfileCommand());
+    pivotSubsystem.setDefaultCommand(pivotSubsystem.runTrapezoidProfileCommand());
   }
 
   /**
@@ -138,10 +139,6 @@ public class RobotContainer {
             () -> -driverController.getLeftY(),
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
-
-    // elevatorSubsystem.setDefaultCommand(
-    //     // TODO
-    // );
 
     // Lock to 0° when A button is held
     driverController
@@ -172,9 +169,9 @@ public class RobotContainer {
     operatorController.povUp().whileTrue(pivotSubsystem.runRoller(6.0));
     operatorController.x().whileTrue(elevatorSubsystem.runRoller(1));
 
-    operatorController.b().onTrue(elevatorSubsystem.setGoalInchesCommand(0));
-    operatorController.y().onTrue(elevatorSubsystem.setGoalInchesCommand(5));
-    operatorController.a().onTrue(elevatorSubsystem.setGoalInchesCommand(10));
+    operatorController.b().onTrue(pivotSubsystem.setGoalRadCommand(0));
+    operatorController.y().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI / 2.0));
+    operatorController.a().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI));
   }
 
   /**

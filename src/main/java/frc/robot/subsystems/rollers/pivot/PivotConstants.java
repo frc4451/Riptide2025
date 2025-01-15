@@ -11,6 +11,6 @@ public class PivotConstants {
   public static final PivotConstraints pivotConstraints = new PivotConstraints(0, 10);
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
-      new TrapezoidProfile.Constraints(1.0, 1.0);
+      new TrapezoidProfile.Constraints(Math.PI / 4.0, Math.PI / 4.0);
   public static final PIDConstants pidConstants = new PIDConstants(1, 0, 0);
 }
