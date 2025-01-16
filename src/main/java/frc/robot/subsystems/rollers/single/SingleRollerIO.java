@@ -12,6 +12,7 @@ public interface SingleRollerIO {
 
     public double appliedVoltage = 0.0;
     public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
     public double temperatureCelsius = 0.0;
   }
 
