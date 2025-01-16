@@ -36,4 +36,6 @@ public final class Constants {
   }
 
   public static final double loopPeriodSecs = Robot.defaultPeriodSecs;
+
+  public static final double phoenixUpdateFreqHz = 50.0;
 }
