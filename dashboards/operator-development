@@ -1,0 +1,33 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Reef Selector",
+            "x": 640.0,
+            "y": 0.0,
+            "width": 768.0,
+            "height": 768.0,
+            "type": "Reef Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Reef Selector",
+              "period": 0.06
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    }
+  ]
+}
