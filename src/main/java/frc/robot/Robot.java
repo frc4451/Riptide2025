@@ -16,6 +16,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.VirtualSubsystem;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -158,7 +159,12 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    // Add all the AprilTags inside the tag layout as visible targets to this
+    // simulated field.
+    VisionConstants.VISION_SYSTEM_SIM.ifPresent(
+        visionSystemSim -> visionSystemSim.addAprilTags(VisionConstants.FIELD_LAYOUT));
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override

@@ -13,9 +13,9 @@ public class CorelElevatorConstants {
 
   public static final double inchesPerRad = 3.0; // equal to radius
 
-  public static final ElevatorConstraints elevatorConstraints = new ElevatorConstraints(0, CorelElevatorSetpoint.L4.setpointInches);
+  public static final ElevatorConstraints elevatorConstraints =
+      new ElevatorConstraints(0, CorelElevatorSetpoint.L4.setpointInches);
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
       new TrapezoidProfile.Constraints(1.0 * inchesPerRad, 1.0 * inchesPerRad);
-
 }

@@ -23,7 +23,11 @@ public class ElevatorSubsystem extends SingleRollerSubsystem {
   private final ElevatorConstraints elevatorConstraints;
 
   public ElevatorSubsystem(
-      String name, ElevatorIO io, TrapezoidProfile.Constraints trapezoidConstraints, double inchesPerRad, ElevatorConstraints elevatorConstraints) {
+      String name,
+      ElevatorIO io,
+      TrapezoidProfile.Constraints trapezoidConstraints,
+      double inchesPerRad,
+      ElevatorConstraints elevatorConstraints) {
     super(name, io);
     trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
     this.inchesPerRad = inchesPerRad;
@@ -31,7 +35,12 @@ public class ElevatorSubsystem extends SingleRollerSubsystem {
   }
 
   public ElevatorSubsystem(ElevatorIO io) {
-    this("Elevator", io, ElevatorConstants.trapezoidConstraints, ElevatorConstants.inchesPerRad, ElevatorConstants.elevatorConstraints);
+    this(
+        "Elevator",
+        io,
+        ElevatorConstants.trapezoidConstraints,
+        ElevatorConstants.inchesPerRad,
+        ElevatorConstants.elevatorConstraints);
   }
 
   public void periodic() {

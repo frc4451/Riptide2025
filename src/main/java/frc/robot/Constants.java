@@ -13,7 +13,10 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.subsystems.drive.DriveConstants;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
@@ -36,4 +39,39 @@ public final class Constants {
   }
 
   public static final double loopPeriodSecs = Robot.defaultPeriodSecs;
+
+  public static final class AdvantageKitConstants {
+    public static enum Mode {
+      REAL,
+      REPLAY,
+      SIM
+    }
+
+    private static Mode kfakeMode = Mode.SIM;
+
+    public static Mode getMode() {
+      return RobotBase.isReal() ? Mode.REAL : kfakeMode;
+    }
+  }
+
+  public static final class PathPlannerConstants {
+    public static final Alliance DEFAULT_ALLIANCE = Alliance.Blue;
+
+    public static final double kMaxAngularAcceleration = 4 * Math.PI; // This was made up
+    public static final double kMaxAccelerationMetersPerSecondSquared = 3.00; // This was made up
+
+    public static final PathConstraints DEFAULT_PATH_CONSTRAINTS =
+        new PathConstraints(
+            DriveConstants.maxSpeedMetersPerSec,
+            PathPlannerConstants.kMaxAccelerationMetersPerSecondSquared,
+            DriveConstants.maxSpeedMetersPerSec,
+            5 * Math.PI);
+
+    public static final PathConstraints TEST_PATH_CONSTRAINTS =
+        new PathConstraints(
+            1.0,
+            PathPlannerConstants.kMaxAccelerationMetersPerSecondSquared,
+            DriveConstants.maxSpeedMetersPerSec,
+            5 * Math.PI);
+  }
 }

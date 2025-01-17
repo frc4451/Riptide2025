@@ -24,10 +24,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
 import frc.robot.dashboard.ReefTreeSelector;
 import frc.robot.dashboard.ReefTreeSelector.ReefTree;
-import frc.robot.state_machines.BobotState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -41,6 +41,7 @@ import frc.robot.subsystems.superstructures.corel.conveyor.CorelConveyor;
 import frc.robot.subsystems.superstructures.corel.conveyor.CorelConveyorIOSim;
 import frc.robot.subsystems.superstructures.corel.elevator.CorelElevator;
 import frc.robot.subsystems.superstructures.corel.elevator.CorelElevatorIOSim;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -55,6 +56,8 @@ public class RobotContainer {
   // private final PivotSubsystem pivotSubsystem;
   // private final ElevatorSubsystem elevatorSubsystem;
   private final CorelSuperstructure corelSuperstructure;
+
+  public final VisionSubsystem m_vision = new VisionSubsystem();
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
