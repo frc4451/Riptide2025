@@ -1,4 +1,4 @@
-package frc.robot.subsystems.rollers.pivot;
+package frc.robot.subsystems.superstructure.pivot;
 
 import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.system.plant.DCMotor;

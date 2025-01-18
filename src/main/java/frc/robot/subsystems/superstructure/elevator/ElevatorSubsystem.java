@@ -1,4 +1,4 @@
-package frc.robot.subsystems.rollers.pivot;
+package frc.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -7,31 +7,40 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
-import frc.robot.subsystems.rollers.single.SingleRollerSubsystem;
+import frc.robot.subsystems.rollers.follow.FollowRollersIO;
+import frc.robot.subsystems.rollers.follow.FollowRollersSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class PivotSubsystem extends SingleRollerSubsystem {
+public class ElevatorSubsystem extends FollowRollersSubsystem {
   private final TrapezoidProfile trapezoidProfile;
 
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
 
   private TrapezoidProfile.State goal = new TrapezoidProfile.State();
 
-  private final PivotConstraints pivotConstraints;
+  private final double inchesPerRad;
+  private final ElevatorConstraints elevatorConstraints;
 
-  public PivotSubsystem(
+  public ElevatorSubsystem(
       String name,
-      PivotIO io,
+      FollowRollersIO io,
       TrapezoidProfile.Constraints trapezoidConstraints,
-      PivotConstraints pivotConstraints) {
+      double inchesPerRad,
+      ElevatorConstraints elevatorConstraints) {
     super(name, io);
     trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
-    this.pivotConstraints = pivotConstraints;
+    this.inchesPerRad = inchesPerRad;
+    this.elevatorConstraints = elevatorConstraints;
   }
 
-  public PivotSubsystem(PivotIO io) {
-    this("Pivot", io, PivotConstants.trapezoidConstraints, PivotConstants.pivotConstraints);
+  public ElevatorSubsystem(FollowRollersIO io) {
+    this(
+        "Elevator",
+        io,
+        ElevatorConstants.trapezoidConstraints,
+        ElevatorConstants.inchesPerRad,
+        ElevatorConstants.elevatorConstraints);
   }
 
   public void periodic() {
@@ -45,26 +54,21 @@ public class PivotSubsystem extends SingleRollerSubsystem {
         getName() + "/Profile/Setpoint/Rad",
         new LoggedTrapezoidState(setpoint.position, setpoint.velocity));
     Logger.recordOutput(
-        getName() + "/Profile/Setpoint/Deg",
+        getName() + "/Profile/Setpoint/In",
         new LoggedTrapezoidState(
             Units.radiansToDegrees(setpoint.position), Units.radiansToDegrees(setpoint.velocity)));
 
     Logger.recordOutput(
         getName() + "/Profile/Goal/Rad", new LoggedTrapezoidState(goal.position, goal.velocity));
     Logger.recordOutput(
-        getName() + "/Profile/Goal/Deg",
+        getName() + "/Profile/Goal/In",
         new LoggedTrapezoidState(
             Units.radiansToDegrees(goal.position), Units.radiansToDegrees(goal.velocity)));
   }
 
   @AutoLogOutput()
-  private double getPositionDegrees() {
-    return Units.radiansToDegrees(inputs.positionRad);
-  }
-
-  @AutoLogOutput()
-  private double getVelocityDegreesPerSec() {
-    return Units.radiansToDegrees(inputs.velocityRadPerSec);
+  private double getHeightInches() {
+    return inputs.leaderPositionRad * inchesPerRad;
   }
 
   private void runTrapezoidProfile() {
@@ -76,19 +80,21 @@ public class PivotSubsystem extends SingleRollerSubsystem {
     return run(this::runTrapezoidProfile);
   }
 
-  public void setGoalRad(double positionInches) {
+  public void setGoalInches(double positionInches) {
     double clampedPosition =
         MathUtil.clamp(
-            positionInches, pivotConstraints.minRadians(), pivotConstraints.maxRadians());
+            positionInches / inchesPerRad,
+            elevatorConstraints.minHeightInches() / inchesPerRad,
+            elevatorConstraints.maxHeightInches() / inchesPerRad);
     goal = new TrapezoidProfile.State(clampedPosition, 0.0);
   }
 
   private void resetController() {
-    setGoalRadCommand(0.0);
+    setGoalInchesCommand(0.0);
     setpoint = new TrapezoidProfile.State(0.0, 0.0);
   }
 
-  public Command setGoalRadCommand(double positionRad) {
-    return runOnce(() -> setGoalRad(positionRad));
+  public Command setGoalInchesCommand(double positionInches) {
+    return runOnce(() -> setGoalInches(positionInches));
   }
 }

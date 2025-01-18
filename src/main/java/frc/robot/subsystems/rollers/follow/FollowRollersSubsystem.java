@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
-public class FollowRollerSubsystem extends SubsystemBase {
+public class FollowRollersSubsystem extends SubsystemBase {
   private final String name;
   protected final FollowRollersIO io;
 
@@ -14,7 +14,7 @@ public class FollowRollerSubsystem extends SubsystemBase {
 
   private final Alert disconnected;
 
-  public FollowRollerSubsystem(String name, FollowRollersIO io) {
+  public FollowRollersSubsystem(String name, FollowRollersIO io) {
     this.name = name;
     this.io = io;
 

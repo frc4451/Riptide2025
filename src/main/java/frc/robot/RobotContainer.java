@@ -29,12 +29,12 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
-import frc.robot.subsystems.rollers.elevators.ElevatorIO;
-import frc.robot.subsystems.rollers.elevators.ElevatorIOSim;
-import frc.robot.subsystems.rollers.elevators.ElevatorSubsystem;
-import frc.robot.subsystems.rollers.pivot.PivotIO;
-import frc.robot.subsystems.rollers.pivot.PivotIOSim;
-import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
+import frc.robot.subsystems.rollers.follow.FollowRollersIO;
+import frc.robot.subsystems.rollers.single.SingleRollerIO;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOSim;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.superstructure.pivot.PivotIOSim;
+import frc.robot.subsystems.superstructure.pivot.PivotSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -68,8 +68,8 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
-        pivotSubsystem = new PivotSubsystem(new PivotIO() {});
-        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
+        pivotSubsystem = new PivotSubsystem(new SingleRollerIO() {});
+        elevatorSubsystem = new ElevatorSubsystem(new FollowRollersIO() {});
         break;
 
       case SIM:
@@ -94,8 +94,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        pivotSubsystem = new PivotSubsystem(new PivotIO() {});
-        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
+        pivotSubsystem = new PivotSubsystem(new SingleRollerIO() {});
+        elevatorSubsystem = new ElevatorSubsystem(new FollowRollersIO() {});
         break;
     }
 
@@ -165,9 +165,8 @@ public class RobotContainer {
                 .ignoringDisable(true));
 
     // TEMP -> Test Pivot Subsystem
-    operatorController.povDown().whileTrue(pivotSubsystem.runRoller(-6.0));
-    operatorController.povUp().whileTrue(pivotSubsystem.runRoller(6.0));
-    operatorController.x().whileTrue(elevatorSubsystem.runRoller(1));
+    operatorController.povDown().whileTrue(elevatorSubsystem.setGoalInchesCommand(10));
+    operatorController.povUp().whileTrue(elevatorSubsystem.setGoalInchesCommand(0));
 
     operatorController.b().onTrue(pivotSubsystem.setGoalRadCommand(0));
     operatorController.y().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI / 2.0));
