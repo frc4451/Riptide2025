@@ -1,55 +1,38 @@
 package frc.robot.subsystems.quest;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import frc.robot.util.VirtualSubsystem;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 import org.littletonrobotics.junction.Logger;
 
-import frc.robot.Constants.AdvantageKitConstants;
-import frc.utils.VirtualSubsystem;
+public class QuestSubsystem extends VirtualSubsystem {
+  private final QuestIO io;
+  private final QuestIOInputsAutoLogged inputs = new QuestIOInputsAutoLogged();
 
-class QuestSubsystem extends VirtualSubsystem {
-    private static record Quest(QuestIO io, QuestIOInputsAutoLogged inputs) {
-    }
+  private final Queue<TimestampedPose> measurements = new ArrayBlockingQueue<>(20);
 
-    private final Quest quest;
+  private final Alert lowBatteryAlert = new Alert("Low Alert", AlertType.kWarning);
 
-    private final ConcurrentLinkedQueue<TimestampedPose> questMeasurements = new ConcurrentLinkedQueue<>();
+  public QuestSubsystem(QuestIO io) {
+    this.io = io;
+    io.resetPose(Pose2d.kZero);
+  }
 
-    public QuestSubsystem() {
-        QuestIO io;
-        if (AdvantageKitConstants.getMode() == AdvantageKitConstants.Mode.REAL) {
-            io = new QuestReal();
-        } else {
-            io = new QuestIO() {
-            };
-        }
+  @Override
+  public void periodic() {
+    final String logRoot = "Oculus/";
 
-        quest = new Quest(io, new QuestIOInputsAutoLogged());
-    }
+    io.updateInputs(inputs);
+    Logger.processInputs(logRoot, inputs);
 
-    private double lastTimestamp = Double.NaN;
+    lowBatteryAlert.set(inputs.batteryLevel < 25);
 
-    @Override
-    public void periodic() {
-        final String logRoot = "Oculus/";
+    measurements.add(new TimestampedPose(inputs.pose, inputs.timestamp));
+  }
 
-        quest.io.updateInputs(quest.inputs);
-        Logger.processInputs(logRoot, quest.inputs);
-
-        // If we have a duplicate frame, don't bother updating anything
-        if (quest.inputs.timestamp == lastTimestamp) {
-            return;
-        }
-        lastTimestamp = quest.inputs.timestamp;
-
-        Logger.recordOutput(logRoot + "Pose", quest.inputs.pose);
-
-        TimestampedPose estimatedPose = new TimestampedPose(quest.inputs.pose, quest.inputs.timestamp);
-
-        questMeasurements.add(estimatedPose);
-    }
-
-    @Override
-    public void simulationPeriodic() {
-    }
+  @Override
+  public void simulationPeriodic() {}
 }
