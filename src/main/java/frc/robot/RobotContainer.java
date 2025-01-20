@@ -29,6 +29,15 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.quest.QuestIO;
+import frc.robot.subsystems.quest.QuestIOReal;
+import frc.robot.subsystems.quest.QuestSubsystem;
+import frc.robot.subsystems.rollers.elevators.ElevatorIO;
+import frc.robot.subsystems.rollers.elevators.ElevatorIOSim;
+import frc.robot.subsystems.rollers.elevators.ElevatorSubsystem;
+import frc.robot.subsystems.rollers.pivot.PivotIO;
+import frc.robot.subsystems.rollers.pivot.PivotIOSim;
+import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -40,9 +49,14 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private final PivotSubsystem pivotSubsystem;
+  private final ElevatorSubsystem elevatorSubsystem;
+
+  private final QuestSubsystem questSubsystem;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController driverController = new CommandXboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -59,6 +73,9 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
+        pivotSubsystem = new PivotSubsystem(new PivotIO() {});
+        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
+        questSubsystem = new QuestSubsystem(new QuestIOReal());
         break;
 
       case SIM:
@@ -70,6 +87,9 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
+        pivotSubsystem = new PivotSubsystem(new PivotIOSim());
+        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
+        questSubsystem = new QuestSubsystem(new QuestIO() {});
         break;
 
       default:
@@ -81,6 +101,9 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
+        pivotSubsystem = new PivotSubsystem(new PivotIO() {});
+        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
+        questSubsystem = new QuestSubsystem(new QuestIO() {});
         break;
     }
 
@@ -105,6 +128,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    elevatorSubsystem.setDefaultCommand(elevatorSubsystem.runTrapezoidProfileCommand());
+    pivotSubsystem.setDefaultCommand(pivotSubsystem.runTrapezoidProfileCommand());
   }
 
   /**
@@ -118,25 +144,25 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -driverController.getLeftY(),
+            () -> -driverController.getLeftX(),
+            () -> -driverController.getRightX()));
 
     // Lock to 0° when A button is held
-    controller
+    driverController
         .a()
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
                 () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
+    driverController
         .b()
         .onTrue(
             Commands.runOnce(
@@ -145,6 +171,15 @@ public class RobotContainer {
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    // TEMP -> Test Pivot Subsystem
+    operatorController.povDown().whileTrue(pivotSubsystem.runRoller(-6.0));
+    operatorController.povUp().whileTrue(pivotSubsystem.runRoller(6.0));
+    operatorController.x().whileTrue(elevatorSubsystem.runRoller(1));
+
+    operatorController.b().onTrue(pivotSubsystem.setGoalRadCommand(0));
+    operatorController.y().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI / 2.0));
+    operatorController.a().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI));
   }
 
   /**
