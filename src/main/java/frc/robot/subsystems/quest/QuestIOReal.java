@@ -9,9 +9,10 @@ import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotController;
 
 public class QuestIOReal implements QuestIO {
-  // Configure Network Tables topics (oculus/...) to communicate with the Quest
+  // Configure Network Tables topics (questnav/...) to communicate with the Quest
   private NetworkTableInstance nt4Instance = NetworkTableInstance.getDefault();
   private NetworkTable nt4Table = nt4Instance.getTable("questnav");
 
@@ -24,14 +25,14 @@ public class QuestIOReal implements QuestIO {
   // Subscribe to the Network Tables oculus data topics
   // Availabe frame data found here:
   // https://github.com/juchong/QuestNav/blob/main/unity/Assets/Robot/MotionStreamer.cs#L90
-  private DoubleSubscriber questTimestamp = nt4Table.getDoubleTopic("timestamp").subscribe(0.0f);
+  private DoubleSubscriber questTimestamp = nt4Table.getDoubleTopic("timestamp").subscribe(0.0);
   private FloatArraySubscriber questPosition =
       nt4Table.getFloatArrayTopic("position").subscribe(new float[] {0.0f, 0.0f, 0.0f});
   private FloatArraySubscriber questQuaternion =
       nt4Table.getFloatArrayTopic("quaternion").subscribe(new float[] {0.0f, 0.0f, 0.0f, 0.0f});
   private FloatArraySubscriber questEulerAngles =
       nt4Table.getFloatArrayTopic("eulerAngles").subscribe(new float[] {0.0f, 0.0f, 0.0f});
-  private DoubleSubscriber questBattery = nt4Table.getDoubleTopic("batteryPercent").subscribe(0.0f);
+  private DoubleSubscriber questBattery = nt4Table.getDoubleTopic("batteryPercent").subscribe(0.0);
 
   /*
    * These are used to offset the headset's origin (0, 0) so that wherever the
@@ -41,6 +42,8 @@ public class QuestIOReal implements QuestIO {
   private double yawOffsetRad = 0.0;
 
   public void updateInputs(QuestIOInputs inputs) {
+    inputs.connected = isConnected();
+
     inputs.pose = getPose();
     inputs.yawRad = getYawRad();
 
@@ -54,6 +57,10 @@ public class QuestIOReal implements QuestIO {
     inputs.rawQuaternion = questQuaternion.get();
 
     cleanUpOculusMessages();
+  }
+
+  private boolean isConnected() {
+    return ((RobotController.getFPGATime() - questTimestamp.getLastChange()) < 250_000);
   }
 
   /** Sets supplied pose as origin of all calculations */
@@ -106,5 +113,16 @@ public class QuestIOReal implements QuestIO {
 
   private Pose2d getPose() {
     return new Pose2d(getTranslation(), Rotation2d.fromRadians(getYawRad()));
+  }
+
+  @Override
+  public void close() {
+    questMiso.close();
+    questMosi.close();
+    questTimestamp.close();
+    questPosition.close();
+    questQuaternion.close();
+    questEulerAngles.close();
+    questBattery.close();
   }
 }

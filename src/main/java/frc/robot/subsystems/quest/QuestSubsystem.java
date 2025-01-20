@@ -3,6 +3,8 @@ package frc.robot.subsystems.quest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.util.VirtualSubsystem;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -14,7 +16,8 @@ public class QuestSubsystem extends VirtualSubsystem {
 
   private final Queue<TimestampedPose> measurements = new ArrayBlockingQueue<>(20);
 
-  private final Alert lowBatteryAlert = new Alert("Low Alert", AlertType.kWarning);
+  private final Alert disconnectedAlert = new Alert("Quest Disconnected!", AlertType.kWarning);
+  private final Alert lowBatteryAlert = new Alert("Quest Low Battery!", AlertType.kWarning);
 
   public QuestSubsystem(QuestIO io) {
     this.io = io;
@@ -23,14 +26,13 @@ public class QuestSubsystem extends VirtualSubsystem {
 
   @Override
   public void periodic() {
-    final String logRoot = "Oculus/";
-
     io.updateInputs(inputs);
-    Logger.processInputs(logRoot, inputs);
+    Logger.processInputs("Oculus", inputs);
 
     lowBatteryAlert.set(inputs.batteryLevel < 25);
+    disconnectedAlert.set(!inputs.connected && Constants.currentMode != Mode.SIM);
 
-    measurements.add(new TimestampedPose(inputs.pose, inputs.timestamp));
+    // measurements.add(new TimestampedPose(inputs.pose, inputs.timestamp));
   }
 
   @Override

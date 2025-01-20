@@ -3,9 +3,11 @@ package frc.robot.subsystems.quest;
 import edu.wpi.first.math.geometry.Pose2d;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface QuestIO {
+public interface QuestIO extends AutoCloseable {
   @AutoLog
   public static class QuestIOInputs {
+    public boolean connected = false;
+
     // These are with relative with offsets applied (probably what you want)
     public Pose2d pose = new Pose2d();
     public double yawRad = 0;
@@ -24,4 +26,7 @@ public interface QuestIO {
 
   /** Sets supplied pose as origin of all calculations */
   public default void resetPose(Pose2d pose) {}
+
+  @Override
+  public default void close() {}
 }
