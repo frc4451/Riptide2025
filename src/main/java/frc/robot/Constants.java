@@ -34,4 +34,8 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static final double loopPeriodSecs = Robot.defaultPeriodSecs;
+
+  public static final double phoenixUpdateFreqHz = 50.0;
 }
