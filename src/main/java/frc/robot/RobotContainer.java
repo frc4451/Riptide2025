@@ -29,6 +29,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.quest.QuestIO;
+import frc.robot.subsystems.quest.QuestIOReal;
+import frc.robot.subsystems.quest.QuestSubsystem;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.superstructure.elevator.ElevatorIOSim;
@@ -48,6 +51,8 @@ public class RobotContainer {
   private final Drive drive;
   private final PivotSubsystem pivotSubsystem;
   private final ElevatorSubsystem elevatorSubsystem;
+
+  private final QuestSubsystem questSubsystem;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -70,6 +75,7 @@ public class RobotContainer {
                 new ModuleIOSpark(3));
         pivotSubsystem = new PivotSubsystem(new SingleRollerIO() {});
         elevatorSubsystem = new ElevatorSubsystem(new FollowRollersIO() {});
+        questSubsystem = new QuestSubsystem(new QuestIOReal());
         break;
 
       case SIM:
@@ -83,6 +89,7 @@ public class RobotContainer {
                 new ModuleIOSim());
         pivotSubsystem = new PivotSubsystem(new PivotIOSim());
         elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
+        questSubsystem = new QuestSubsystem(new QuestIO() {});
         break;
 
       default:
@@ -96,6 +103,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         pivotSubsystem = new PivotSubsystem(new SingleRollerIO() {});
         elevatorSubsystem = new ElevatorSubsystem(new FollowRollersIO() {});
+        questSubsystem = new QuestSubsystem(new QuestIO() {});
         break;
     }
 
