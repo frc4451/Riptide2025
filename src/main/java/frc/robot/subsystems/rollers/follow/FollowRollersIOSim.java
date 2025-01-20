@@ -73,6 +73,12 @@ public class FollowRollersIOSim implements FollowRollersIO {
   }
 
   @Override
+  public void runVelocity(double velocityRadPerSecond) {
+    leader.setAngularVelocity(velocityRadPerSecond);
+    follower.setAngularVelocity(invertFollower ? velocityRadPerSecond : -velocityRadPerSecond);
+  }
+
+  @Override
   public void runPosition(double positionRad) {
     closedLoop = true;
     controller.setSetpoint(positionRad);

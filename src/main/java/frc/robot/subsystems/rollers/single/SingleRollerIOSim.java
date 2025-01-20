@@ -51,6 +51,11 @@ public class SingleRollerIOSim implements SingleRollerIO {
   }
 
   @Override
+  public void runVelocity(double velocityRadPerSecond) {
+    sim.setAngularVelocity(velocityRadPerSecond);
+  }
+
+  @Override
   public void runPosition(double positionRad) {
     closedLoop = true;
     controller.setSetpoint(positionRad);

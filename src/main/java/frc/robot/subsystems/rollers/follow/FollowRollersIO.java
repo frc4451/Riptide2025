@@ -29,6 +29,8 @@ public interface FollowRollersIO {
   /** Run roller at set voltage */
   public default void runVolts(double volts) {}
 
+  public default void runVelocity(double velocity) {}
+
   /** Run roller at set position */
   public default void runPosition(double positionRad) {}
 
