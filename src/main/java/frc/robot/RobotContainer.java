@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.commands.AimAtReef;
 import frc.robot.commands.DriveCommands;
 import frc.robot.dashboard.ReefTreeSelector;
 import frc.robot.dashboard.ReefTreeSelector.ReefTree;
@@ -41,6 +42,7 @@ import frc.robot.subsystems.superstructures.corel.conveyor.CorelConveyor;
 import frc.robot.subsystems.superstructures.corel.conveyor.CorelConveyorIOSim;
 import frc.robot.subsystems.superstructures.corel.elevator.CorelElevator;
 import frc.robot.subsystems.superstructures.corel.elevator.CorelElevatorIOSim;
+import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -207,6 +209,14 @@ public class RobotContainer {
 
     // Switch to X pattern when X button is pressed
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    VisionConstants.FIELD_LAYOUT.getTagPose(17).ifPresent((pose) -> 
+        driverController.rightBumper().whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> pose.toPose2d().getRotation().plus(new Rotation2d(Math.PI)))));
 
     // Reset gyro to 0° when B button is pressed
     driverController

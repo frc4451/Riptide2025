@@ -44,6 +44,10 @@ public class BobotState extends VirtualSubsystem {
     visibleAprilTags = trackedAprilTags;
   }
 
+  public static Set<TargetWithSource> getVisibleAprilTags() {
+    return BobotState.visibleAprilTags;
+  }
+
   @Override
   public void periodic() {
     // publisher.

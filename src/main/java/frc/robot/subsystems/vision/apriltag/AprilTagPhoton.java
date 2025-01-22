@@ -1,11 +1,13 @@
 package frc.robot.subsystems.vision.apriltag;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.subsystems.vision.VisionConstants.VisionSource;
 import java.util.Arrays;
+import java.util.List;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -56,7 +58,7 @@ public class AprilTagPhoton implements AprilTagIO {
 
   private PhotonPipelineResult frame = new PhotonPipelineResult();
   private boolean isDuplicateFrame = false;
-  private EstimatedPose estimatedPose = new EstimatedPose();
+  // private EstimatedPose estimatedPose = new EstimatedPose();
   private boolean isConnected = false;
   private int heartbeat = 0;
 
@@ -67,7 +69,7 @@ public class AprilTagPhoton implements AprilTagIO {
     if (!isConnected) {
       frame = new PhotonPipelineResult();
       isDuplicateFrame = false;
-      estimatedPose = new EstimatedPose();
+      // estimatedPose = new EstimatedPose();
       return;
     }
 
@@ -81,14 +83,15 @@ public class AprilTagPhoton implements AprilTagIO {
 
     AprilTagFiltering.removeTooFarTargets(latestFrame);
     frame = latestFrame;
-    estimatedPose = new EstimatedPose(AprilTagAlgorithms.estimateRobotPose(latestFrame, estimator));
+    // estimatedPose = new EstimatedPose(AprilTagAlgorithms.estimateRobotPose(latestFrame,
+    // estimator));
   }
 
   @Override
   public void updateInputs(AprilTagIOInputs inputs) {
     inputs.frame = frame;
     inputs.isDuplicateFrame = isDuplicateFrame;
-    inputs.estimatedPose = estimatedPose;
+    // inputs.estimatedPose = estimatedPose;
     inputs.isConnected = isConnected;
     inputs.heartbeat = heartbeat;
 
@@ -103,5 +106,16 @@ public class AprilTagPhoton implements AprilTagIO {
             .boxed()
             .map(id -> VisionConstants.FIELD_LAYOUT.getTagPose(id).get())
             .toArray(Pose3d[]::new);
+
+    List<Translation2d> corners = List.of();
+
+    // Detected Corners
+    inputs.frame.getTargets().stream()
+        .map(target -> target.getDetectedCorners())
+        .flatMap(List::stream)
+        .map(corner -> new Translation2d(corner.x, corner.y))
+        .forEach(translation -> corners.add(translation));
+
+    inputs.corners = corners.stream().toArray(Translation2d[]::new);
   }
 }

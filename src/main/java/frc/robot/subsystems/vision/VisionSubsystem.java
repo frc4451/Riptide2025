@@ -9,13 +9,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AdvantageKitConstants;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.vision.VisionConstants.VisionSource;
-import frc.robot.subsystems.vision.apriltag.AprilTagAlgorithms;
 import frc.robot.subsystems.vision.apriltag.AprilTagIO;
 import frc.robot.subsystems.vision.apriltag.AprilTagIOInputsAutoLogged;
 import frc.robot.subsystems.vision.apriltag.AprilTagPhoton;
 import frc.robot.subsystems.vision.apriltag.AprilTagPhotonSim;
 import frc.robot.subsystems.vision.apriltag.DuplicateTracker;
-import frc.robot.subsystems.vision.apriltag.EstimatedPose;
 import frc.robot.subsystems.vision.object_detection.ObjectDetectionFiltering;
 import frc.robot.subsystems.vision.object_detection.ObjectDetectionIO;
 import frc.robot.subsystems.vision.object_detection.ObjectDetectionIOInputsAutoLogged;
@@ -177,13 +175,13 @@ public class VisionSubsystem extends VirtualSubsystem {
       // .toArray());
 
       // Add estimated position and deviation to be used by SwerveDrivePoseEstimator
-      EstimatedPose estimatedPose = cam.inputs.estimatedPose;
+      // EstimatedPose estimatedPose = cam.inputs.estimatedPose;
 
-      if (estimatedPose.isPresent) {
-        // Find Vision Measurement and add it for our Queue if it exists
-        AprilTagAlgorithms.findVisionMeasurement(estimatedPose.asEstimatedRobotPose())
-            .ifPresent(visionMeasurements::add);
-      }
+      // if (estimatedPose.isPresent) {
+      //   // Find Vision Measurement and add it for our Queue if it exists
+      //   AprilTagAlgorithms.findVisionMeasurement(estimatedPose.asEstimatedRobotPose())
+      //       .ifPresent(visionMeasurements::add);
+      // }
     }
 
     if (!currentVisibleAprilTags.isEmpty()) {

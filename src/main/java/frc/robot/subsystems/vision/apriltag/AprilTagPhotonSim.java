@@ -2,6 +2,7 @@ package frc.robot.subsystems.vision.apriltag;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
@@ -60,11 +61,11 @@ public class AprilTagPhotonSim implements AprilTagIO {
           SimCameraProperties simCameraProperties = new SimCameraProperties();
 
           // All of our AprilTag cameras use 16:9 FHD resolution
-          simCameraProperties.setCalibration(1280, 800, Rotation2d.fromDegrees(70));
+          simCameraProperties.setCalibration(source.sensorWithLens().x(), source.sensorWithLens().y(), Rotation2d.fromDegrees(source.sensorWithLens().fov()));
           // I read this from the docs, but this may need adjusting
           simCameraProperties.setCalibError(0.25, 0.08);
-          simCameraProperties.setFPS(20.0);
-          simCameraProperties.setAvgLatencyMs(35);
+          simCameraProperties.setFPS(60.0);
+          simCameraProperties.setAvgLatencyMs(20);
           simCameraProperties.setLatencyStdDevMs(5);
 
           cameraSim = new PhotonCameraSim(camera, simCameraProperties);
@@ -106,7 +107,7 @@ public class AprilTagPhotonSim implements AprilTagIO {
   public void updateInputs(AprilTagIOInputs inputs) {
     inputs.frame = frame;
     inputs.isDuplicateFrame = isDuplicateFrame;
-    inputs.estimatedPose = estimatedPose;
+    // inputs.estimatedPose = estimatedPose;
     inputs.isConnected = camera.isConnected();
     inputs.heartbeat = heartbeat;
 
@@ -121,6 +122,23 @@ public class AprilTagPhotonSim implements AprilTagIO {
             .boxed()
             .map(id -> VisionConstants.FIELD_LAYOUT.getTagPose(id).get())
             .toArray(Pose3d[]::new);
+
+    // Detected Corners
+    // List<Translation2d> corners = List.of();
+
+    // inputs.frame.getTargets().stream()
+    //     .map(target -> target.getDetectedCorners())
+    //     .flatMap(List::stream)
+    //     .map(corner -> new Translation2d(corner.x, corner.y))
+    //     .forEach(translation -> corners.add(translation));
+
+    // inputs.corners = corners.stream().toArray(Translation2d[]::new);
+
+    inputs.corners =
+        inputs.frame.getTargets().stream()
+            .flatMap(target -> target.getDetectedCorners().stream())
+            .map(corner -> new Translation2d(corner.x, corner.y))
+            .toArray(Translation2d[]::new);
   }
 
   public void updateFieldPoseEstimate() {

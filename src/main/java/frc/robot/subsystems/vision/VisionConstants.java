@@ -21,7 +21,8 @@ import java.util.stream.Stream;
 import org.photonvision.simulation.VisionSystemSim;
 
 public final class VisionConstants {
-  public static record VisionSource(String name, Transform3d robotToCamera) {}
+  public static record SensorWithLens(int x, int y, double fov) {}
+  public static record VisionSource(String name, Transform3d robotToCamera, SensorWithLens sensorWithLens) {}
 
   public static final AprilTagFieldLayout FIELD_LAYOUT =
       AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
@@ -41,29 +42,31 @@ public final class VisionConstants {
               "FrontLeft",
               new Transform3d(
                   new Translation3d(
-                      Units.inchesToMeters(13.14), // forward+
-                      Units.inchesToMeters(10.35), // left+
-                      Units.inchesToMeters(10.50)), // up+
-                  new Rotation3d(0, Units.degreesToRadians(-28), Units.degreesToRadians(-30)))),
+                      Units.inchesToMeters(0), // forward+
+                      Units.inchesToMeters(12), // left+
+                      Units.inchesToMeters(7)), // up+
+                  new Rotation3d(0, Units.degreesToRadians(-2.5), Units.degreesToRadians(0))),
+                  new SensorWithLens(1600, 1304, 55)),
           // FR
           new VisionSource(
               "FrontRight",
               new Transform3d(
                   new Translation3d(
-                      Units.inchesToMeters(13.14), // forward+
-                      Units.inchesToMeters(-10.35), // left+
-                      Units.inchesToMeters(10.50)), // up+
-                  new Rotation3d(0, Units.degreesToRadians(-28), Units.degreesToRadians(30)))),
-          // RL
+                      Units.inchesToMeters(0), // forward+
+                      Units.inchesToMeters(-12), // left+
+                      Units.inchesToMeters(7)), // up+
+                      new Rotation3d(0, Units.degreesToRadians(-2.5), Units.degreesToRadians(0))),
+                      new SensorWithLens(1600, 1304, 55)),
+                      // RL
           new VisionSource(
-              "BackLeft",
+              "FrontCenter",
               new Transform3d(
                   new Translation3d(
-                      Units.inchesToMeters(-12.05), // forward+
-                      Units.inchesToMeters(8.89), // left+
-                      Units.inchesToMeters(7.56)), // up+
-                  new Rotation3d(
-                      0, Units.degreesToRadians(-28), Units.degreesToRadians(180 + 30)))),
+                      Units.inchesToMeters(0), // forward+
+                      Units.inchesToMeters(0), // left+
+                      Units.inchesToMeters(7)), // up+
+                  new Rotation3d(0, Units.degreesToRadians(-2.5), Units.degreesToRadians(0))),
+                  new SensorWithLens(1600, 1304, 80)),
           // RR
           new VisionSource(
               "BackRight",
@@ -72,8 +75,8 @@ public final class VisionConstants {
                       Units.inchesToMeters(-12.05), // forward+
                       Units.inchesToMeters(-8.89), // left+
                       Units.inchesToMeters(7.56)), // up+
-                  new Rotation3d(
-                      0, Units.degreesToRadians(-28), Units.degreesToRadians(180 - 30)))));
+                  new Rotation3d(0, 0, Units.degreesToRadians(180))),
+                  new SensorWithLens(1600, 1304, 55)));
 
   public static final VisionSource OBJECT_DETECTION_SOURCE =
       new VisionSource(
@@ -83,7 +86,7 @@ public final class VisionConstants {
                   Units.inchesToMeters(-13.59), // forward+
                   Units.inchesToMeters(0), // left+
                   Units.inchesToMeters(20.51)), // up+
-              new Rotation3d(0, Units.degreesToRadians(25), 0)));
+              new Rotation3d(0, Units.degreesToRadians(25), 0)), new SensorWithLens(1600, 1304, 55));
 
   // Review the Field layout for positions
   // https://firstfrc.blob.core.windows.net/frc2024/FieldAssets/2024LayoutMarkingDiagram.pdf
