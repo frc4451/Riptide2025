@@ -1,5 +1,7 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import java.util.List;
 import java.util.Optional;
@@ -13,9 +15,12 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class AprilTagIOPhoton implements AprilTagIO {
   private final PhotonCamera camera;
   private final PhotonPoseEstimator estimator;
+  private final Transform3d robotToCamera;
 
   public AprilTagIOPhoton(VisionSource source) {
     camera = new PhotonCamera(source.name());
+
+    robotToCamera = source.robotToCamera();
 
     estimator =
         new PhotonPoseEstimator(
@@ -30,20 +35,54 @@ public class AprilTagIOPhoton implements AprilTagIO {
   public void updateInputs(AprilTagIOInputs inputs) {
     List<PhotonPipelineResult> unreadResults = camera.getAllUnreadResults();
 
-    List<PoseObservation> poseObservations = List.of();
-    List<PhotonTrackedTarget> targets = List.of();
-    List<Translation2d> corners = List.of();
+    List<PoseObservation> allPoseObservations = List.of();
+    List<PoseObservation> allLocalizedPoseObservations = List.of();
+    // List<PhotonTrackedTarget> allTargets = List.of();
+    List<Translation2d> allCorners = List.of();
 
     for (PhotonPipelineResult result : unreadResults) {
-      // Targets
-      targets.addAll(result.getTargets());
+      // Filtering of tags by ambiguity threshold & validity of id
+      // Does not apply to global pose estimation
+      // TODO: Rejections
+      List<PhotonTrackedTarget> filteredTargets =
+          result.getTargets().stream()
+              .filter(
+                  target ->
+                      target.getPoseAmbiguity() < VisionConstants.ambiguityCutoff
+                          && target.getFiducialId() != -1)
+              .toList();
+
+      // allTargets.addAll(targets);
 
       // Detected Corners
-      result.getTargets().stream()
-          .map(target -> target.getDetectedCorners())
-          .flatMap(List::stream)
-          .map(corner -> new Translation2d(corner.x, corner.y))
-          .forEach(translation -> corners.add(translation));
+      List<Translation2d> corners =
+          result.getTargets().stream()
+              .map(target -> target.getDetectedCorners())
+              .flatMap(List::stream)
+              .map(corner -> new Translation2d(corner.x, corner.y))
+              .toList();
+
+      allCorners.addAll(corners);
+
+      List<PoseObservation> localizedPoseObservations =
+          filteredTargets.stream()
+              .map(
+                  target -> {
+                    Transform3d robotToTarget = target.getBestCameraToTarget().plus(robotToCamera);
+                    Pose3d tagPose =
+                        VisionConstants.fieldLayout.getTagPose(target.getFiducialId()).get();
+                    Pose3d localizedRobotPose = tagPose.transformBy(robotToTarget.inverse());
+                    // TODO: account for gyro
+
+                    return new PoseObservation(
+                        localizedRobotPose,
+                        result.getTimestampSeconds(),
+                        target.getPoseAmbiguity(),
+                        new int[] {target.getFiducialId()});
+                  })
+              .toList();
+
+      allLocalizedPoseObservations.addAll(localizedPoseObservations);
 
       // Pose Estimation
       Optional<EstimatedRobotPose> maybeEstimatedPose = estimator.update(result);
@@ -57,7 +96,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
       if (result.getMultiTagResult().isPresent()) {
         MultiTargetPNPResult multiTagResult = result.getMultiTagResult().get();
 
-        poseObservations.add(
+        allPoseObservations.add(
             new PoseObservation(
                 estimatedPose.estimatedPose,
                 estimatedPose.timestampSeconds,
@@ -66,8 +105,9 @@ public class AprilTagIOPhoton implements AprilTagIO {
       } else if (!result.getTargets().isEmpty()) {
         PhotonTrackedTarget target = result.getTargets().get(0);
 
-        if (target.poseAmbiguity < VisionConstants.ambiguityCutoff) {
-          poseObservations.add(
+        if (target.poseAmbiguity < VisionConstants.ambiguityCutoff
+            && target.getFiducialId() != -1) {
+          allPoseObservations.add(
               new PoseObservation(
                   estimatedPose.estimatedPose,
                   estimatedPose.timestampSeconds,
@@ -79,8 +119,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
 
     inputs.connected = camera.isConnected();
 
-    inputs.poseObservations = poseObservations.stream().toArray(PoseObservation[]::new);
+    inputs.poseObservations = allPoseObservations.stream().toArray(PoseObservation[]::new);
     // inputs.targets = targets.stream().toArray(PhotonTrackedTarget[]::new);
-    inputs.corners = corners.stream().toArray(Translation2d[]::new);
+    inputs.corners = allCorners.stream().toArray(Translation2d[]::new);
   }
 }
