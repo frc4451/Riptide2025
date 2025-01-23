@@ -1,10 +1,12 @@
 package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.vision.PoseObservation;
 import frc.robot.util.VirtualSubsystem;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Class full of static variables and methods that store robot state we'd need across mulitple
@@ -36,7 +38,7 @@ public class BobotState extends VirtualSubsystem {
 
   @Override
   public void periodic() {
-    // Logger.recordOutput(logRoot + "Value", BobotState.currentReef);
+    Logger.recordOutput(logRoot + "HPS Zone", FieldUtils.getHPSZone());
   }
 
   @Override
