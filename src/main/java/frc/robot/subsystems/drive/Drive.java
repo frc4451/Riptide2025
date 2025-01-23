@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
@@ -180,12 +181,22 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
-      for (PoseObservation observation : BobotState.getVisionObservations()) {
-        poseEstimator.addVisionMeasurement(
-            observation.robotPose().toPose2d(), observation.timestampSeconds());
-      }
-      BobotState.updateGlobalPose(getPose());
     }
+
+    // TODO: Confidence for AprilTags & Quest
+
+    // AprilTag Cameras
+    for (PoseObservation observation : BobotState.getVisionObservations()) {
+      poseEstimator.addVisionMeasurement(
+          observation.robotPose().toPose2d(), observation.timestampSeconds());
+    }
+
+    // Quest
+    for (TimestampedPose timestampedPose : BobotState.getQuestMeasurments()) {
+      poseEstimator.addVisionMeasurement(timestampedPose.pose(), timestampedPose.timestamp());
+    }
+
+    BobotState.updateGlobalPose(getPose());
   }
 
   /**

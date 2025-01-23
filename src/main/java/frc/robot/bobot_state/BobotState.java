@@ -2,6 +2,7 @@ package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.field.FieldUtils;
+import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
 import frc.robot.util.VirtualSubsystem;
 import java.util.Queue;
@@ -17,6 +18,7 @@ public class BobotState extends VirtualSubsystem {
   private static final String logRoot = "BobotState/";
 
   private static final Queue<PoseObservation> poseObservations = new LinkedBlockingQueue<>(20);
+  private static final Queue<TimestampedPose> questMeasurements = new LinkedBlockingQueue<>(20);
 
   private static Pose2d globalPose = new Pose2d();
 
@@ -26,6 +28,14 @@ public class BobotState extends VirtualSubsystem {
 
   public static Queue<PoseObservation> getVisionObservations() {
     return BobotState.poseObservations;
+  }
+
+  public static void offerQuestMeasurment(TimestampedPose observation) {
+    BobotState.questMeasurements.offer(observation);
+  }
+
+  public static Queue<TimestampedPose> getQuestMeasurments() {
+    return BobotState.questMeasurements;
   }
 
   public static void updateGlobalPose(Pose2d pose) {
