@@ -1,5 +1,6 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -10,12 +11,17 @@ public interface AprilTagIO {
 
     // public PhotonPipelineResult[] results = new PhotonPipelineResult[0];
 
-    public PoseObservation[] poseObservations = new PoseObservation[0];
-    // public PhotonTrackedTarget[] targets = new PhotonTrackedTarget[0];
-    public Translation2d[] corners = new Translation2d[0];
+    public Translation2d[] validCorners = new Translation2d[0];
+    public Translation2d[] rejectedCorners = new Translation2d[0];
 
-    // public int[] visibleIds = new int[0];
-    // public int[] rejectedIds = new int[0];
+    public int[] validIds = new int[0];
+    public int[] rejectedIds = new int[0];
+
+    public PoseObservation[] validPoseObservations = new PoseObservation[0];
+    public PoseObservation[] rejectedPoseObservations = new PoseObservation[0];
+
+    public Pose3d[] validPoses = new Pose3d[0];
+    public Pose3d[] rejectedPoses = new Pose3d[0];
   }
 
   public default void updateInputs(AprilTagIOInputs inputs) {}

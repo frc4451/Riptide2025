@@ -1,5 +1,6 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import java.util.ArrayList;
@@ -35,34 +36,55 @@ public class AprilTagIOPhoton implements AprilTagIO {
   public void updateInputs(AprilTagIOInputs inputs) {
     List<PhotonPipelineResult> unreadResults = camera.getAllUnreadResults();
 
-    List<PoseObservation> allPoseObservations = new ArrayList<>();
-    List<PoseObservation> allLocalizedPoseObservations = new ArrayList<>();
+    // List<PoseObservation> allLocalizedPoseObservations = new ArrayList<>();
     // List<PhotonTrackedTarget> allTargets = List.of();
-    List<Translation2d> allCorners = new ArrayList<>();
+    List<Translation2d> validCorners = new ArrayList<>();
+    List<Translation2d> rejectedCorners = new ArrayList<>();
+
+    List<Integer> validIds = new ArrayList<>();
+    List<Integer> rejectedIds = new ArrayList<>();
+
+    List<PoseObservation> validPoseObservations = new ArrayList<>();
+    List<PoseObservation> rejectedPoseObservations = new ArrayList<>();
+
+    List<Pose3d> validPoses = new ArrayList<>();
+    List<Pose3d> rejectedPoses = new ArrayList<>();
 
     for (PhotonPipelineResult result : unreadResults) {
       // Filtering of tags by ambiguity threshold & validity of id
       // Does not apply to global pose estimation
-      // TODO: Rejections
       // List<PhotonTrackedTarget> filteredTargets =
-      //     result.getTargets().stream()
-      //         .filter(
-      //             target ->
-      //                 target.getPoseAmbiguity() < VisionConstants.ambiguityCutoff
-      //                     && target.getFiducialId() != -1)
-      //         .toList();
+      // result.getTargets().stream()
+      // .filter(
+      // target ->
+      // target.getPoseAmbiguity() < VisionConstants.ambiguityCutoff
+      // && target.getFiducialId() != -1)
+      // .toList();
 
       // allTargets.addAll(targets);
 
       // Detected Corners
-      List<Translation2d> corners =
-          result.getTargets().stream()
-              .map(target -> target.getDetectedCorners())
-              .flatMap(List::stream)
+      for (PhotonTrackedTarget target : result.getTargets()) {
+        if (AprilTagAlgorithms.isValid(target)) {
+          // for (TargetCorner corner : target.getDetectedCorners()) {
+          //   validCorners.add(new Translation2d(corner.x, corner.y));
+          // }
+          target.getDetectedCorners().stream()
               .map(corner -> new Translation2d(corner.x, corner.y))
-              .toList();
+              .forEach(validCorners::add);
 
-      allCorners.addAll(corners);
+          validIds.add(target.getFiducialId());
+        } else {
+          // for (TargetCorner corner : target.getDetectedCorners()) {
+          //   rejectedCorners.add(new Translation2d(corner.x, corner.y));
+          // }
+          target.getDetectedCorners().stream()
+              .map(corner -> new Translation2d(corner.x, corner.y))
+              .forEach(rejectedCorners::add);
+
+          rejectedIds.add(target.getFiducialId());
+        }
+      }
 
       // List<PoseObservation> localizedPoseObservations =
       // filteredTargets.stream()
@@ -99,35 +121,51 @@ public class AprilTagIOPhoton implements AprilTagIO {
       if (result.getMultiTagResult().isPresent()) {
         MultiTargetPNPResult multiTagResult = result.getMultiTagResult().get();
 
-        allPoseObservations.add(
+        PoseObservation observation =
             new PoseObservation(
                 estimatedPose.estimatedPose,
                 estimatedPose.timestampSeconds,
                 multiTagResult.estimatedPose.ambiguity,
                 // multiTagResult.fiducialIDsUsed.stream().mapToInt(id -> id).toArray()
                 -100,
-                PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR));
+                PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
+
+        validPoseObservations.add(observation);
+        validPoses.add(observation.robotPose());
       } else if (!result.getTargets().isEmpty()) {
         PhotonTrackedTarget target = result.getTargets().get(0);
 
-        if (target.poseAmbiguity < VisionConstants.ambiguityCutoff
-            && target.getFiducialId() != -1) {
-          allPoseObservations.add(
-              new PoseObservation(
-                  estimatedPose.estimatedPose,
-                  estimatedPose.timestampSeconds,
-                  target.poseAmbiguity,
-                  // new int[] {target.fiducialId}
-                  target.fiducialId,
-                  PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY));
+        PoseObservation observation =
+            new PoseObservation(
+                estimatedPose.estimatedPose,
+                estimatedPose.timestampSeconds,
+                target.poseAmbiguity,
+                // new int[] {target.fiducialId}
+                target.fiducialId,
+                PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+
+        if (AprilTagAlgorithms.isValid(target)) {
+          validPoseObservations.add(observation);
+          validPoses.add(observation.robotPose());
+        } else {
+          rejectedPoseObservations.add(observation);
+          rejectedPoses.add(observation.robotPose());
         }
       }
     }
 
     inputs.connected = camera.isConnected();
 
-    inputs.poseObservations = allPoseObservations.stream().toArray(PoseObservation[]::new);
-    // inputs.targets = targets.stream().toArray(PhotonTrackedTarget[]::new);
-    inputs.corners = allCorners.stream().toArray(Translation2d[]::new);
+    inputs.validCorners = validCorners.toArray(Translation2d[]::new);
+    inputs.rejectedCorners = rejectedCorners.toArray(Translation2d[]::new);
+
+    inputs.validIds = validIds.stream().mapToInt(Integer::intValue).toArray();
+    inputs.rejectedIds = rejectedIds.stream().mapToInt(Integer::intValue).toArray();
+
+    inputs.validPoseObservations = validPoseObservations.toArray(PoseObservation[]::new);
+    inputs.rejectedPoseObservations = rejectedPoseObservations.toArray(PoseObservation[]::new);
+
+    inputs.validPoses = validPoses.toArray(Pose3d[]::new);
+    inputs.rejectedPoses = rejectedPoses.toArray(Pose3d[]::new);
   }
 }
