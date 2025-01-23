@@ -35,10 +35,9 @@ public class VisionConstants {
                       new Translation3d(
                           Units.inchesToMeters(3.523), // forward+
                           Units.inchesToMeters(12.204), // left+
-                          Units.inchesToMeters(8.477)), // up+
-                      new Rotation3d(
-                          0, Units.degreesToRadians(-12.5), Units.degreesToRadians(30)))),
-              SimCameraConfig.THRIFTY_CAM_STOCK),
+                          Units.inchesToMeters(9)), // up+
+                      new Rotation3d(0, Units.degreesToRadians(-12.5), Units.degreesToRadians(0)))),
+              SimCameraConfig.ARDUCAM_OV9281_55),
 
           // FLI
           new AprilTagCameraConfig(
@@ -74,7 +73,8 @@ public class VisionConstants {
                       new Translation3d(
                           Units.inchesToMeters(5.5), // forward+
                           Units.inchesToMeters(-12), // left+
-                          Units.inchesToMeters(7)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(-30)))),
-              SimCameraConfig.THRIFTY_CAM_STOCK));
+                          Units.inchesToMeters(9)), // up+
+                      new Rotation3d(
+                          0, Units.degreesToRadians(-12.5), Units.degreesToRadians(-0)))),
+              SimCameraConfig.ARDUCAM_OV9281_55));
 }
