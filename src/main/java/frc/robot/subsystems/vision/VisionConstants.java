@@ -33,11 +33,12 @@ public class VisionConstants {
                   "FrontLeftOuter",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(5.5), // forward+
-                          Units.inchesToMeters(7), // left+
-                          Units.inchesToMeters(8)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(30)))),
-              SimCameraConfig.THRIFTY_CAM),
+                          Units.inchesToMeters(3.523), // forward+
+                          Units.inchesToMeters(12.204), // left+
+                          Units.inchesToMeters(8.477)), // up+
+                      new Rotation3d(
+                          0, Units.degreesToRadians(-12.5), Units.degreesToRadians(30)))),
+              SimCameraConfig.THRIFTY_CAM_STOCK),
 
           // FLI
           new AprilTagCameraConfig(
@@ -45,11 +46,12 @@ public class VisionConstants {
                   "FrontLeftInner",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(5.5), // forward+
-                          Units.inchesToMeters(7), // left+
-                          Units.inchesToMeters(8)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(0)))),
-              SimCameraConfig.THRIFTY_CAM),
+                          Units.inchesToMeters(4.023), // forward+
+                          Units.inchesToMeters(12.204), // left+
+                          Units.inchesToMeters(8.477)), // up+
+                      new Rotation3d(
+                          0, Units.degreesToRadians(-17.5), Units.degreesToRadians(-30)))),
+              SimCameraConfig.THRIFTY_CAM_65),
 
           // FRI
           new AprilTagCameraConfig(
@@ -57,11 +59,12 @@ public class VisionConstants {
                   "FrontRightInner",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(5.5), // forward+
-                          Units.inchesToMeters(-7), // left+
-                          Units.inchesToMeters(8)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(0)))),
-              SimCameraConfig.THRIFTY_CAM),
+                          Units.inchesToMeters(4.023), // forward+
+                          Units.inchesToMeters(-12.204), // left+
+                          Units.inchesToMeters(8.477)), // up+
+                      new Rotation3d(
+                          0, Units.degreesToRadians(-17.5), Units.degreesToRadians(30)))),
+              SimCameraConfig.THRIFTY_CAM_65),
 
           // FRO
           new AprilTagCameraConfig(
@@ -70,8 +73,8 @@ public class VisionConstants {
                   new Transform3d(
                       new Translation3d(
                           Units.inchesToMeters(5.5), // forward+
-                          Units.inchesToMeters(-7), // left+
-                          Units.inchesToMeters(8)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-30)))),
-              SimCameraConfig.THRIFTY_CAM));
+                          Units.inchesToMeters(-12), // left+
+                          Units.inchesToMeters(7)), // up+
+                      new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(-30)))),
+              SimCameraConfig.THRIFTY_CAM_STOCK));
 }

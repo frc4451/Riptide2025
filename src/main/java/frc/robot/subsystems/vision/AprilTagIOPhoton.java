@@ -50,6 +50,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
     List<Pose3d> validPoses = new ArrayList<>();
     List<Pose3d> rejectedPoses = new ArrayList<>();
 
+    List<Pose3d> validAprilTags = new ArrayList<>();
+
     for (PhotonPipelineResult result : unreadResults) {
       // Filtering of tags by ambiguity threshold & validity of id
       // Does not apply to global pose estimation
@@ -74,6 +76,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
               .forEach(validCorners::add);
 
           validIds.add(target.getFiducialId());
+
+          validAprilTags.add(VisionConstants.fieldLayout.getTagPose(target.getFiducialId()).get());
         } else {
           // for (TargetCorner corner : target.getDetectedCorners()) {
           //   rejectedCorners.add(new Translation2d(corner.x, corner.y));
@@ -167,5 +171,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
 
     inputs.validPoses = validPoses.toArray(Pose3d[]::new);
     inputs.rejectedPoses = rejectedPoses.toArray(Pose3d[]::new);
+
+    inputs.validAprilTagPoses = validAprilTags.toArray(Pose3d[]::new);
   }
 }

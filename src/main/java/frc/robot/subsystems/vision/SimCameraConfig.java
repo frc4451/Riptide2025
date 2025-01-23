@@ -21,9 +21,15 @@ public record SimCameraConfig(Calibration calib, CalibrationError calibError, La
   }
 
   /** Default simulated camera configuration for a Thrify Cam * */
-  public static SimCameraConfig THRIFTY_CAM =
+  public static SimCameraConfig THRIFTY_CAM_STOCK =
       new SimCameraConfig(
           new Calibration(1600, 1304, Rotation2d.fromDegrees(55), 60),
+          new CalibrationError(0.25, 0.08),
+          new Latency(20, 5));
+
+  public static SimCameraConfig THRIFTY_CAM_65 =
+      new SimCameraConfig(
+          new Calibration(1600, 1304, Rotation2d.fromDegrees(65), 60),
           new CalibrationError(0.25, 0.08),
           new Latency(20, 5));
 }
