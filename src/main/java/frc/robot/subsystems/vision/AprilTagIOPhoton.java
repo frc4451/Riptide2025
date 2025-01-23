@@ -50,7 +50,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
     List<Pose3d> validPoses = new ArrayList<>();
     List<Pose3d> rejectedPoses = new ArrayList<>();
 
-    List<Pose3d> validAprilTags = new ArrayList<>();
+    List<Pose3d> validAprilTagPoses = new ArrayList<>();
+    List<Pose3d> rejectedAprilTagPoses = new ArrayList<>();
 
     for (PhotonPipelineResult result : unreadResults) {
       // Filtering of tags by ambiguity threshold & validity of id
@@ -77,7 +78,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
 
           validIds.add(target.getFiducialId());
 
-          validAprilTags.add(VisionConstants.fieldLayout.getTagPose(target.getFiducialId()).get());
+          validAprilTagPoses.add(
+              VisionConstants.fieldLayout.getTagPose(target.getFiducialId()).get());
         } else {
           // for (TargetCorner corner : target.getDetectedCorners()) {
           //   rejectedCorners.add(new Translation2d(corner.x, corner.y));
@@ -87,6 +89,12 @@ public class AprilTagIOPhoton implements AprilTagIO {
               .forEach(rejectedCorners::add);
 
           rejectedIds.add(target.getFiducialId());
+
+          if (target.getFiducialId() != -1) {
+            VisionConstants.fieldLayout
+                .getTagPose(target.getFiducialId())
+                .ifPresent(rejectedAprilTagPoses::add);
+          }
         }
       }
 
@@ -172,6 +180,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
     inputs.validPoses = validPoses.toArray(Pose3d[]::new);
     inputs.rejectedPoses = rejectedPoses.toArray(Pose3d[]::new);
 
-    inputs.validAprilTagPoses = validAprilTags.toArray(Pose3d[]::new);
+    inputs.validAprilTagPoses = validAprilTagPoses.toArray(Pose3d[]::new);
+    inputs.rejectedAprilTagPoses = rejectedAprilTagPoses.toArray(Pose3d[]::new);
   }
 }

@@ -18,6 +18,7 @@ public interface AprilTagIO {
     public int[] rejectedIds = new int[0];
 
     public Pose3d[] validAprilTagPoses = new Pose3d[0];
+    public Pose3d[] rejectedAprilTagPoses = new Pose3d[0];
 
     public PoseObservation[] validPoseObservations = new PoseObservation[0];
     public PoseObservation[] rejectedPoseObservations = new PoseObservation[0];

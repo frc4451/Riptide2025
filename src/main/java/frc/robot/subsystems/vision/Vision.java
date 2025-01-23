@@ -67,6 +67,9 @@ public class Vision extends VirtualSubsystem {
     List<Pose3d> validPoses = new ArrayList<>();
     List<Pose3d> rejectedPoses = new ArrayList<>();
 
+    List<Pose3d> validAprilTagPoses = new ArrayList<>();
+    List<Pose3d> rejectedAprilTagPoses = new ArrayList<>();
+
     for (AprilTagCamera cam : aprilTagCameras) {
       cam.io.updateInputs(cam.inputs);
       Logger.processInputs(aprilTagLogRoot + "/" + cam.source.name(), cam.inputs);
@@ -84,6 +87,9 @@ public class Vision extends VirtualSubsystem {
 
       validPoses.addAll(Arrays.asList(cam.inputs.validPoses));
       rejectedPoses.addAll(Arrays.asList(cam.inputs.rejectedPoses));
+
+      validAprilTagPoses.addAll(Arrays.asList(cam.inputs.validAprilTagPoses));
+      rejectedAprilTagPoses.addAll(Arrays.asList(cam.inputs.rejectedAprilTagPoses));
 
       for (PoseObservation observation : cam.inputs.validPoseObservations) {
         BobotState.offerVisionObservation(observation);
@@ -114,6 +120,13 @@ public class Vision extends VirtualSubsystem {
         aggregateAprilTagLogRoot + "/ValidPoses", validPoses.toArray(Pose3d[]::new));
     Logger.recordOutput(
         aggregateAprilTagLogRoot + "/RejectedPoses", rejectedPoses.toArray(Pose3d[]::new));
+
+    Logger.recordOutput(
+        aggregateAprilTagLogRoot + "/ValidAprilTagPoses",
+        validAprilTagPoses.toArray(Pose3d[]::new));
+    Logger.recordOutput(
+        aggregateAprilTagLogRoot + "/RejectedAprilTagPoses",
+        rejectedAprilTagPoses.toArray(Pose3d[]::new));
   }
 
   @Override
