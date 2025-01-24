@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.subsystems.vision.VisionConstants;
 
 public class FieldUtils {
   public static Alliance getAlliance() {
@@ -42,5 +43,14 @@ public class FieldUtils {
     return FieldUtils.getHPSZone() == HPSZone.DRIVER_LEFT
         ? Rotation2d.fromDegrees(60)
         : Rotation2d.fromDegrees(300);
+  }
+
+  public static Rotation2d getAngleOfTag17() {
+    return VisionConstants.fieldLayout
+        .getTagPose(17)
+        .get()
+        .getRotation()
+        .toRotation2d()
+        .plus(new Rotation2d(Math.PI));
   }
 }

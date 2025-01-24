@@ -187,6 +187,15 @@ public class RobotContainer {
                 //
                 ));
 
+    driverController
+        .x()
+        .onTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftY(),
+                () -> -driverController.getLeftX(),
+                () -> FieldUtils.getAngleOfTag17()));
+
     // TEMP -> Test Pivot Subsystem
     operatorController.povDown().whileTrue(pivotSubsystem.runRoller(-6.0));
     operatorController.povUp().whileTrue(pivotSubsystem.runRoller(6.0));
