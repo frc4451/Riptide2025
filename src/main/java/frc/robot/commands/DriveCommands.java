@@ -52,7 +52,9 @@ public class DriveCommands {
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
     // Apply deadband
-    double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);
+    x = MathUtil.applyDeadband(x, DEADBAND);
+    y = MathUtil.applyDeadband(y, DEADBAND);
+    double linearMagnitude = Math.hypot(x, y);
     Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
 
     // Square magnitude for more precise control
