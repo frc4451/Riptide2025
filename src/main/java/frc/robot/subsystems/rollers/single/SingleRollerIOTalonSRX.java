@@ -2,30 +2,28 @@ package frc.robot.subsystems.rollers.single;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class SingleRollerIOTalonSRX implements SingleRollerIO {
   private final TalonSRX talon;
-  private final double reduction;
 
-  private final double tempCelsius;
-  private final double statorCurrentAmps;
-  private final double supplyCurrentAmps;
-  private final double voltage;
-
-  public SingleRollerIOTalonSRX(int canID, double reduction, int currentLimitAmps, boolean invert) {
-    talon = new TalonSRX(canID);
-    this.reduction = reduction;
-
-    tempCelsius = talon.getTemperature();
-    statorCurrentAmps = talon.getStatorCurrent();
-    supplyCurrentAmps = talon.getSupplyCurrent();
-    voltage = talon.getBusVoltage();
+  public SingleRollerIOTalonSRX(int canId, int currentLimitAmps, boolean invert) {
+    talon = new TalonSRX(canId);
 
     talon.setInverted(invert);
     talon.setNeutralMode(NeutralMode.Brake);
-    talon.configContinuousCurrentLimit(currentLimitAmps);
+
+    talon.configSupplyCurrentLimit(
+        new SupplyCurrentLimitConfiguration(
+            true,
+            currentLimitAmps,
+            currentLimitAmps,
+            0.04)); // 0.04 s is the same as the Phoenix 6 default of 40 ms
+
+    talon.configVoltageCompSaturation(12.0);
+    talon.enableVoltageCompensation(true);
   }
 
   @Override
@@ -35,7 +33,7 @@ public class SingleRollerIOTalonSRX implements SingleRollerIO {
     inputs.positionRad = Double.NaN;
     inputs.velocityRadPerSec = Double.NaN;
 
-    inputs.appliedVoltage = talon.getBusVoltage();
+    inputs.appliedVoltage = talon.getMotorOutputVoltage();
     inputs.supplyCurrentAmps = talon.getSupplyCurrent();
     inputs.torqueCurrentAmps = talon.getStatorCurrent();
     inputs.temperatureCelsius = talon.getTemperature();
