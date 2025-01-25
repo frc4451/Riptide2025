@@ -4,9 +4,6 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix6.BaseStatusSignal;
-
-import edu.wpi.first.math.util.Units;
 
 public class SingleRollerIOTalonSRX implements SingleRollerIO {
   private final TalonSRX talon;
@@ -32,7 +29,7 @@ public class SingleRollerIOTalonSRX implements SingleRollerIO {
   }
 
   @Override
-  public void updateInputs(SingleRollerIOInputs inputs){
+  public void updateInputs(SingleRollerIOInputs inputs) {
     inputs.connected = talon.getLastError() == ErrorCode.OK;
 
     inputs.positionRad = Double.NaN;
@@ -44,18 +41,18 @@ public class SingleRollerIOTalonSRX implements SingleRollerIO {
     inputs.temperatureCelsius = talon.getTemperature();
   }
 
-@Override
-  public void runVolts(double volts){
+  @Override
+  public void runVolts(double volts) {
     talon.set(TalonSRXControlMode.PercentOutput, volts / 12.0);
   }
 
-@Override
-  public void runPosition(double position){
+  @Override
+  public void runPosition(double position) {
     throw new IllegalStateException("There is no position control for a TalonSRX");
   }
 
-@Override
-  public void stop(){
+  @Override
+  public void stop() {
     talon.set(TalonSRXControlMode.Disabled, 0);
   }
 }

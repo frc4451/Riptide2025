@@ -69,7 +69,7 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
     talon.getConfigurator().apply(cfg);
   }
 
-@Override
+  @Override
   public void updateInputs(SingleRollerIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
@@ -86,13 +86,13 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   }
 
   /** Run roller at set voltage */
-@Override
+  @Override
   public void runVolts(double volts) {
     talon.setControl(voltageOut.withOutput(volts));
   }
 
   /** Run roller at set position */
-@Override
+  @Override
   public void runPosition(double positionRad) {
     talon.setControl(positionOut.withPosition(positionRad * reduction));
   }
