@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package riptide.proto;
+
+import "photon.proto";
+
+option java_package = "frc.robot.proto";
+
+message ProtobufPhotonPipelineResults {
+  repeated photonvision.proto.ProtobufPhotonPipelineResult results = 1;
+}

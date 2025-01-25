@@ -166,6 +166,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
       }
     }
 
+    inputs.results = new PhotonPipelineResults(unreadResults);
+
     inputs.connected = camera.isConnected();
 
     inputs.validCorners = validCorners.toArray(Translation2d[]::new);

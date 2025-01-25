@@ -9,7 +9,7 @@ public interface AprilTagIO {
   public static class AprilTagIOInputs {
     public boolean connected = false;
 
-    // public PhotonPipelineResult[] results = new PhotonPipelineResult[0];
+    public PhotonPipelineResults results = new PhotonPipelineResults();
 
     public Translation2d[] validCorners = new Translation2d[0];
     public Translation2d[] rejectedCorners = new Translation2d[0];

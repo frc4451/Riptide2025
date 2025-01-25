@@ -3,6 +3,7 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2025.2.1"
     id "com.peterabeles.gversion" version "1.10"
     id "com.diffplug.spotless" version "6.12.0"
+    id "com.google.protobuf" version "0.9.4"
 }
 
 java {
@@ -95,6 +96,9 @@ dependencies {
 
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
+
+    // Quickbuf Runtime (Protobuf)
+    implementation group: "us.hebi.quickbuf", name: "quickbuf-runtime", version: wpi.versions.quickbufVersion.get();
 }
 
 test {
@@ -214,5 +218,33 @@ spotless {
         trimTrailingWhitespace()
         indentWithSpaces(2)
         endWithNewline()
+    }
+}
+
+// protobuf
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.29.3"
+    }
+    plugins {
+        quickbuf {
+            artifact = "us.hebi.quickbuf:protoc-gen-quickbuf:${wpi.versions.quickbufVersion.get()}"
+        }
+    }
+
+    generateProtoTasks {
+        all().configureEach {
+            builtins {
+                remove cpp {}
+                remove java {} // quickbuf does this instead
+            }
+            plugins {
+                quickbuf {
+                    // option "java8_optional=true"
+                    option "indent=2"
+                    option "gen_descriptors=true"
+                }
+            }
+        }
     }
 }
