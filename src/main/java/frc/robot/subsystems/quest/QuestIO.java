@@ -10,13 +10,10 @@ public interface QuestIO extends AutoCloseable {
 
     // These are with relative with offsets applied (probably what you want)
     public Pose2d pose = new Pose2d();
-    public double yawRad = 0;
+    public Pose2d robotPose = new Pose2d();
 
     public double timestamp = 0;
     public double batteryLevel = 0;
-
-    public Pose2d rawPose = new Pose2d();
-    public double rawYawRad = 0;
 
     public float[] rawPosition = {0.0f, 0.0f, 0.0f};
     public float[] rawQuaternion = {0.0f, 0.0f, 0.0f, 0.0f};
