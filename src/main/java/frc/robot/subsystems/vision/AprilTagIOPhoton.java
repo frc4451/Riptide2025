@@ -1,8 +1,12 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import frc.robot.subsystems.vision.VisionConstants.PoseEstimationMethod;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -133,6 +137,10 @@ public class AprilTagIOPhoton implements AprilTagIO {
       if (result.getMultiTagResult().isPresent()) {
         MultiTargetPNPResult multiTagResult = result.getMultiTagResult().get();
 
+        Pose3d pose = estimatedPose.estimatedPose;
+        Matrix<N3, N1> stdDevs =
+            AprilTagAlgorithms.getEstimationStdDevs(pose.toPose2d(), result.getTargets());
+
         PoseObservation observation =
             new PoseObservation(
                 estimatedPose.estimatedPose,
@@ -140,13 +148,17 @@ public class AprilTagIOPhoton implements AprilTagIO {
                 multiTagResult.estimatedPose.ambiguity,
                 // multiTagResult.fiducialIDsUsed.stream().mapToInt(id -> id).toArray()
                 -100,
-                PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
+                stdDevs,
+                PoseEstimationMethod.MULTI_TAG);
 
         validPoseObservations.add(observation);
         validPoses.add(observation.robotPose());
       } else if (!result.getTargets().isEmpty()) {
         PhotonTrackedTarget target = result.getTargets().get(0);
 
+        Pose3d pose = estimatedPose.estimatedPose;
+        Matrix<N3, N1> stdDevs =
+            AprilTagAlgorithms.getEstimationStdDevs(pose.toPose2d(), result.getTargets());
         PoseObservation observation =
             new PoseObservation(
                 estimatedPose.estimatedPose,
@@ -154,7 +166,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
                 target.poseAmbiguity,
                 // new int[] {target.fiducialId}
                 target.fiducialId,
-                PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+                stdDevs,
+                PoseEstimationMethod.SINGLE_TAG);
 
         if (AprilTagAlgorithms.isValid(target)) {
           validPoseObservations.add(observation);
