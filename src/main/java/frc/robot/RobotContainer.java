@@ -49,7 +49,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
+  public final Drive drive;
   private final Vision vision = new Vision();
   private final PivotSubsystem pivotSubsystem;
   private final ElevatorSubsystem elevatorSubsystem;
@@ -57,7 +57,7 @@ public class RobotContainer {
   private final QuestSubsystem questSubsystem;
 
   // Controller
-  private final CommandXboxController driverController = new CommandXboxController(0);
+  public final CommandXboxController driverController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   // Dashboard inputs
