@@ -35,16 +35,16 @@ public class DriveConstants {
       };
 
   // Zeroed rotation values for each module, see setup instructions
-  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(-1.5332492033587857);
-  public static final Rotation2d frontRightZeroRotation = new Rotation2d(-3.137842957173483);
-  public static final Rotation2d backLeftZeroRotation = new Rotation2d(-3.138901297246115);
-  public static final Rotation2d backRightZeroRotation = new Rotation2d(1.5813666582107544);
+  public static final Rotation2d frontLeftZeroRotation = new Rotation2d(-Math.PI / 2);
+  public static final Rotation2d frontRightZeroRotation = new Rotation2d(0);
+  public static final Rotation2d backLeftZeroRotation = new Rotation2d(Math.PI);
+  public static final Rotation2d backRightZeroRotation = new Rotation2d(Math.PI / 2);
 
   // Device CAN IDs
   public static final int pigeonCanId = 1;
-  public static final double mountPoseYawDeg = -0.9988248944282532;
-  public static final double mountPosePitchDeg = -0.2277984470129013;
-  public static final double mountPoseRollDeg = 1.5160924196243286;
+  public static final double mountPoseYawDeg = -1.9862875938415527;
+  public static final double mountPosePitchDeg = -0.9666743278503418;
+  public static final double mountPoseRollDeg = -0.9247415661811829;
 
   public static final int frontLeftDriveCanId = 15;
   public static final int backLeftDriveCanId = 17;
@@ -60,7 +60,7 @@ public class DriveConstants {
   public static final int driveMotorCurrentLimit = 40;
   public static final double wheelRadiusMeters = Units.inchesToMeters(1.684);
   public static final double driveMotorReduction =
-      (45.0 * 22.0) / (12.0 * 15.0); // MAXSwerve with 12 pinion teeth and 22 spur teeth
+      (45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
   public static final DCMotor driveGearbox = DCMotor.getNEO(1);
 
   // Drive encoder configuration
