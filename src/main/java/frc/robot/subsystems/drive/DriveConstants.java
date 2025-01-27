@@ -42,6 +42,9 @@ public class DriveConstants {
 
   // Device CAN IDs
   public static final int pigeonCanId = 1;
+  public static final double mountPoseYawDeg = -0.9988248944282532;
+  public static final double mountPosePitchDeg = -0.2277984470129013;
+  public static final double mountPoseRollDeg = 1.5160924196243286;
 
   public static final int frontLeftDriveCanId = 15;
   public static final int backLeftDriveCanId = 17;

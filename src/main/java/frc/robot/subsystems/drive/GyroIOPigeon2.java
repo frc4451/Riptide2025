@@ -13,6 +13,8 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
@@ -20,14 +22,10 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Acceleration;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import frc.robot.Constants;
-
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
@@ -43,16 +41,17 @@ public class GyroIOPigeon2 implements GyroIO {
   private final StatusSignal<AngularVelocity> yawVelocity = pigeon.getAngularVelocityZWorld();
 
   public GyroIOPigeon2() {
-    pigeon.getConfigurator().apply(new Pigeon2Configuration());
+    Pigeon2Configuration config = new Pigeon2Configuration();
+    config.MountPose.withMountPoseYaw(DriveConstants.mountPoseYawDeg)
+        .withMountPosePitch(DriveConstants.mountPosePitchDeg)
+        .withMountPoseRoll(DriveConstants.mountPoseRollDeg);
+
     pigeon.getConfigurator().setYaw(0.0);
+    pigeon.getConfigurator().apply(config);
 
     yaw.setUpdateFrequency(DriveConstants.odometryFrequency);
     BaseStatusSignal.setUpdateFrequencyForAll(
-      Constants.phoenixUpdateFreqHz,
-      yawVelocity,
-      accelX,
-      accelY,
-      accelZ);
+        Constants.phoenixUpdateFreqHz, yawVelocity, accelX, accelY, accelZ);
 
     pigeon.optimizeBusUtilization();
     yawTimestampQueue = SparkOdometryThread.getInstance().makeTimestampQueue();
@@ -61,7 +60,8 @@ public class GyroIOPigeon2 implements GyroIO {
 
   @Override
   public void updateInputs(GyroIOInputs inputs) {
-    inputs.connected = BaseStatusSignal.refreshAll(yaw, yawVelocity, accelX, accelY, accelZ).equals(StatusCode.OK);
+    inputs.connected =
+        BaseStatusSignal.refreshAll(yaw, yawVelocity, accelX, accelY, accelZ).equals(StatusCode.OK);
     inputs.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
     inputs.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
 
