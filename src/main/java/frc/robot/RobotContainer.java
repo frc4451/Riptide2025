@@ -14,9 +14,12 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.bobot_state.BobotState;
@@ -37,6 +40,7 @@ import frc.robot.subsystems.rollers.pivot.PivotIO;
 import frc.robot.subsystems.rollers.pivot.PivotIOSim;
 import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
 import frc.robot.subsystems.vision.Vision;
+import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -158,6 +162,31 @@ public class RobotContainer {
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> BobotState.getRotationToClosestReefIfPresent()));
+
+    driverController
+        .a()
+        .and(driverController.povLeft())
+        .whileTrue(
+            Commands.defer(
+                () ->
+                    AutoBuilder.pathfindToPose(
+                        BobotState.getPoseToLeftPoleIfPresent(),
+                        new PathConstraints(
+                            3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+                        0),
+                Set.of(drive)));
+    driverController
+        .a()
+        .and(driverController.povRight())
+        .whileTrue(
+            Commands.defer(
+                () ->
+                    AutoBuilder.pathfindToPose(
+                        BobotState.getPoseToLeftPoleIfPresent(),
+                        new PathConstraints(
+                            3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+                        0),
+                Set.of(drive)));
 
     driverController
         .b()

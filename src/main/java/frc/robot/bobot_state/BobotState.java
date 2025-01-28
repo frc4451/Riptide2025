@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
+import frc.robot.field.FieldConstants.ReefFace;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
@@ -60,6 +61,20 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.hpsTracker.getRotationTarget().orElse(BobotState.globalPose.getRotation());
   }
 
+  public static Pose2d getPoseToLeftPoleIfPresent() {
+    if (BobotState.reefTracker.getClosestReef().isPresent()) {
+      return BobotState.reefTracker.getClosestReef().get().getLeftPole();
+    }
+    return BobotState.getGlobalPose();
+  }
+
+  public static Pose2d getPoseToRightPoleIfPresent() {
+    if (BobotState.reefTracker.getClosestReef().isPresent()) {
+      return BobotState.reefTracker.getClosestReef().get().getRightPole();
+    }
+    return BobotState.getGlobalPose();
+  }
+
   @Override
   public void periodic() {
 
@@ -67,13 +82,19 @@ public class BobotState extends VirtualSubsystem {
       reefTracker.update();
 
       String calcLogRoot = logRoot + "Reef/";
-      Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestReefAprilTag());
+      Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestReef());
       Logger.recordOutput(
           calcLogRoot + "TargetAngleDeg",
           reefTracker.getRotationTarget().map(Rotation2d::getDegrees).orElse(Double.NaN));
       Logger.recordOutput(
           calcLogRoot + "TargetAngleRad",
           reefTracker.getRotationTarget().map(Rotation2d::getRadians).orElse(Double.NaN));
+      Logger.recordOutput(
+          calcLogRoot + "Left Pole",
+          reefTracker.getClosestReef().map(ReefFace::getLeftPole).orElse(Pose2d.kZero));
+      Logger.recordOutput(
+          calcLogRoot + "Right Pole",
+          reefTracker.getClosestReef().map(ReefFace::getRightPole).orElse(Pose2d.kZero));
     }
 
     {

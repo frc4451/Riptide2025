@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.field.FieldConstants.AprilTagStruct;
+import frc.robot.field.FieldConstants.ReefFace;
 import frc.robot.subsystems.vision.VisionConstants;
 import java.util.List;
 
@@ -35,23 +36,24 @@ public class FieldUtils {
         .plus(new Rotation2d(Math.PI));
   }
 
-  public static AprilTagStruct getClosestReefAprilTag() {
-    List<AprilTagStruct> reefTags =
+  public static ReefFace getClosestReef() {
+    List<ReefFace> reefTags =
         FieldUtils.isBlueAlliance() ? FieldConstants.blueReefTags : FieldConstants.redReefTags;
     Translation2d robotTranslation = BobotState.getGlobalPose().getTranslation();
 
-    AprilTagStruct closestTag =
+    ReefFace closestReef =
         reefTags.stream()
             .reduce(
-                (AprilTagStruct tag1, AprilTagStruct tag2) ->
-                    robotTranslation.getDistance(tag1.pose().getTranslation().toTranslation2d())
+                (ReefFace reef1, ReefFace reef2) ->
+                    robotTranslation.getDistance(
+                                reef1.tag().pose().getTranslation().toTranslation2d())
                             < robotTranslation.getDistance(
-                                tag2.pose().getTranslation().toTranslation2d())
-                        ? tag1
-                        : tag2)
+                                reef2.tag().pose().getTranslation().toTranslation2d())
+                        ? reef1
+                        : reef2)
             .orElse(null);
 
-    return closestTag;
+    return closestReef;
   }
 
   public static AprilTagStruct getClosestHPSTag() {
