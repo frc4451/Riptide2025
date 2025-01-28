@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.Mode;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
@@ -163,30 +164,32 @@ public class RobotContainer {
                 () -> -driverController.getLeftX(),
                 () -> BobotState.getRotationToClosestReefIfPresent()));
 
-    driverController
-        .a()
-        .and(driverController.povLeft())
-        .whileTrue(
-            Commands.defer(
-                () ->
-                    AutoBuilder.pathfindToPose(
-                        BobotState.getPoseToLeftPoleIfPresent(),
-                        new PathConstraints(
-                            3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
-                        0),
-                Set.of(drive)));
-    driverController
-        .a()
-        .and(driverController.povRight())
-        .whileTrue(
-            Commands.defer(
-                () ->
-                    AutoBuilder.pathfindToPose(
-                        BobotState.getPoseToLeftPoleIfPresent(),
-                        new PathConstraints(
-                            3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
-                        0),
-                Set.of(drive)));
+    if (Constants.currentMode == Mode.SIM) {
+      driverController
+          .a()
+          .and(driverController.povLeft())
+          .whileTrue(
+              Commands.defer(
+                  () ->
+                      AutoBuilder.pathfindToPose(
+                          BobotState.getPoseToLeftPoleIfPresent(),
+                          new PathConstraints(
+                              3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+                          0),
+                  Set.of(drive)));
+      driverController
+          .a()
+          .and(driverController.povRight())
+          .whileTrue(
+              Commands.defer(
+                  () ->
+                      AutoBuilder.pathfindToPose(
+                          BobotState.getPoseToLeftPoleIfPresent(),
+                          new PathConstraints(
+                              3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
+                          0),
+                  Set.of(drive)));
+    }
 
     driverController
         .b()
