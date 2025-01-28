@@ -23,8 +23,8 @@ import edu.wpi.first.math.util.Units;
 public class DriveConstants {
   public static final double maxSpeedMetersPerSec = 5.5;
   public static final double odometryFrequency = 100.0; // Hz
-  public static final double trackWidth = Units.inchesToMeters(24.5);
-  public static final double wheelBase = Units.inchesToMeters(24.5);
+  public static final double trackWidth = Units.inchesToMeters(20.5); // 24.5 Ember
+  public static final double wheelBase = Units.inchesToMeters(20.5); // 24.5 Ember
   public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
   public static final Translation2d[] moduleTranslations =
       new Translation2d[] {
