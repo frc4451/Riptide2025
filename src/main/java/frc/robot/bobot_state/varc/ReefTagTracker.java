@@ -26,10 +26,18 @@ public class ReefTagTracker extends TargetAngleTracker {
         Optional.of(
             FieldUtils.getClosestReefAprilTag()
                 .pose()
-                .relativeTo(robotPose)
-                .getTranslation()
-                .toTranslation2d()
-                .getAngle()
-                .plus(BobotState.getGlobalPose().getRotation()));
+                .getRotation()
+                .toRotation2d()
+                .plus(new Rotation2d(Math.PI)));
+
+    // this.rotationTarget =
+    //     Optional.of(
+    //         FieldUtils.getClosestReefAprilTag()
+    //             .pose()
+    //             .relativeTo(robotPose)
+    //             .getTranslation()
+    //             .toTranslation2d()
+    //             .getAngle()
+    //             .plus(BobotState.getGlobalPose().getRotation()));
   }
 }
