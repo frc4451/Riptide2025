@@ -1,10 +1,13 @@
 package frc.robot.field;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.field.FieldConstants.AprilTagStruct;
 import frc.robot.subsystems.vision.VisionConstants;
+import java.util.List;
 
 public class FieldUtils {
   public static Alliance getAlliance() {
@@ -23,28 +26,6 @@ public class FieldUtils {
     return FieldUtils.isRedAlliance() ? -1 : 1;
   }
 
-  public static HPSZone getHPSZone() {
-    // Relative to the blue alliance half field
-    HPSZone zone =
-        BobotState.getGlobalPose().getY() > FieldConstants.halfFieldWidth
-            ? HPSZone.DRIVER_LEFT
-            : HPSZone.DRIVER_RIGHT;
-
-    // Flip if Red Alliance
-    if (FieldUtils.isRedAlliance()) {
-      zone = (zone == HPSZone.DRIVER_LEFT) ? HPSZone.DRIVER_RIGHT : HPSZone.DRIVER_LEFT;
-    }
-
-    return zone;
-  }
-
-  public static Rotation2d getHPSOffset() {
-    // This is entirely for visual demonstration. You should rewrite this to use VARC
-    return FieldUtils.getHPSZone() == HPSZone.DRIVER_LEFT
-        ? Rotation2d.fromDegrees(60)
-        : Rotation2d.fromDegrees(300);
-  }
-
   public static Rotation2d getAngleOfTag17() {
     return VisionConstants.fieldLayout
         .getTagPose(17)
@@ -52,5 +33,44 @@ public class FieldUtils {
         .getRotation()
         .toRotation2d()
         .plus(new Rotation2d(Math.PI));
+  }
+
+  public static AprilTagStruct getClosestReefAprilTag() {
+    List<AprilTagStruct> reefTags =
+        FieldUtils.isBlueAlliance() ? FieldConstants.blueReefTags : FieldConstants.redReefTags;
+    Translation2d robotTranslation = BobotState.getGlobalPose().getTranslation();
+
+    AprilTagStruct closestTag =
+        reefTags.stream()
+            .reduce(
+                (AprilTagStruct tag1, AprilTagStruct tag2) ->
+                    robotTranslation.getDistance(tag1.pose().getTranslation().toTranslation2d())
+                            < robotTranslation.getDistance(
+                                tag2.pose().getTranslation().toTranslation2d())
+                        ? tag1
+                        : tag2)
+            .orElse(null);
+
+    return closestTag;
+  }
+
+  public static AprilTagStruct getClosestHPSTag() {
+    List<AprilTagStruct> hpsTags =
+        FieldUtils.isBlueAlliance() ? FieldConstants.blueHPSTags : FieldConstants.redHPSTags;
+
+    Translation2d robotTranslation = BobotState.getGlobalPose().getTranslation();
+
+    AprilTagStruct closestTag =
+        hpsTags.stream()
+            .reduce(
+                (AprilTagStruct tag1, AprilTagStruct tag2) ->
+                    robotTranslation.getDistance(tag1.pose().getTranslation().toTranslation2d())
+                            < robotTranslation.getDistance(
+                                tag2.pose().getTranslation().toTranslation2d())
+                        ? tag1
+                        : tag2)
+            .orElse(null);
+
+    return closestTag;
   }
 }
