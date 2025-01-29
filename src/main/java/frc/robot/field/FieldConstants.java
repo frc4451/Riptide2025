@@ -2,11 +2,9 @@ package frc.robot.field;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.PoseUtils;
 import java.util.List;
 
 public class FieldConstants {
@@ -25,16 +23,7 @@ public class FieldConstants {
      * @return Pose2d representation of the `left pole` on the reef
      */
     public Pose2d getLeftPole() {
-      Translation2d offset =
-          tag.pose
-              .toPose2d()
-              .transformBy(
-                  new Transform2d(
-                      (tagToReef) * Math.cos(tag.pose.getRotation().toRotation2d().getRadians()),
-                      (tagToReef) * Math.sin(tag.pose.getRotation().toRotation2d().getRadians()),
-                      Rotation2d.fromDegrees(90)))
-              .getTranslation();
-      return new Pose2d(offset.getX(), offset.getY(), tag.pose.getRotation().toRotation2d());
+      return PoseUtils.getParallelOffsetPose(tag.pose.toPose2d(), -tagToReef);
     }
 
     /**
@@ -43,16 +32,7 @@ public class FieldConstants {
      * @return Pose2d representation of the `right pole` on the reef
      */
     public Pose2d getRightPole() {
-      Translation2d offset =
-          tag.pose
-              .toPose2d()
-              .transformBy(
-                  new Transform2d(
-                      (tagToReef) * Math.cos(tag.pose.getRotation().toRotation2d().getRadians()),
-                      (tagToReef) * Math.sin(tag.pose.getRotation().toRotation2d().getRadians()),
-                      Rotation2d.fromDegrees(90)))
-              .getTranslation();
-      return new Pose2d(offset.getY(), offset.getX(), tag.pose.getRotation().toRotation2d());
+      return PoseUtils.getParallelOffsetPose(tag.pose.toPose2d(), tagToReef);
     }
   }
 
