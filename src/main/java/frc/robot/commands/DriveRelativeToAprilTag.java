@@ -65,17 +65,17 @@ public class DriveRelativeToAprilTag {
 
   public static Command drivePerpendicularToPoseCommand(
       Drive drive, Supplier<Pose2d> maybeTargetPose, Supplier<Double> perpendicularInput) {
-    PIDController parallelController = new PIDController(0.1, 0.0, 0.0);
-    PIDController thetaController = new PIDController(0.0, 0.0, 0.0);
+    PIDController parallelController = new PIDController(5.0, 0.0, 0.0);
+    PIDController thetaController = new PIDController(5.0, 0.0, 0.0);
 
     return Commands.run(
             () -> {
               Pose2d robotPose = BobotState.getGlobalPose();
               Pose2d targetPose = maybeTargetPose.get();
 
-              Rotation2d desiredTheta = targetPose.getRotation().unaryMinus();
+              Rotation2d desiredTheta = targetPose.getRotation().plus(Rotation2d.kPi);
 
-              //   https://en.wikipedia.org/wiki/Vector_projection#Scalar_projection
+              // https://en.wikipedia.org/wiki/Vector_projection#Scalar_projection
               Translation2d robotToTarget = robotPose.minus(targetPose).getTranslation();
               Rotation2d angleBetween = robotToTarget.getAngle();
               double parallelError = -robotToTarget.getNorm() * angleBetween.getSin();
@@ -86,10 +86,13 @@ public class DriveRelativeToAprilTag {
 
               double angularSpeed = thetaController.calculate(thetaError.getRadians());
 
-              //   The error is here, need to fix
+              // The error is here, need to fix
               ChassisSpeeds speeds =
                   ChassisSpeeds.fromRobotRelativeSpeeds(
-                      perpendicularInput.get(), parallelSpeed, angularSpeed, desiredTheta);
+                      perpendicularInput.get() * drive.getMaxLinearSpeedMetersPerSec(),
+                      parallelSpeed,
+                      angularSpeed,
+                      desiredTheta);
               boolean isFlipped =
                   DriverStation.getAlliance().isPresent()
                       && DriverStation.getAlliance().get() == Alliance.Red;

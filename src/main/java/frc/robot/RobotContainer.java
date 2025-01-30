@@ -14,12 +14,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Mode;
@@ -42,9 +39,6 @@ import frc.robot.subsystems.rollers.pivot.PivotIO;
 import frc.robot.subsystems.rollers.pivot.PivotIOSim;
 import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.util.PoseUtils;
-import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -178,28 +172,20 @@ public class RobotContainer {
     if (Constants.currentMode == Mode.SIM) {
       driverController
           .a()
-          .and(driverController.povLeft())
+          .and(driverController.leftBumper())
           .whileTrue(
-              Commands.defer(
-                  () ->
-                      AutoBuilder.pathfindToPose(
-                          BobotState.getPoseToLeftPoleIfPresent(),
-                          new PathConstraints(
-                              3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
-                          0),
-                  Set.of(drive)));
+              DriveRelativeToAprilTag.drivePerpendicularToPoseCommand(
+                  drive,
+                  () -> BobotState.getPoseToLeftPoleIfPresent(),
+                  () -> -driverController.getLeftY()));
       driverController
           .a()
-          .and(driverController.povRight())
+          .and(driverController.rightBumper())
           .whileTrue(
-              Commands.defer(
-                  () ->
-                      AutoBuilder.pathfindToPose(
-                          BobotState.getPoseToLeftPoleIfPresent(),
-                          new PathConstraints(
-                              3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
-                          0),
-                  Set.of(drive)));
+              DriveRelativeToAprilTag.drivePerpendicularToPoseCommand(
+                  drive,
+                  () -> BobotState.getPoseToRightPoleIfPresent(),
+                  () -> -driverController.getLeftY()));
     }
 
     driverController
