@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 public class DrivePerpendicularToPoseCommand extends Command {
   private final PIDController parallelController = new PIDController(5.0, 0.0, 0.0);
   private final PIDController thetaController = new PIDController(5.0, 0.0, 0.0);
@@ -37,14 +39,15 @@ public class DrivePerpendicularToPoseCommand extends Command {
     Translation2d robotToTarget = robotPose.minus(targetPose).getTranslation();
     Rotation2d angleBetween = robotToTarget.getAngle();
     double parallelError = robotToTarget.getNorm() * angleBetween.getSin();
+    Logger.recordOutput("Commands/" + getName() + "/parallelError", parallelError);
 
     Rotation2d thetaError = robotPose.getRotation().minus(desiredTheta);
+    Logger.recordOutput("Commands/" + getName() + "/thetaError", thetaError);
 
     double parallelSpeed = parallelController.calculate(parallelError);
 
     double angularSpeed = thetaController.calculate(thetaError.getRadians());
 
-    // The error is here, need to fix
     ChassisSpeeds speeds =
         ChassisSpeeds.fromRobotRelativeSpeeds(
             -perpendicularInput.get() * drive.getMaxLinearSpeedMetersPerSec(),
