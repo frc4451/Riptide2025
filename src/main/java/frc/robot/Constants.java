@@ -38,4 +38,7 @@ public final class Constants {
   public static final double loopPeriodSecs = Robot.defaultPeriodSecs;
 
   public static final double phoenixUpdateFreqHz = 50.0;
+
+  public static final double controllerDeadband = 0.15;
+  public static final double triggerPressedThreshold = 0.1;
 }

@@ -17,7 +17,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
@@ -38,6 +37,7 @@ import frc.robot.subsystems.rollers.pivot.PivotIO;
 import frc.robot.subsystems.rollers.pivot.PivotIOSim;
 import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.CommandCustomXboxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -56,8 +56,8 @@ public class RobotContainer {
   private final QuestSubsystem questSubsystem;
 
   // Controller
-  public final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  public final CommandCustomXboxController driverController = new CommandCustomXboxController(0);
+  private final CommandCustomXboxController operatorController = new CommandCustomXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -147,9 +147,9 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            () -> -driverController.getLeftYSquared(),
+            () -> -driverController.getLeftXSquared(),
+            () -> -driverController.getRightXSquared()));
 
     configureAlignmentBindings();
 
@@ -172,8 +172,8 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
                 () -> BobotState.getRotationToClosestReefIfPresent()));
 
     driverController
@@ -183,7 +183,7 @@ public class RobotContainer {
             new DrivePerpendicularToPoseCommand(
                 drive,
                 () -> BobotState.getPoseToLeftPoleIfPresent(),
-                () -> -driverController.getLeftY()));
+                () -> -driverController.getLeftYSquared()));
 
     driverController
         .a()
@@ -192,7 +192,7 @@ public class RobotContainer {
             new DrivePerpendicularToPoseCommand(
                 drive,
                 () -> BobotState.getPoseToRightPoleIfPresent(),
-                () -> -driverController.getLeftY()));
+                () -> -driverController.getLeftYSquared()));
 
     // Human Player Stations
     driverController
@@ -200,8 +200,8 @@ public class RobotContainer {
         .whileTrue(
             DriveCommands.joystickDriveAtAngle(
                 drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
                 () -> BobotState.getRotationToClosestHPSfIfPresent()));
   }
 
