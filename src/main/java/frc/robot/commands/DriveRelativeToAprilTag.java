@@ -16,6 +16,7 @@ import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.VisionConstants;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class DriveRelativeToAprilTag {
   public Command driveToOffsetCommand(
@@ -66,32 +67,30 @@ public class DriveRelativeToAprilTag {
   }
 
   public static Command drivePerpendicularToPoseCommand(
-      Drive drive, Pose2d targetPose, Supplier<Double> perpendicularInput) {
-    PIDController parallelController = new PIDController(0.0, 0.0, 0.0);
+      Drive drive, Supplier<Pose2d> maybeTargetPose, Supplier<Double> perpendicularInput) {
+    PIDController parallelController = new PIDController(0.1, 0.0, 0.0);
     PIDController thetaController = new PIDController(0.0, 0.0, 0.0);
 
     return Commands.run(
             () -> {
-              Rotation2d desiredTheta = targetPose.getRotation().plus(Rotation2d.kPi);
-
               Pose2d robotPose = BobotState.getGlobalPose();
-              Translation2d robotToTargetGlobalSpace = robotPose.minus(targetPose).getTranslation();
-              Vector<N2> robotToTargetRelativeSpace =
-                  robotToTargetGlobalSpace
-                      .toVector()
-                      .projection(new Translation2d(1, targetPose.getRotation()).toVector());
+                Pose2d targetPose = maybeTargetPose.get();
 
-              double parallelError = robotToTargetRelativeSpace.get(1); // grab y
+              Rotation2d desiredTheta = targetPose.getRotation().unaryMinus();
+
+              
+            //   https://en.wikipedia.org/wiki/Vector_projection#Scalar_projection
+              Translation2d robotToTargetGlobalSpace = robotPose.minus(targetPose).getTranslation();
+              Rotation2d globalToRelativeAngle = targetPose.getRotation().minus(robotToTargetGlobalSpace.getAngle());
+              double parallelError = robotToTargetGlobalSpace.getNorm() * globalToRelativeAngle.getSin();
+              Logger.recordOutput("test", parallelError);
+
               Rotation2d thetaError = robotPose.getRotation().minus(desiredTheta);
 
               double parallelSpeed = parallelController.calculate(parallelError);
 
-              double xSpeed =
-                  targetPose.getRotation().getCos() * parallelSpeed
-                      - targetPose.getRotation().getSin() * perpendicularInput.get();
-              double ySpeed =
-                  targetPose.getRotation().getSin() * parallelSpeed
-                      + targetPose.getRotation().getCos() * perpendicularInput.get();
+              double xSpeed = parallelSpeed * -targetPose.getRotation().getSin() + -perpendicularInput.get() * targetPose.getRotation().getCos();
+              double ySpeed = parallelSpeed * targetPose.getRotation().getCos() + -perpendicularInput.get() * targetPose.getRotation().getSin();
 
               double angularSpeed = thetaController.calculate(thetaError.getRadians());
 

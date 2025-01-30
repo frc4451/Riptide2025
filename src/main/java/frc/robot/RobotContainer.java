@@ -172,8 +172,7 @@ public class RobotContainer {
         .whileTrue(
             DriveRelativeToAprilTag.drivePerpendicularToPoseCommand(
                 drive,
-                PoseUtils.getPerpendicularOffsetPose(
-                    VisionConstants.fieldLayout.getTagPose(18).get().toPose2d(), 1),
+                () -> BobotState.getPoseToLeftPoleIfPresent(),
                 () -> -driverController.getLeftY()));
 
     if (Constants.currentMode == Mode.SIM) {
