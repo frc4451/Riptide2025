@@ -14,18 +14,13 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.Mode;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.DriveRelativeToAprilTag;
+import frc.robot.commands.DrivePerpendicularToPoseCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -42,9 +37,7 @@ import frc.robot.subsystems.rollers.pivot.PivotIO;
 import frc.robot.subsystems.rollers.pivot.PivotIOSim;
 import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.util.PoseUtils;
-import java.util.Set;
+import frc.robot.util.CommandCustomXboxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -63,8 +56,8 @@ public class RobotContainer {
   private final QuestSubsystem questSubsystem;
 
   // Controller
-  public final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  public final CommandCustomXboxController driverController = new CommandCustomXboxController(0);
+  private final CommandCustomXboxController operatorController = new CommandCustomXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -154,63 +147,11 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            () -> -driverController.getLeftYSquared(),
+            () -> -driverController.getLeftXSquared(),
+            () -> -driverController.getRightXSquared()));
 
-    driverController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> BobotState.getRotationToClosestReefIfPresent()));
-
-    driverController
-        .y()
-        .whileTrue(
-            DriveRelativeToAprilTag.drivePerpendicularToPoseCommand(
-                drive,
-                PoseUtils.getPerpendicularOffsetPose(
-                    VisionConstants.fieldLayout.getTagPose(18).get().toPose2d(), 1),
-                () -> -driverController.getLeftY()));
-
-    if (Constants.currentMode == Mode.SIM) {
-      driverController
-          .a()
-          .and(driverController.povLeft())
-          .whileTrue(
-              Commands.defer(
-                  () ->
-                      AutoBuilder.pathfindToPose(
-                          BobotState.getPoseToLeftPoleIfPresent(),
-                          new PathConstraints(
-                              3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
-                          0),
-                  Set.of(drive)));
-      driverController
-          .a()
-          .and(driverController.povRight())
-          .whileTrue(
-              Commands.defer(
-                  () ->
-                      AutoBuilder.pathfindToPose(
-                          BobotState.getPoseToLeftPoleIfPresent(),
-                          new PathConstraints(
-                              3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720)),
-                          0),
-                  Set.of(drive)));
-    }
-
-    driverController
-        .b()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> BobotState.getRotationToClosestHPSfIfPresent()));
+    configureAlignmentBindings();
 
     // TEMP -> Test Pivot Subsystem
     operatorController.povDown().whileTrue(pivotSubsystem.runRoller(-6.0));
@@ -220,6 +161,48 @@ public class RobotContainer {
     operatorController.b().onTrue(pivotSubsystem.setGoalRadCommand(0));
     operatorController.y().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI / 2.0));
     operatorController.a().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI));
+  }
+
+  private void configureAlignmentBindings() {
+    // Coral
+    driverController
+        .a()
+        .and(driverController.leftBumper().negate())
+        .and(driverController.rightBumper().negate())
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
+                () -> BobotState.getRotationToClosestReefIfPresent()));
+
+    driverController
+        .a()
+        .and(driverController.leftBumper())
+        .whileTrue(
+            new DrivePerpendicularToPoseCommand(
+                drive,
+                () -> BobotState.getPoseToLeftPoleIfPresent(),
+                () -> -driverController.getLeftYSquared()));
+
+    driverController
+        .a()
+        .and(driverController.rightBumper())
+        .whileTrue(
+            new DrivePerpendicularToPoseCommand(
+                drive,
+                () -> BobotState.getPoseToRightPoleIfPresent(),
+                () -> -driverController.getLeftYSquared()));
+
+    // Human Player Stations
+    driverController
+        .b()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
+                () -> BobotState.getRotationToClosestHPSfIfPresent()));
   }
 
   /**

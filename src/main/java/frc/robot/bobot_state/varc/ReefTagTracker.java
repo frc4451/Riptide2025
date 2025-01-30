@@ -30,13 +30,7 @@ public class ReefTagTracker extends TargetAngleTracker {
     // TODO Handle Vision targeting here
 
     this.rotationTarget =
-        Optional.of(
-            FieldUtils.getClosestReef()
-                .tag()
-                .pose()
-                .getRotation()
-                .toRotation2d()
-                .plus(new Rotation2d(Math.PI)));
+        Optional.of(FieldUtils.getClosestReef().tag().pose().getRotation().toRotation2d());
 
     this.closestReef = Optional.of(FieldUtils.getClosestReef());
 
