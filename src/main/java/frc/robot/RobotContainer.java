@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Mode;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriveRelativeToAprilTag;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -41,6 +42,8 @@ import frc.robot.subsystems.rollers.pivot.PivotIO;
 import frc.robot.subsystems.rollers.pivot.PivotIOSim;
 import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.util.PoseUtils;
 import java.util.Set;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -163,6 +166,15 @@ public class RobotContainer {
                 () -> -driverController.getLeftY(),
                 () -> -driverController.getLeftX(),
                 () -> BobotState.getRotationToClosestReefIfPresent()));
+
+    driverController
+        .y()
+        .whileTrue(
+            DriveRelativeToAprilTag.drivePerpendicularToPoseCommand(
+                drive,
+                PoseUtils.getPerpendicularOffsetPose(
+                    VisionConstants.fieldLayout.getTagPose(18).get().toPose2d(), 1),
+                () -> -driverController.getLeftY()));
 
     if (Constants.currentMode == Mode.SIM) {
       driverController
