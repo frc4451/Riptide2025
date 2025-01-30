@@ -26,10 +26,8 @@ public class HPSTagTracker extends TargetAngleTracker {
         Optional.of(
             FieldUtils.getClosestHPSTag()
                 .pose()
-                .relativeTo(robotPose)
-                .getTranslation()
-                .toTranslation2d()
-                .getAngle()
-                .plus(BobotState.getGlobalPose().getRotation()));
+                .getRotation()
+                .toRotation2d()
+                .plus(new Rotation2d(Math.PI)));
   }
 }
