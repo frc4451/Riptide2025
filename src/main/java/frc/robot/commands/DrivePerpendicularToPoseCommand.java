@@ -5,8 +5,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
@@ -33,12 +31,12 @@ public class DrivePerpendicularToPoseCommand extends Command {
     Pose2d robotPose = drive.getPose();
     Pose2d targetPose = maybeTargetPose.get();
 
-    Rotation2d desiredTheta = targetPose.getRotation().plus(Rotation2d.kPi);
+    Rotation2d desiredTheta = targetPose.getRotation();
 
     // https://en.wikipedia.org/wiki/Vector_projection#Scalar_projection
     Translation2d robotToTarget = robotPose.minus(targetPose).getTranslation();
     Rotation2d angleBetween = robotToTarget.getAngle();
-    double parallelError = -robotToTarget.getNorm() * angleBetween.getSin();
+    double parallelError = robotToTarget.getNorm() * angleBetween.getSin();
 
     Rotation2d thetaError = robotPose.getRotation().minus(desiredTheta);
 
@@ -49,7 +47,7 @@ public class DrivePerpendicularToPoseCommand extends Command {
     // The error is here, need to fix
     ChassisSpeeds speeds =
         ChassisSpeeds.fromRobotRelativeSpeeds(
-            perpendicularInput.get() * drive.getMaxLinearSpeedMetersPerSec(),
+            -perpendicularInput.get() * drive.getMaxLinearSpeedMetersPerSec(),
             parallelSpeed,
             angularSpeed,
             desiredTheta);
