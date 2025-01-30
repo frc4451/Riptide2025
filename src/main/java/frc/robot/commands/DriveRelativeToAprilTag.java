@@ -1,13 +1,14 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.CoordinateAxis;
+import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -72,16 +73,28 @@ public class DriveRelativeToAprilTag {
 
     return Commands.run(
             () -> {
-              Rotation2d desiredTheta = targetPose.getRotation().plus(Rotation2d.kPi);
+              Rotation2d targetRotation = targetPose.getRotation();
+              //   Rotation Matrix
+              CoordinateSystem globalCoordinates =
+                  new CoordinateSystem(CoordinateAxis.E(), CoordinateAxis.N(), CoordinateAxis.U());
+              CoordinateSystem targetRelativeCoordinates =
+                  new CoordinateSystem(
+                      new CoordinateAxis(targetRotation.getCos(), -targetRotation.getSin(), 0),
+                      new CoordinateAxis(targetRotation.getSin(), targetRotation.getCos(), 0),
+                      CoordinateAxis.U());
+
+              Rotation2d desiredTheta = targetRotation.plus(Rotation2d.kPi);
 
               Pose2d robotPose = BobotState.getGlobalPose();
               Translation2d robotToTargetGlobalSpace = robotPose.minus(targetPose).getTranslation();
-              Vector<N2> robotToTargetRelativeSpace =
-                  robotToTargetGlobalSpace
-                      .toVector()
-                      .projection(new Translation2d(1, targetPose.getRotation()).toVector());
+              Translation3d robotToTargetGlobalSpace3d =
+                  new Translation3d(robotToTargetGlobalSpace.getX(), robotToTargetGlobalSpace.getY(), 0.0);
+              Translation2d robotToTargetRelativeSpace =
+                  CoordinateSystem.convert(
+                          robotToTargetGlobalSpace3d, targetRelativeCoordinates, globalCoordinates)
+                      .toTranslation2d();
 
-              double parallelError = robotToTargetRelativeSpace.get(1); // grab y
+              double parallelError = robotToTargetRelativeSpace.getX();
               Rotation2d thetaError = robotPose.getRotation().minus(desiredTheta);
 
               double parallelSpeed = parallelController.calculate(parallelError);
