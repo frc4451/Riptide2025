@@ -46,6 +46,8 @@ public class GyroIOPigeon2 implements GyroIO {
         .withMountPosePitch(DriveConstants.mountPosePitchDeg)
         .withMountPoseRoll(DriveConstants.mountPoseRollDeg);
 
+    config.GyroTrim.withGyroScalarX(1.501).withGyroScalarY(1.501).withGyroScalarZ(1.501);
+
     pigeon.getConfigurator().setYaw(0.0);
     pigeon.getConfigurator().apply(config);
 
