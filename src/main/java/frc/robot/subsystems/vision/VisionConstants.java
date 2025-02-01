@@ -32,7 +32,20 @@ public class VisionConstants {
           ? Optional.of(new VisionSystemSim("AprilTagSim"))
           : Optional.empty();
 
-  public static final List<AprilTagCameraConfig> aprilTagCamerasConfigs =
+  private static final List<AprilTagCameraConfig> guidoConfigs =
+      List.of(
+          new AprilTagCameraConfig(
+              new VisionSource(
+                  "SillyCam",
+                  new Transform3d(
+                      new Translation3d(
+                          6.0 / 100.0, // forward+
+                          29.5 / 100.0, // left+
+                          26.5 / 100.0), // up+
+                      new Rotation3d(0, Units.degreesToRadians(-17.5), 0))),
+              SimCameraConfig.THRIFTY_CAM_90));
+
+  private static final List<AprilTagCameraConfig> riptideConfigs =
       List.of(
           // FLO
           new AprilTagCameraConfig(
@@ -80,6 +93,9 @@ public class VisionConstants {
                       new Rotation3d(
                           0, Units.degreesToRadians(-27.5), Units.degreesToRadians(-30)))),
               SimCameraConfig.THRIFTY_CAM_80));
+
+  public static final List<AprilTagCameraConfig> aprilTagCamerasConfigs =
+      Constants.currentBot == Constants.Bot.GUIDO ? guidoConfigs : riptideConfigs;
 
   public static final double ambiguityCutoff = 0.05;
   public static final double singleTagPoseCutoffMeters = 4;
