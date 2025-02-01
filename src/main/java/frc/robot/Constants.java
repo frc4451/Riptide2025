@@ -21,6 +21,13 @@ import edu.wpi.first.wpilibj.RobotBase;
  * (log replay from a file).
  */
 public final class Constants {
+  public static enum Bot {
+    GUIDO,
+    RIPTIDE
+  }
+
+  public static final Bot currentBot = Bot.GUIDO;
+
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
@@ -38,4 +45,7 @@ public final class Constants {
   public static final double loopPeriodSecs = Robot.defaultPeriodSecs;
 
   public static final double phoenixUpdateFreqHz = 50.0;
+
+  public static final double controllerDeadband = 0.15;
+  public static final double triggerPressedThreshold = 0.1;
 }

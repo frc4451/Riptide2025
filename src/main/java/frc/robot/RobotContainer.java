@@ -14,15 +14,13 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DrivePerpendicularToPoseCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -38,6 +36,8 @@ import frc.robot.subsystems.rollers.elevators.ElevatorSubsystem;
 import frc.robot.subsystems.rollers.pivot.PivotIO;
 import frc.robot.subsystems.rollers.pivot.PivotIOSim;
 import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.util.CommandCustomXboxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -48,21 +48,24 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
  */
 public class RobotContainer {
   // Subsystems
-  private final Drive drive;
+  public final Drive drive;
+  private final Vision vision = new Vision();
   private final PivotSubsystem pivotSubsystem;
   private final ElevatorSubsystem elevatorSubsystem;
 
-  private final QuestSubsystem questSubsystem;
+  public final QuestSubsystem quest;
 
   // Controller
-  private final CommandXboxController driverController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  public final CommandCustomXboxController driverController = new CommandCustomXboxController(0);
+  private final CommandCustomXboxController operatorController = new CommandCustomXboxController(1);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    new BobotState();
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -75,7 +78,7 @@ public class RobotContainer {
                 new ModuleIOSpark(3));
         pivotSubsystem = new PivotSubsystem(new PivotIO() {});
         elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
-        questSubsystem = new QuestSubsystem(new QuestIOReal());
+        quest = new QuestSubsystem(new QuestIOReal());
         break;
 
       case SIM:
@@ -89,7 +92,7 @@ public class RobotContainer {
                 new ModuleIOSim());
         pivotSubsystem = new PivotSubsystem(new PivotIOSim());
         elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
-        questSubsystem = new QuestSubsystem(new QuestIO() {});
+        quest = new QuestSubsystem(new QuestIO() {});
         break;
 
       default:
@@ -103,7 +106,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         pivotSubsystem = new PivotSubsystem(new PivotIO() {});
         elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
-        questSubsystem = new QuestSubsystem(new QuestIO() {});
+        quest = new QuestSubsystem(new QuestIO() {});
         break;
     }
 
@@ -144,33 +147,11 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -driverController.getLeftY(),
-            () -> -driverController.getLeftX(),
-            () -> -driverController.getRightX()));
+            () -> -driverController.getLeftYSquared(),
+            () -> -driverController.getLeftXSquared(),
+            () -> -driverController.getRightXSquared()));
 
-    // Lock to 0° when A button is held
-    driverController
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftY(),
-                () -> -driverController.getLeftX(),
-                () -> new Rotation2d()));
-
-    // Switch to X pattern when X button is pressed
-    driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Reset gyro to 0° when B button is pressed
-    driverController
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    configureAlignmentBindings();
 
     // TEMP -> Test Pivot Subsystem
     operatorController.povDown().whileTrue(pivotSubsystem.runRoller(-6.0));
@@ -180,6 +161,58 @@ public class RobotContainer {
     operatorController.b().onTrue(pivotSubsystem.setGoalRadCommand(0));
     operatorController.y().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI / 2.0));
     operatorController.a().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI));
+  }
+
+  private void configureAlignmentBindings() {
+    // Coral
+    driverController
+        .a()
+        .and(driverController.leftBumper().negate())
+        .and(driverController.rightBumper().negate())
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
+                () -> BobotState.getRotationToClosestReefIfPresent()));
+
+    driverController
+        .a()
+        .and(driverController.leftBumper())
+        .whileTrue(
+            new DrivePerpendicularToPoseCommand(
+                drive,
+                () -> BobotState.getPoseToLeftPoleIfPresent(),
+                () -> -driverController.getLeftYSquared()));
+
+    driverController
+        .a()
+        .and(driverController.rightBumper())
+        .whileTrue(
+            new DrivePerpendicularToPoseCommand(
+                drive,
+                () -> BobotState.getPoseToRightPoleIfPresent(),
+                () -> -driverController.getLeftYSquared()));
+
+    // Human Player Stations
+    driverController
+        .b()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
+                () -> BobotState.getRotationToClosestHPSIfPresent()));
+
+    // Barge
+    driverController
+        .x()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
+                () -> BobotState.getRotationToClosestBargeIfPresent()));
   }
 
   /**

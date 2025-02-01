@@ -21,7 +21,6 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -30,8 +29,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -42,6 +39,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.bobot_state.BobotState;
+import frc.robot.subsystems.quest.QuestConstants;
+import frc.robot.subsystems.quest.TimestampedPose;
+import frc.robot.subsystems.vision.PoseObservation;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -182,6 +183,30 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
+
+    // TODO: Confidence for AprilTags & Quest
+
+    {
+      // AprilTag Cameras
+      PoseObservation observation;
+      while ((observation = BobotState.getVisionObservations().poll()) != null) {
+        poseEstimator.addVisionMeasurement(
+            observation.robotPose().toPose2d(),
+            observation.timestampSeconds(),
+            observation.stdDevs());
+      }
+
+      // Quest
+      if (DriverStation.isEnabled()) {
+        TimestampedPose timestampedPose;
+        while ((timestampedPose = BobotState.getQuestMeasurments().poll()) != null) {
+          poseEstimator.addVisionMeasurement(
+              timestampedPose.pose(), timestampedPose.timestamp(), QuestConstants.stdDevs);
+        }
+      }
+    }
+
+    BobotState.updateGlobalPose(getPose());
   }
 
   /**
@@ -303,15 +328,6 @@ public class Drive extends SubsystemBase {
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
-  }
-
-  /** Adds a new timestamped vision measurement. */
-  public void addVisionMeasurement(
-      Pose2d visionRobotPoseMeters,
-      double timestampSeconds,
-      Matrix<N3, N1> visionMeasurementStdDevs) {
-    poseEstimator.addVisionMeasurement(
-        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
 
   /** Returns the maximum linear speed in meters per sec. */

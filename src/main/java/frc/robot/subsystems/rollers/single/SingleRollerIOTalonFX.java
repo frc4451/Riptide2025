@@ -57,19 +57,19 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
     // spotless:on
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-            Constants.phoenixUpdateFreqHz,
-            position,
-            velocity,
-            voltage,
-            supplyCurrentAmps,
-            torqueCurrentAmps,
-            tempCelsius)
-        .isOK();
+        Constants.phoenixUpdateFreqHz,
+        position,
+        velocity,
+        voltage,
+        supplyCurrentAmps,
+        torqueCurrentAmps,
+        tempCelsius);
     talon.optimizeBusUtilization(0.0, 1.0);
 
     talon.getConfigurator().apply(cfg);
   }
 
+  @Override
   public void updateInputs(SingleRollerIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
@@ -86,16 +86,19 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   }
 
   /** Run roller at set voltage */
+  @Override
   public void runVolts(double volts) {
     talon.setControl(voltageOut.withOutput(volts));
   }
 
   /** Run roller at set position */
+  @Override
   public void runPosition(double positionRad) {
     talon.setControl(positionOut.withPosition(positionRad * reduction));
   }
 
   /** Stop roller */
+  @Override
   public void stop() {
     talon.setControl(neutralOut);
   }
