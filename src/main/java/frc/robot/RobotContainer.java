@@ -202,7 +202,17 @@ public class RobotContainer {
                 drive,
                 () -> -driverController.getLeftYSquared(),
                 () -> -driverController.getLeftXSquared(),
-                () -> BobotState.getRotationToClosestHPSfIfPresent()));
+                () -> BobotState.getRotationToClosestHPSIfPresent()));
+
+    // Barge
+    driverController
+        .x()
+        .whileTrue(
+            DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
+                () -> BobotState.getRotationToClosestBargeIfPresent()));
   }
 
   /**

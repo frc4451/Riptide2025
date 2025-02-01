@@ -2,6 +2,7 @@ package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
 import frc.robot.field.FieldConstants.ReefFace;
@@ -28,6 +29,7 @@ public class BobotState extends VirtualSubsystem {
 
   private static ReefTagTracker reefTracker = new ReefTagTracker();
   private static HPSTagTracker hpsTracker = new HPSTagTracker();
+  private static BargeTagTracker bargeTracker = new BargeTagTracker();
 
   public static void offerVisionObservation(PoseObservation observation) {
     BobotState.poseObservations.offer(observation);
@@ -57,8 +59,12 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.reefTracker.getRotationTarget().orElse(BobotState.globalPose.getRotation());
   }
 
-  public static Rotation2d getRotationToClosestHPSfIfPresent() {
+  public static Rotation2d getRotationToClosestHPSIfPresent() {
     return BobotState.hpsTracker.getRotationTarget().orElse(BobotState.globalPose.getRotation());
+  }
+
+  public static Rotation2d getRotationToClosestBargeIfPresent() {
+    return BobotState.bargeTracker.getRotationTarget().orElse(BobotState.globalPose.getRotation());
   }
 
   public static Pose2d getPoseToLeftPoleIfPresent() {
@@ -102,6 +108,18 @@ public class BobotState extends VirtualSubsystem {
 
       String calcLogRoot = logRoot + "HPS/";
       Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPSTag());
+      Logger.recordOutput(
+          calcLogRoot + "TargetAngleDeg",
+          hpsTracker.getRotationTarget().map(Rotation2d::getDegrees).orElse(Double.NaN));
+      Logger.recordOutput(
+          calcLogRoot + "TargetAngleRad",
+          hpsTracker.getRotationTarget().map(Rotation2d::getRadians).orElse(Double.NaN));
+    }
+
+    {
+      bargeTracker.update();
+
+      String calcLogRoot = logRoot + "Barge/";
       Logger.recordOutput(
           calcLogRoot + "TargetAngleDeg",
           hpsTracker.getRotationTarget().map(Rotation2d::getDegrees).orElse(Double.NaN));

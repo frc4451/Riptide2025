@@ -75,4 +75,8 @@ public class FieldUtils {
 
     return closestTag;
   }
+
+  public static AprilTagStruct getBargeTag() {
+    return FieldUtils.isBlueAlliance() ? FieldConstants.blueBarge : FieldConstants.redBarge;
+  }
 }

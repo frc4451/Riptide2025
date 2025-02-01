@@ -52,7 +52,8 @@ public class FieldConstants {
       new AprilTagStruct(13, VisionConstants.fieldLayout.getTagPose(13).get());
 
   public static final Integer blueProcessor = 16;
-  public static final Integer blueBarge = 14; // TODO how do we want to name this?
+  public static final AprilTagStruct blueBarge =
+      new AprilTagStruct(14, VisionConstants.fieldLayout.getTagPose(14).get());
 
   // See Allred's sheet for why they're AB/CD/EF/etc
   public static final ReefFace blueReefAB =
@@ -74,7 +75,8 @@ public class FieldConstants {
       new AprilTagStruct(2, VisionConstants.fieldLayout.getTagPose(2).get());
 
   public static final Integer redProcessor = 3;
-  public static final Integer redBarge = 4;
+  public static final AprilTagStruct redBarge =
+      new AprilTagStruct(4, VisionConstants.fieldLayout.getTagPose(4).get());
 
   public static final ReefFace redReefAB =
       new ReefFace(new AprilTagStruct(7, VisionConstants.fieldLayout.getTagPose(7).get()));
