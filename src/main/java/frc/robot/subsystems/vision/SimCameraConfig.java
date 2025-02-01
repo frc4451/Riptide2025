@@ -32,6 +32,23 @@ public record SimCameraConfig(Calibration calib, CalibrationError calibError, La
           new Calibration(1600, 1304, Rotation2d.fromDegrees(65), 60),
           new CalibrationError(0.25, 0.08),
           new Latency(20, 5));
+  public static SimCameraConfig THRIFTY_CAM_70 =
+      new SimCameraConfig(
+          new Calibration(1600, 1304, Rotation2d.fromDegrees(70), 60),
+          new CalibrationError(0.25, 0.08),
+          new Latency(20, 5));
+
+  public static SimCameraConfig THRIFTY_CAM_80 =
+      new SimCameraConfig(
+          new Calibration(1600, 1304, Rotation2d.fromDegrees(80), 60),
+          new CalibrationError(0.25, 0.08),
+          new Latency(20, 5));
+
+  public static SimCameraConfig THRIFTY_CAM_90 =
+      new SimCameraConfig(
+          new Calibration(1600, 1304, Rotation2d.fromDegrees(90), 60),
+          new CalibrationError(0.25, 0.08),
+          new Latency(20, 5));
 
   public static SimCameraConfig ARDUCAM_OV9281_45 =
       new SimCameraConfig(

@@ -40,49 +40,48 @@ public class VisionConstants {
                   "FrontLeftOuter",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(3.04), // forward+
-                          Units.inchesToMeters(12.5), // left+
-                          Units.inchesToMeters(9.99)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(0)))),
-              SimCameraConfig.ARDUCAM_OV9281_55),
-
+                          Units.inchesToMeters(-4.594), // forward+
+                          Units.inchesToMeters(12.728), // left+
+                          Units.inchesToMeters(8.010)), // up+
+                      new Rotation3d(
+                          0, Units.degreesToRadians(-27.5), Units.degreesToRadians(30)))),
+              SimCameraConfig.THRIFTY_CAM_80),
           // FLI
           new AprilTagCameraConfig(
               new VisionSource(
                   "FrontLeftInner",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(3.905), // forward+
-                          Units.inchesToMeters(12.271), // left+
-                          Units.inchesToMeters(8.010)), // up+
+                          Units.inchesToMeters(6.915), // forward+
+                          Units.inchesToMeters(12.421), // left+
+                          Units.inchesToMeters(8.141)), // up+
                       new Rotation3d(
-                          0, Units.degreesToRadians(-17.5), Units.degreesToRadians(-30)))),
-              SimCameraConfig.THRIFTY_CAM_65),
-
+                          0, Units.degreesToRadians(-25), Units.degreesToRadians(-10)))),
+              SimCameraConfig.THRIFTY_CAM_90),
           // FRI
           new AprilTagCameraConfig(
               new VisionSource(
                   "FrontRightInner",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(3.905), // forward+
-                          Units.inchesToMeters(-12.271), // left+
-                          Units.inchesToMeters(8.010)), // up+
+                          Units.inchesToMeters(6.915), // forward+
+                          Units.inchesToMeters(-12.421), // left+
+                          Units.inchesToMeters(8.141)), // up+
                       new Rotation3d(
-                          0, Units.degreesToRadians(-17.5), Units.degreesToRadians(30)))),
-              SimCameraConfig.THRIFTY_CAM_65),
-
+                          0, Units.degreesToRadians(-25), Units.degreesToRadians(10)))),
+              SimCameraConfig.THRIFTY_CAM_90),
           // FRO
           new AprilTagCameraConfig(
               new VisionSource(
                   "FrontRightOuter",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(3.04), // forward+
-                          Units.inchesToMeters(-12.5), // left+
-                          Units.inchesToMeters(9.99)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-0)))),
-              SimCameraConfig.ARDUCAM_OV9281_55));
+                          Units.inchesToMeters(-4.594), // forward+
+                          Units.inchesToMeters(-12.728), // left+
+                          Units.inchesToMeters(8.010)), // up+
+                      new Rotation3d(
+                          0, Units.degreesToRadians(-27.5), Units.degreesToRadians(-30)))),
+              SimCameraConfig.THRIFTY_CAM_80));
 
   public static final double ambiguityCutoff = 0.05;
   public static final double singleTagPoseCutoffMeters = 4;
