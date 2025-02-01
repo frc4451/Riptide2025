@@ -31,7 +31,7 @@ public class QuestSubsystem extends VirtualSubsystem {
     lowBatteryAlert.set(inputs.batteryLevel < 25 && !disconnectedAlert.get());
 
     if (DriverStation.isEnabled() && inputs.connected) {
-      BobotState.offerQuestMeasurment(new TimestampedPose(inputs.questPose, inputs.timestamp));
+      BobotState.offerQuestMeasurment(new TimestampedPose(inputs.robotPose, inputs.timestamp));
     } else {
       io.resetPose(BobotState.getGlobalPose());
     }
