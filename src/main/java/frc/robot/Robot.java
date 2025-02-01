@@ -120,7 +120,15 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     if (robotContainer.driverController.b().getAsBoolean()) {
       robotContainer.drive.setPose(Pose2d.kZero);
+      robotContainer.quest.resetPose(Pose2d.kZero);
+      robotContainer.quest.zeroAbsolutePosition();
     }
+  }
+
+  @Override
+  public void disabledExit() {
+    robotContainer.quest.resetPose(Pose2d.kZero);
+    robotContainer.quest.zeroAbsolutePosition();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

@@ -15,11 +15,13 @@ public class QuestSubsystem extends VirtualSubsystem {
   private final QuestIOInputsAutoLogged inputs = new QuestIOInputsAutoLogged();
 
   private final Alert disconnectedAlert = new Alert("Quest Disconnected!", AlertType.kWarning);
-  private final Alert lowBatteryAlert = new Alert("Quest Battery is Low! (<25%)", AlertType.kWarning);
+  private final Alert lowBatteryAlert =
+      new Alert("Quest Battery is Low! (<25%)", AlertType.kWarning);
 
   public QuestSubsystem(QuestIO io) {
     this.io = io;
     io.resetPose(Pose2d.kZero);
+    io.zeroAbsolutePosition();
   }
 
   @Override
@@ -35,6 +37,14 @@ public class QuestSubsystem extends VirtualSubsystem {
     } else {
       io.resetPose(BobotState.getGlobalPose());
     }
+  }
+
+  public void resetPose(Pose2d pose) {
+    io.resetPose(pose);
+  }
+
+  public void zeroAbsolutePosition() {
+    io.zeroAbsolutePosition();
   }
 
   @Override

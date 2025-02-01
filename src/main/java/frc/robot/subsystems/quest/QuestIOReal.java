@@ -61,11 +61,10 @@ public class QuestIOReal implements QuestIO {
   /** Sets supplied pose as origin of all calculations */
   public void resetPose(Pose2d pose) {
     resetPose = pose.plus(QuestConstants.robotToQuest);
-    zeroAbsolutePosition();
   }
 
   /** Zeroes the absolute 3D position of the robot (similar to long-pressing the quest logo) */
-  private void zeroAbsolutePosition() {
+  public void zeroAbsolutePosition() {
     if (questMiso.get() != 99) {
       questMosi.set(1);
     }

@@ -23,6 +23,9 @@ public interface QuestIO extends AutoCloseable {
   /** Sets supplied pose as origin of all calculations */
   public default void resetPose(Pose2d pose) {}
 
+  /** Zeroes the absolute 3D position of the robot (similar to long-pressing the quest logo) */
+  public default void zeroAbsolutePosition() {}
+
   @Override
   public default void close() {}
 }

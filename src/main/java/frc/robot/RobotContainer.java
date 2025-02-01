@@ -53,7 +53,7 @@ public class RobotContainer {
   private final PivotSubsystem pivotSubsystem;
   private final ElevatorSubsystem elevatorSubsystem;
 
-  private final QuestSubsystem questSubsystem;
+  public final QuestSubsystem quest;
 
   // Controller
   public final CommandCustomXboxController driverController = new CommandCustomXboxController(0);
@@ -78,7 +78,7 @@ public class RobotContainer {
                 new ModuleIOSpark(3));
         pivotSubsystem = new PivotSubsystem(new PivotIO() {});
         elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
-        questSubsystem = new QuestSubsystem(new QuestIOReal());
+        quest = new QuestSubsystem(new QuestIOReal());
         break;
 
       case SIM:
@@ -92,7 +92,7 @@ public class RobotContainer {
                 new ModuleIOSim());
         pivotSubsystem = new PivotSubsystem(new PivotIOSim());
         elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
-        questSubsystem = new QuestSubsystem(new QuestIO() {});
+        quest = new QuestSubsystem(new QuestIO() {});
         break;
 
       default:
@@ -106,7 +106,7 @@ public class RobotContainer {
                 new ModuleIO() {});
         pivotSubsystem = new PivotSubsystem(new PivotIO() {});
         elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
-        questSubsystem = new QuestSubsystem(new QuestIO() {});
+        quest = new QuestSubsystem(new QuestIO() {});
         break;
     }
 
