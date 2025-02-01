@@ -23,11 +23,6 @@ public class HPSTagTracker extends TargetAngleTracker {
     // TODO Handle Vision targeting here
 
     this.rotationTarget =
-        Optional.of(
-            FieldUtils.getClosestHPSTag()
-                .pose()
-                .getRotation()
-                .toRotation2d()
-                .plus(new Rotation2d(Math.PI)));
+        Optional.of(FieldUtils.getClosestHPSTag().pose().getRotation().toRotation2d());
   }
 }
