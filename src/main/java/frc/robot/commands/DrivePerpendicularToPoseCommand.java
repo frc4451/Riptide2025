@@ -43,12 +43,14 @@ public class DrivePerpendicularToPoseCommand extends Command {
     double parallelError = -robotToTarget.getNorm() * angleBetween.getSin();
     Logger.recordOutput("Commands/" + getName() + "/parallelError", parallelError);
 
-    Rotation2d thetaError = robotPose.getRotation().minus(desiredTheta);
+    double thetaError = robotPose.getRotation().minus(desiredTheta).getRadians();
     Logger.recordOutput("Commands/" + getName() + "/thetaError", thetaError);
 
-    double parallelSpeed = parallelController.calculate(parallelError);
+    double parallelSpeed = parallelController.calculate(parallelError, 0);
+    parallelSpeed = !parallelController.atSetpoint() ? parallelSpeed : 0;
 
-    double angularSpeed = angleController.calculate(thetaError.getRadians());
+    double angularSpeed = angleController.calculate(thetaError, 0);
+    angularSpeed = !angleController.atSetpoint() ? angularSpeed : 0;
 
     ChassisSpeeds speeds =
         ChassisSpeeds.fromRobotRelativeSpeeds(

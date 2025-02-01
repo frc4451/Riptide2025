@@ -113,6 +113,7 @@ public class DriveCommands {
               double omega =
                   angleController.calculate(
                       drive.getRotation().getRadians(), rotationSupplier.get().getRadians());
+              omega = !angleController.atSetpoint() ? omega : 0;
 
               // Convert to field relative speeds & send command
               ChassisSpeeds speeds =
