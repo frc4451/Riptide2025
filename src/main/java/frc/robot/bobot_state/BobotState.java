@@ -83,6 +83,10 @@ public class BobotState extends VirtualSubsystem {
 
   @Override
   public void periodic() {
+    {
+      TimestampedPose[] questPoses = getQuestMeasurments().stream().toArray(TimestampedPose[]::new);
+      Logger.recordOutput(logRoot + "Quest/Measurements", questPoses);
+    }
 
     {
       reefTracker.update();

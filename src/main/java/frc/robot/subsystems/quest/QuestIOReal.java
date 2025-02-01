@@ -43,14 +43,13 @@ public class QuestIOReal implements QuestIO {
   public void updateInputs(QuestIOInputs inputs) {
     inputs.connected = isConnected();
 
-    inputs.pose = getQuestPose();
+    inputs.questPose = getQuestPose();
     inputs.robotPose = getRobotPose();
+
+    inputs.rawPose = getRawPose();
 
     inputs.timestamp = questTimestamp.get();
     inputs.batteryLevel = questBattery.get();
-
-    inputs.rawPosition = questPosition.get();
-    inputs.rawQuaternion = questQuaternion.get();
 
     cleanUpOculusMessages();
   }
@@ -91,6 +90,10 @@ public class QuestIOReal implements QuestIO {
   private Translation2d getQuestTranslation() {
     float[] oculusPosition = questPosition.get();
     return new Translation2d(oculusPosition[2], -oculusPosition[0]);
+  }
+
+  private Pose2d getRawPose() {
+    return new Pose2d(getQuestTranslation(), Rotation2d.fromRadians(getQuestYawRad()));
   }
 
   private Pose2d getQuestPose() {

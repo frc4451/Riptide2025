@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.subsystems.quest.QuestConstants;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
 import frc.robot.util.LocalADStarAK;
@@ -185,15 +186,24 @@ public class Drive extends SubsystemBase {
 
     // TODO: Confidence for AprilTags & Quest
 
-    // AprilTag Cameras
-    for (PoseObservation observation : BobotState.getVisionObservations()) {
-      poseEstimator.addVisionMeasurement(
-          observation.robotPose().toPose2d(), observation.timestampSeconds());
-    }
+    {
+      // AprilTag Cameras
+      PoseObservation observation;
+      while ((observation = BobotState.getVisionObservations().poll()) != null) {
+        poseEstimator.addVisionMeasurement(
+            observation.robotPose().toPose2d(),
+            observation.timestampSeconds(),
+            observation.stdDevs());
+      }
 
-    // Quest
-    for (TimestampedPose timestampedPose : BobotState.getQuestMeasurments()) {
-      poseEstimator.addVisionMeasurement(timestampedPose.pose(), timestampedPose.timestamp());
+      // Quest
+      if (DriverStation.isEnabled()) {
+        TimestampedPose timestampedPose;
+        while ((timestampedPose = BobotState.getQuestMeasurments().poll()) != null) {
+          poseEstimator.addVisionMeasurement(
+              timestampedPose.pose(), timestampedPose.timestamp(), QuestConstants.stdDevs);
+        }
+      }
     }
 
     BobotState.updateGlobalPose(getPose());
