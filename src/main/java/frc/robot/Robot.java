@@ -151,6 +151,8 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    // We want to set the Quest's initial pose when we're testing at home
+    // We can check this by seeing if the FMS is attached
     if (!DriverStation.isFMSAttached()) {
       robotContainer.quest.resetPose(BobotState.getGlobalPose());
       robotContainer.quest.zeroAbsolutePosition();
