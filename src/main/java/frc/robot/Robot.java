@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.vision.VisionConstants;
 import frc.robot.util.VirtualSubsystem;
 import org.littletonrobotics.junction.LogFileUtil;
@@ -127,13 +128,14 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledExit() {
-    robotContainer.quest.resetPose(Pose2d.kZero);
-    robotContainer.quest.zeroAbsolutePosition();
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    robotContainer.quest.resetPose(BobotState.getGlobalPose());
+    robotContainer.quest.zeroAbsolutePosition();
+
     autonomousCommand = robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -149,6 +151,11 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    if (!DriverStation.isFMSAttached()) {
+      robotContainer.quest.resetPose(BobotState.getGlobalPose());
+      robotContainer.quest.zeroAbsolutePosition();
+    }
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
