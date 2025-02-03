@@ -88,20 +88,19 @@ public class FollowRollersIOTalonFX {
     // spotless:on
 
     BaseStatusSignal.setUpdateFrequencyForAll(
-            Constants.phoenixUpdateFreqHz,
-            leaderPosition,
-            leaderVelocity,
-            leaderVoltage,
-            leaderSupplyCurrentAmps,
-            leaderTorqueCurrentAmps,
-            leaderTempCelsius,
-            followerPosition,
-            followerVelocity,
-            followerVoltage,
-            followerSupplyCurrentAmps,
-            followerTorqueCurrentAmps,
-            followerTempCelsius)
-        .isOK();
+        Constants.phoenixUpdateFreqHz,
+        leaderPosition,
+        leaderVelocity,
+        leaderVoltage,
+        leaderSupplyCurrentAmps,
+        leaderTorqueCurrentAmps,
+        leaderTempCelsius,
+        followerPosition,
+        followerVelocity,
+        followerVoltage,
+        followerSupplyCurrentAmps,
+        followerTorqueCurrentAmps,
+        followerTempCelsius);
     leader.optimizeBusUtilization(0.0, 1.0);
     follower.optimizeBusUtilization(0.0, 1.0);
 

@@ -38,7 +38,6 @@ import frc.robot.subsystems.superstructure.pivot.PivotIOSim;
 import frc.robot.subsystems.superstructure.pivot.PivotSubsystem;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
