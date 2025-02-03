@@ -30,10 +30,6 @@ public class Pivot extends SingleRoller {
     this.pivotConstraints = pivotConstraints;
   }
 
-  public Pivot(SingleRollerIO io) {
-    this("Pivot", io, PivotConstants.trapezoidConstraints, PivotConstants.pivotConstraints);
-  }
-
   public void periodic() {
     super.periodic();
 

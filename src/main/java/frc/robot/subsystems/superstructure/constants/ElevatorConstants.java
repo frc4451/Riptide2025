@@ -1,7 +1,8 @@
-package frc.robot.subsystems.superstructure.elevator;
+package frc.robot.subsystems.superstructure.constants;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import frc.robot.subsystems.superstructure.elevator.ElevatorConstraints;
 
 public class ElevatorConstants {
   public static final int leaderCanId = 0;

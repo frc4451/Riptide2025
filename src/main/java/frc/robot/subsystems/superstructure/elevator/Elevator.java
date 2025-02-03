@@ -8,7 +8,6 @@ import frc.robot.Constants;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.follow.FollowRollers;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends FollowRollers {
@@ -55,9 +54,10 @@ public class Elevator extends FollowRollers {
         name + "/Profile/Goal/In",
         new LoggedTrapezoidState(
             Units.radiansToDegrees(goal.position), Units.radiansToDegrees(goal.velocity)));
+
+    Logger.recordOutput(name + "/HeightInches", getHeightInches());
   }
 
-  @AutoLogOutput(key = "Superstructure/Elevator/HeightInches")
   public double getHeightInches() {
     return inputs.leaderPositionRad * inchesPerRad;
   }
