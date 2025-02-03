@@ -30,12 +30,7 @@ import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.quest.QuestIO;
 import frc.robot.subsystems.quest.QuestIOReal;
 import frc.robot.subsystems.quest.QuestSubsystem;
-import frc.robot.subsystems.rollers.follow.FollowRollersIO;
-import frc.robot.subsystems.rollers.single.SingleRollerIO;
-import frc.robot.subsystems.superstructure.elevator.ElevatorIOSim;
-import frc.robot.subsystems.superstructure.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.superstructure.pivot.PivotIOSim;
-import frc.robot.subsystems.superstructure.pivot.PivotSubsystem;
+import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -50,8 +45,7 @@ public class RobotContainer {
   // Subsystems
   public final Drive drive;
   private final Vision vision = new Vision();
-  private final PivotSubsystem pivotSubsystem;
-  private final ElevatorSubsystem elevatorSubsystem;
+  private final SuperStructure superStructure = new SuperStructure();
 
   public final QuestSubsystem quest;
 
@@ -76,8 +70,6 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
-        pivotSubsystem = new PivotSubsystem(new SingleRollerIO() {});
-        elevatorSubsystem = new ElevatorSubsystem(new FollowRollersIO() {});
         quest = new QuestSubsystem(new QuestIOReal());
         break;
 
@@ -90,8 +82,6 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        pivotSubsystem = new PivotSubsystem(new PivotIOSim());
-        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
         quest = new QuestSubsystem(new QuestIO() {});
         break;
 
@@ -104,8 +94,6 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        pivotSubsystem = new PivotSubsystem(new SingleRollerIO() {});
-        elevatorSubsystem = new ElevatorSubsystem(new FollowRollersIO() {});
         quest = new QuestSubsystem(new QuestIO() {});
         break;
     }
@@ -132,8 +120,10 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    elevatorSubsystem.setDefaultCommand(elevatorSubsystem.runTrapezoidProfileCommand());
-    pivotSubsystem.setDefaultCommand(pivotSubsystem.runTrapezoidProfileCommand());
+    // superStructure.setDefaultCommand(superStructure.elevatorManualCommand(() ->
+    // -operatorController.getRightYSquared()));
+    operatorController.a().whileTrue(superStructure.elevatorSetSetpoint(0));
+    operatorController.y().whileTrue(superStructure.elevatorSetSetpoint(10));
   }
 
   /**
@@ -152,14 +142,6 @@ public class RobotContainer {
             () -> -driverController.getRightXSquared()));
 
     configureAlignmentBindings();
-
-    // TEMP -> Test Pivot Subsystem
-    operatorController.povDown().whileTrue(elevatorSubsystem.setGoalInchesCommand(10));
-    operatorController.povUp().whileTrue(elevatorSubsystem.setGoalInchesCommand(0));
-
-    operatorController.b().onTrue(pivotSubsystem.setGoalRadCommand(0));
-    operatorController.y().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI / 2.0));
-    operatorController.a().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI));
   }
 
   private void configureAlignmentBindings() {

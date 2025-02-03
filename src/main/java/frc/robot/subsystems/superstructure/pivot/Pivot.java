@@ -4,24 +4,23 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
+import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
-import frc.robot.subsystems.rollers.single.SingleRollerSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class PivotSubsystem extends SingleRollerSubsystem {
+public class Pivot extends SingleRoller {
   private final TrapezoidProfile trapezoidProfile;
+
+  private final PivotConstraints pivotConstraints;
 
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
 
   private TrapezoidProfile.State goal = new TrapezoidProfile.State();
 
-  private final PivotConstraints pivotConstraints;
-
-  public PivotSubsystem(
+  public Pivot(
       String name,
       SingleRollerIO io,
       TrapezoidProfile.Constraints trapezoidConstraints,
@@ -31,7 +30,7 @@ public class PivotSubsystem extends SingleRollerSubsystem {
     this.pivotConstraints = pivotConstraints;
   }
 
-  public PivotSubsystem(SingleRollerIO io) {
+  public Pivot(SingleRollerIO io) {
     this("Pivot", io, PivotConstants.trapezoidConstraints, PivotConstants.pivotConstraints);
   }
 
@@ -43,38 +42,34 @@ public class PivotSubsystem extends SingleRollerSubsystem {
     }
 
     Logger.recordOutput(
-        getName() + "/Profile/Setpoint/Rad",
+        name + "/Profile/Setpoint/Rad",
         new LoggedTrapezoidState(setpoint.position, setpoint.velocity));
     Logger.recordOutput(
-        getName() + "/Profile/Setpoint/Deg",
+        name + "/Profile/Setpoint/Deg",
         new LoggedTrapezoidState(
             Units.radiansToDegrees(setpoint.position), Units.radiansToDegrees(setpoint.velocity)));
 
     Logger.recordOutput(
-        getName() + "/Profile/Goal/Rad", new LoggedTrapezoidState(goal.position, goal.velocity));
+        name + "/Profile/Goal/Rad", new LoggedTrapezoidState(goal.position, goal.velocity));
     Logger.recordOutput(
-        getName() + "/Profile/Goal/Deg",
+        name + "/Profile/Goal/Deg",
         new LoggedTrapezoidState(
             Units.radiansToDegrees(goal.position), Units.radiansToDegrees(goal.velocity)));
   }
 
   @AutoLogOutput()
-  private double getPositionDegrees() {
+  public double getPositionDegrees() {
     return Units.radiansToDegrees(inputs.positionRad);
   }
 
   @AutoLogOutput()
-  private double getVelocityDegreesPerSec() {
+  public double getVelocityDegreesPerSec() {
     return Units.radiansToDegrees(inputs.velocityRadPerSec);
   }
 
-  private void runTrapezoidProfile() {
+  public void runTrapezoidProfile() {
     setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
     io.runPosition(setpoint.position);
-  }
-
-  public Command runTrapezoidProfileCommand() {
-    return run(this::runTrapezoidProfile);
   }
 
   public void setGoalRad(double positionInches) {
@@ -85,11 +80,7 @@ public class PivotSubsystem extends SingleRollerSubsystem {
   }
 
   private void resetController() {
-    setGoalRadCommand(0.0);
+    setGoalRad(0.0);
     setpoint = new TrapezoidProfile.State(0.0, 0.0);
-  }
-
-  public Command setGoalRadCommand(double positionRad) {
-    return runOnce(() -> setGoalRad(positionRad));
   }
 }

@@ -1,6 +1,5 @@
 package frc.robot.subsystems.rollers.single;
 
-import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -12,17 +11,15 @@ import frc.robot.Constants;
 public class SingleRollerIOSim implements SingleRollerIO {
   private final DCMotorSim sim;
 
-  private final PIDController controller;
+  private final PIDController controller = new PIDController(5.0, 0, 0);
 
   private double appliedVoltage = 0.0;
 
   private boolean closedLoop = false;
 
-  public SingleRollerIOSim(
-      DCMotor motorModel, double reduction, double moi, PIDConstants pidConstants) {
+  public SingleRollerIOSim(DCMotor motorModel, double reduction, double moi) {
     sim =
         new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
-    controller = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
   }
 
   @Override

@@ -18,9 +18,8 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
-import frc.robot.subsystems.rollers.follow.FollowRollersIO.FollowRollersIOInputs;
 
-public class FollowRollersIOTalonFX {
+public class FollowRollersIOTalonFX implements FollowRollersIO {
   private final TalonFX leader;
   private final TalonFX follower;
 

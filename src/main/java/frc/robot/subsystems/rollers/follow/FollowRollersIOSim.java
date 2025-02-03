@@ -1,6 +1,5 @@
 package frc.robot.subsystems.rollers.follow;
 
-import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -13,7 +12,7 @@ public class FollowRollersIOSim implements FollowRollersIO {
   private final DCMotorSim leader;
   private final DCMotorSim follower;
 
-  private final PIDController controller;
+  private final PIDController controller = new PIDController(5.0, 0, 0);
 
   private double appliedVoltage = 0.0;
 
@@ -26,7 +25,6 @@ public class FollowRollersIOSim implements FollowRollersIO {
       DCMotor followerModel,
       double reduction,
       double moi,
-      PIDConstants pidConstants,
       boolean invertFollower) {
     leader =
         new DCMotorSim(
@@ -34,8 +32,6 @@ public class FollowRollersIOSim implements FollowRollersIO {
     follower =
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(followerModel, moi, reduction), followerModel);
-
-    controller = new PIDController(pidConstants.kP, pidConstants.kI, pidConstants.kD);
 
     this.invertFollower = invertFollower;
   }
