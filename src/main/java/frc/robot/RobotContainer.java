@@ -31,6 +31,7 @@ import frc.robot.subsystems.quest.QuestIO;
 import frc.robot.subsystems.quest.QuestIOReal;
 import frc.robot.subsystems.quest.QuestSubsystem;
 import frc.robot.subsystems.superstructure.SuperStructure;
+import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -122,8 +123,8 @@ public class RobotContainer {
 
     // superStructure.setDefaultCommand(superStructure.elevatorManualCommand(() ->
     // -operatorController.getRightYSquared()));
-    operatorController.a().whileTrue(superStructure.elevatorSetSetpoint(0));
-    operatorController.y().whileTrue(superStructure.elevatorSetSetpoint(10));
+    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.INTAKE));
   }
 
   /**

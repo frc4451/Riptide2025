@@ -34,10 +34,11 @@ public class Elevator extends FollowRollers {
 
   public void periodic() {
     super.periodic();
-    runTrapezoidProfile();
 
     if (DriverStation.isDisabled()) {
       resetController();
+    } else {
+      runTrapezoidProfile();
     }
 
     Logger.recordOutput(

@@ -35,6 +35,8 @@ public class Pivot extends SingleRoller {
 
     if (DriverStation.isDisabled()) {
       resetController();
+    } else {
+      runTrapezoidProfile();
     }
 
     Logger.recordOutput(
@@ -51,14 +53,15 @@ public class Pivot extends SingleRoller {
         name + "/Profile/Goal/Deg",
         new LoggedTrapezoidState(
             Units.radiansToDegrees(goal.position), Units.radiansToDegrees(goal.velocity)));
+  
+    Logger.recordOutput(name + "/PositionDegrees", getPositionDegrees());
+    Logger.recordOutput(name + "/VelocityDegreesPerSecond", getVelocityDegreesPerSec());
   }
 
-  @AutoLogOutput()
   public double getPositionDegrees() {
     return Units.radiansToDegrees(inputs.positionRad);
   }
 
-  @AutoLogOutput()
   public double getVelocityDegreesPerSec() {
     return Units.radiansToDegrees(inputs.velocityRadPerSec);
   }
