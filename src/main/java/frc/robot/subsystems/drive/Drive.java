@@ -192,8 +192,9 @@ public class Drive extends SubsystemBase {
       while ((observation = BobotState.getVisionObservations().poll()) != null) {
         poseEstimator.addVisionMeasurement(
             observation.robotPose().toPose2d(),
-            observation.timestampSeconds(),
-            observation.stdDevs());
+            observation.timestampSeconds()
+            // ,observation.stdDevs()
+            );
       }
 
       // Quest
@@ -201,7 +202,9 @@ public class Drive extends SubsystemBase {
         TimestampedPose timestampedPose;
         while ((timestampedPose = BobotState.getQuestMeasurments().poll()) != null) {
           poseEstimator.addVisionMeasurement(
-              timestampedPose.pose(), timestampedPose.timestamp(), QuestConstants.stdDevs);
+              timestampedPose.pose(), timestampedPose.timestamp()
+              // , QuestConstants.stdDevs
+              );
         }
       }
     }

@@ -14,14 +14,15 @@ public class QuestSubsystem extends VirtualSubsystem {
   private final QuestIO io;
   private final QuestIOInputsAutoLogged inputs = new QuestIOInputsAutoLogged();
 
+  private boolean hasDisconnected = true;
+
   private final Alert disconnectedAlert = new Alert("Quest Disconnected!", AlertType.kWarning);
   private final Alert lowBatteryAlert =
       new Alert("Quest Battery is Low! (<25%)", AlertType.kWarning);
 
   public QuestSubsystem(QuestIO io) {
     this.io = io;
-    io.resetPose(Pose2d.kZero);
-    io.zeroAbsolutePosition();
+    resetPose(Pose2d.kZero);
   }
 
   @Override
@@ -32,19 +33,30 @@ public class QuestSubsystem extends VirtualSubsystem {
     disconnectedAlert.set(!inputs.connected && Constants.currentMode != Mode.SIM);
     lowBatteryAlert.set(inputs.batteryLevel < 25 && !disconnectedAlert.get());
 
-    if (DriverStation.isEnabled() && inputs.connected) {
-      BobotState.offerQuestMeasurment(new TimestampedPose(inputs.robotPose, inputs.timestamp));
+    // We should only be offering measurements if the robot is enabled & if we did not only recently
+    // just reconnect
+    boolean offeringMeasurements = false;
+    if (inputs.connected) {
+      if (DriverStation.isEnabled() && !hasDisconnected) {
+        BobotState.offerQuestMeasurment(new TimestampedPose(inputs.robotPose, inputs.timestamp));
+        offeringMeasurements = true;
+      }
+
+      // If the we lose then regain connection in a match we want to reset to our global pose,
+      // lest our robot measurements forever be wrong
+      if (hasDisconnected) {
+        resetPose(BobotState.getGlobalPose());
+        hasDisconnected = false;
+      }
     } else {
-      io.resetPose(BobotState.getGlobalPose());
+      hasDisconnected = true;
     }
+
+    Logger.recordOutput("Oculus/OfferingMeasurements", offeringMeasurements);
   }
 
   public void resetPose(Pose2d pose) {
     io.resetPose(pose);
-  }
-
-  public void zeroAbsolutePosition() {
-    io.zeroAbsolutePosition();
   }
 
   @Override
