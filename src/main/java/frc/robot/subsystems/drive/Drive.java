@@ -40,7 +40,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.bobot_state.BobotState;
-import frc.robot.subsystems.quest.QuestConstants;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
 import frc.robot.util.LocalADStarAK;
@@ -191,8 +190,7 @@ public class Drive extends SubsystemBase {
       PoseObservation observation;
       while ((observation = BobotState.getVisionObservations().poll()) != null) {
         poseEstimator.addVisionMeasurement(
-            observation.robotPose().toPose2d(),
-            observation.timestampSeconds()
+            observation.robotPose().toPose2d(), observation.timestampSeconds()
             // ,observation.stdDevs()
             );
       }
