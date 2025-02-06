@@ -1,6 +1,7 @@
 package frc.robot.subsystems.superstructure;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -28,6 +29,12 @@ public class SuperStructure extends SubsystemBase {
   private final SingleRoller coralShooter;
   private final Pivot algaePivot;
   private final SingleRoller algaeShooter;
+
+  private final SuperStructureMechanism measuredMechanism =
+      new SuperStructureMechanism("Measured", Color.kGreen, Color.kGreen, Color.kGreen);
+  private final SuperStructureMechanism setpointMechanism =
+      new SuperStructureMechanism(
+          "Setpoint", Color.kBlueViolet, Color.kBlueViolet, Color.kBlueViolet);
 
   private SuperStructureModes mode = SuperStructureModes.TUCKED;
 
@@ -160,6 +167,13 @@ public class SuperStructure extends SubsystemBase {
     coralShooter.periodic();
     algaePivot.periodic();
     algaeShooter.periodic();
+
+    measuredMechanism.update(
+        elevator.getHeightInches(),
+        coralPivot.getPositionDegrees(),
+        algaePivot.getPositionDegrees());
+    setpointMechanism.update(
+        elevator.getGoalInches(), coralPivot.getGoalRad(), algaePivot.getGoalRad());
   }
 
   private void setMode(SuperStructureModes mode) {
@@ -171,23 +185,15 @@ public class SuperStructure extends SubsystemBase {
     }
   }
 
-  private void setAlgaeShooterModes(AlgaeShooterModes mode) { 
+  private void setAlgaeShooterModes(AlgaeShooterModes mode) {
     algaeShooter.runVolts(mode.voltage);
   }
 
-  private void setCoralShooterModes(CoralShooterModes mode) { 
+  private void setCoralShooterModes(CoralShooterModes mode) {
     coralShooter.runVolts(mode.voltage);
   }
 
   public Command setModeCommand(SuperStructureModes mode) {
     return runOnce(() -> setMode(mode));
   }
-
-  // public Command elevatorManualCommand(DoubleSupplier input) {
-  //   return run(() -> elevator.runVolts(input.getAsDouble() * 12.0));
-  // }
-
-  // public Command elevatorSetSetpoint(double heightInches) {
-  //   return run(() -> elevator.setGoalInches(heightInches));
-  // }
 }

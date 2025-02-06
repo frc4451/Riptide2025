@@ -52,7 +52,7 @@ public class Pivot extends SingleRoller {
         name + "/Profile/Goal/Deg",
         new LoggedTrapezoidState(
             Units.radiansToDegrees(goal.position), Units.radiansToDegrees(goal.velocity)));
-  
+
     Logger.recordOutput(name + "/PositionDegrees", getPositionDegrees());
     Logger.recordOutput(name + "/VelocityDegreesPerSecond", getVelocityDegreesPerSec());
   }
@@ -75,6 +75,10 @@ public class Pivot extends SingleRoller {
         MathUtil.clamp(
             positionInches, pivotConstraints.minRadians(), pivotConstraints.maxRadians());
     goal = new TrapezoidProfile.State(clampedPosition, 0.0);
+  }
+
+  public double getGoalRad() {
+    return goal.position;
   }
 
   private void resetController() {

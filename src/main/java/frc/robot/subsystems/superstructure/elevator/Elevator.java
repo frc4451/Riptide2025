@@ -77,6 +77,10 @@ public class Elevator extends FollowRollers {
     goal = new TrapezoidProfile.State(clampedPosition, 0.0);
   }
 
+  public double getGoalInches() {
+    return goal.position;
+  }
+
   private void resetController() {
     setGoalInches(0.0);
     setpoint = new TrapezoidProfile.State(0.0, 0.0);
