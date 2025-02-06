@@ -1,6 +1,7 @@
 package frc.robot.subsystems.superstructure.pivot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -53,16 +54,8 @@ public class Pivot extends SingleRoller {
         new LoggedTrapezoidState(
             Units.radiansToDegrees(goal.position), Units.radiansToDegrees(goal.velocity)));
 
-    Logger.recordOutput(name + "/PositionDegrees", getPositionDegrees());
-    Logger.recordOutput(name + "/VelocityDegreesPerSecond", getVelocityDegreesPerSec());
-  }
-
-  public double getPositionDegrees() {
-    return Units.radiansToDegrees(inputs.positionRad);
-  }
-
-  public double getVelocityDegreesPerSec() {
-    return Units.radiansToDegrees(inputs.velocityRadPerSec);
+    Logger.recordOutput(name + "/PositionDegrees", getPosition().getDegrees());
+    Logger.recordOutput(name + "/VelocityDegreesPerSecond", getVelocity().getDegrees());
   }
 
   public void runTrapezoidProfile() {
@@ -70,19 +63,34 @@ public class Pivot extends SingleRoller {
     io.runPosition(setpoint.position);
   }
 
-  public void setGoalRad(double positionInches) {
+  public Rotation2d getPosition() {
+    return new Rotation2d(inputs.positionRad);
+  }
+
+  public Rotation2d getVelocity() {
+    return new Rotation2d(inputs.velocityRadPerSec);
+  }
+
+  public void setGoal(Rotation2d angle) {
+    setGoal(angle.getRadians());
+  }
+
+  public void setGoal(double angleRad) {
     double clampedPosition =
-        MathUtil.clamp(
-            positionInches, pivotConstraints.minRadians(), pivotConstraints.maxRadians());
+        MathUtil.clamp(angleRad, pivotConstraints.minRadians(), pivotConstraints.maxRadians());
     goal = new TrapezoidProfile.State(clampedPosition, 0.0);
   }
 
-  public double getGoalRad() {
-    return goal.position;
+  public Rotation2d getGoalPosition() {
+    return new Rotation2d(goal.position);
+  }
+
+  public Rotation2d getGoalVelocity() {
+    return new Rotation2d(goal.velocity);
   }
 
   private void resetController() {
-    setGoalRad(0.0);
+    setGoal(0.0);
     setpoint = new TrapezoidProfile.State(0.0, 0.0);
   }
 }

@@ -169,31 +169,29 @@ public class SuperStructure extends SubsystemBase {
     algaeShooter.periodic();
 
     measuredMechanism.update(
-        elevator.getHeightInches(),
-        coralPivot.getPositionDegrees(),
-        algaePivot.getPositionDegrees());
+        elevator.getHeightInches(), coralPivot.getPosition(), algaePivot.getPosition());
     setpointMechanism.update(
-        elevator.getGoalInches(), coralPivot.getGoalRad(), algaePivot.getGoalRad());
+        elevator.getGoalHeightInches(), coralPivot.getGoalPosition(), algaePivot.getGoalPosition());
   }
 
   private void setMode(SuperStructureModes mode) {
-    if (!(this.mode == mode)) {
+    if (this.mode != mode) {
       this.mode = mode;
-      elevator.setGoalInches(mode.elevatorHeightInches);
-      coralPivot.setGoalRad(mode.coralPos.getRadians());
-      algaePivot.setGoalRad(mode.algaePos.getRadians());
+      elevator.setGoalHeightInches(mode.elevatorHeightInches);
+      coralPivot.setGoal(mode.coralPos.getRadians());
+      algaePivot.setGoal(mode.algaePos.getRadians());
     }
-  }
-
-  private void setAlgaeShooterModes(AlgaeShooterModes mode) {
-    algaeShooter.runVolts(mode.voltage);
-  }
-
-  private void setCoralShooterModes(CoralShooterModes mode) {
-    coralShooter.runVolts(mode.voltage);
   }
 
   public Command setModeCommand(SuperStructureModes mode) {
     return runOnce(() -> setMode(mode));
+  }
+
+  private void runAlgaeShooter(AlgaeShooterModes mode) {
+    algaeShooter.runVolts(mode.voltage);
+  }
+
+  private void runCoralShooter(CoralShooterModes mode) {
+    coralShooter.runVolts(mode.voltage);
   }
 }

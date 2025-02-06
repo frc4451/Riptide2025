@@ -2,7 +2,6 @@ package frc.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
@@ -47,14 +46,13 @@ public class Elevator extends FollowRollers {
     Logger.recordOutput(
         name + "/Profile/Setpoint/In",
         new LoggedTrapezoidState(
-            Units.radiansToDegrees(setpoint.position), Units.radiansToDegrees(setpoint.velocity)));
+            setpoint.position * inchesPerRad, setpoint.velocity * inchesPerRad));
 
     Logger.recordOutput(
         name + "/Profile/Goal/Rad", new LoggedTrapezoidState(goal.position, goal.velocity));
     Logger.recordOutput(
         name + "/Profile/Goal/In",
-        new LoggedTrapezoidState(
-            Units.radiansToDegrees(goal.position), Units.radiansToDegrees(goal.velocity)));
+        new LoggedTrapezoidState(goal.position * inchesPerRad, goal.velocity * inchesPerRad));
 
     Logger.recordOutput(name + "/HeightInches", getHeightInches());
   }
@@ -68,21 +66,21 @@ public class Elevator extends FollowRollers {
     io.runPosition(setpoint.position);
   }
 
-  public void setGoalInches(double positionInches) {
-    double clampedPosition =
+  public void setGoalHeightInches(double positionInches) {
+    double clampedPositionRad =
         MathUtil.clamp(
             positionInches / inchesPerRad,
             elevatorConstraints.minHeightInches() / inchesPerRad,
             elevatorConstraints.maxHeightInches() / inchesPerRad);
-    goal = new TrapezoidProfile.State(clampedPosition, 0.0);
+    goal = new TrapezoidProfile.State(clampedPositionRad, 0.0);
   }
 
-  public double getGoalInches() {
-    return goal.position;
+  public double getGoalHeightInches() {
+    return goal.position * inchesPerRad;
   }
 
   private void resetController() {
-    setGoalInches(0.0);
+    setGoalHeightInches(0.0);
     setpoint = new TrapezoidProfile.State(0.0, 0.0);
   }
 }

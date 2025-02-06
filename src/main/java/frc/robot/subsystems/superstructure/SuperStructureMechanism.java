@@ -46,11 +46,11 @@ public class SuperStructureMechanism {
   }
 
   /** Update arm visualizer with current arm angle */
-  public void update(double elevatorHeightInches, double coralAngleRads, double algaeAngleRads) {
+  public void update(double elevatorHeightInches, Rotation2d coralAngle, Rotation2d algaeAngle) {
     // TODO: Place pivots on their spots on the elevator
     elevator.setLength(elevatorHeightInches);
-    coralPivot.setAngle(Rotation2d.fromRadians(coralAngleRads));
-    algaePivot.setAngle(Rotation2d.fromRadians(algaeAngleRads));
+    coralPivot.setAngle(coralAngle);
+    algaePivot.setAngle(algaeAngle);
     Logger.recordOutput("Superstructure/" + key + "/Mechanism2d", mechanism);
 
     // Log 3d poses
