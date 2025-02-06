@@ -8,7 +8,6 @@ import frc.robot.Constants;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Pivot extends SingleRoller {

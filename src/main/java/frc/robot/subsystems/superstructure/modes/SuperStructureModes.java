@@ -8,8 +8,7 @@ public enum SuperStructureModes {
   L1(1.0, Rotation2d.kPi, Rotation2d.kPi),
   L2(2.0, Rotation2d.kPi, Rotation2d.kPi),
   L3(3.0, Rotation2d.kPi, Rotation2d.kPi),
-  L4(4.0, Rotation2d.kPi, Rotation2d.kPi)
-  ;
+  L4(4.0, Rotation2d.kPi, Rotation2d.kPi);
 
   public final double elevatorHeightInches;
   public final Rotation2d coralPos;
