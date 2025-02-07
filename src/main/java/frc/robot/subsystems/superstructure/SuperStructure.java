@@ -18,6 +18,7 @@ import frc.robot.subsystems.superstructure.constants.CoralPivotConstants;
 import frc.robot.subsystems.superstructure.constants.CoralShooterConstants;
 import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
+import frc.robot.subsystems.superstructure.mechanism.SuperStructureMechanism;
 import frc.robot.subsystems.superstructure.modes.AlgaeShooterModes;
 import frc.robot.subsystems.superstructure.modes.CoralShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
@@ -32,9 +33,8 @@ public class SuperStructure extends SubsystemBase {
 
   private final SuperStructureMechanism measuredMechanism =
       new SuperStructureMechanism("Measured", Color.kGreen, Color.kGreen, Color.kGreen);
-  private final SuperStructureMechanism setpointMechanism =
-      new SuperStructureMechanism(
-          "Setpoint", Color.kBlueViolet, Color.kBlueViolet, Color.kBlueViolet);
+  private final SuperStructureMechanism goalMechanism =
+      new SuperStructureMechanism("Goal", Color.kBlueViolet, Color.kBlueViolet, Color.kBlueViolet);
 
   private SuperStructureModes mode = SuperStructureModes.TUCKED;
 
@@ -170,7 +170,7 @@ public class SuperStructure extends SubsystemBase {
 
     measuredMechanism.update(
         elevator.getHeightInches(), coralPivot.getPosition(), algaePivot.getPosition());
-    setpointMechanism.update(
+    goalMechanism.update(
         elevator.getGoalHeightInches(), coralPivot.getGoalPosition(), algaePivot.getGoalPosition());
   }
 
