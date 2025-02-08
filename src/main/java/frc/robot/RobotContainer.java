@@ -13,10 +13,14 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
@@ -34,7 +38,6 @@ import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -55,7 +58,8 @@ public class RobotContainer {
   private final CommandCustomXboxController operatorController = new CommandCustomXboxController(1);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  // private final LoggedDashboardChooser<Command> autoChooser;
+  private final AutoChooser autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -100,23 +104,30 @@ public class RobotContainer {
     }
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new AutoChooser();
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
+    autoChooser.addCmd(
+        "Drive Wheel Radius Characterization",
+        () -> DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addCmd(
+        "Drive Simple FF Characterization", () -> DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addCmd(
         "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
+        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addCmd(
         "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addCmd(
+        "Drive SysId (Dynamic Forward)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addCmd(
+        "Drive SysId (Dynamic Reverse)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addRoutine("2 Meters", () -> getTestAuto("2 Meters"));
+    autoChooser.addRoutine("3 Meters", () -> getTestAuto("3 Meters"));
+    autoChooser.addRoutine("5 Meters", () -> getTestAuto("5 Meters"));
+
+    SmartDashboard.putData("Auto chooser?", autoChooser);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -203,6 +214,25 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return autoChooser.selectedCommand();
+  }
+
+  public AutoRoutine getTestAuto(String name) {
+    AutoRoutine routine = drive.autoFactory.newRoutine("testAuto");
+
+    AutoTrajectory trajectory = routine.trajectory(name);
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                Commands.runOnce(
+                    () -> {
+                      trajectory.getInitialPose().ifPresent((pose) -> quest.resetPose(pose));
+                    }),
+                trajectory.resetOdometry(),
+                trajectory.cmd()));
+
+    return routine;
   }
 }
