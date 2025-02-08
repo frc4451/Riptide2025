@@ -18,8 +18,8 @@ public class ElevatorConstants {
   public static final boolean invertFollower = true;
   public static final double currentLimitAmps = 30;
 
-  public static final ElevatorConstraints elevatorConstraints = new ElevatorConstraints(0, 10);
+  public static final ElevatorConstraints elevatorConstraints = new ElevatorConstraints(0, 40);
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
-      new TrapezoidProfile.Constraints(1.0 * inchesPerRad, 1.0 * inchesPerRad);
+      new TrapezoidProfile.Constraints(10.0 * inchesPerRad, 10.0 * inchesPerRad);
 }

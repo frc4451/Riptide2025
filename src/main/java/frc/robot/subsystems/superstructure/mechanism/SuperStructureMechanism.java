@@ -3,6 +3,8 @@ package frc.robot.subsystems.superstructure.mechanism;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.subsystems.superstructure.constants.AlgaePivotConstants;
+import frc.robot.subsystems.superstructure.constants.CoralPivotConstants;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
@@ -22,7 +24,7 @@ public class SuperStructureMechanism {
   private final String key;
 
   public SuperStructureMechanism(
-      String key, Color elevatorColor, Color coralColor, Color algaeColor) {
+      String key, Color elevatorColor, Color coralColor, Color algaeColor, double lineWidth) {
     this.key = key;
     mechanism =
         new LoggedMechanism2d(
@@ -30,14 +32,18 @@ public class SuperStructureMechanism {
             MechanismConstants.displayHeight,
             new Color8Bit(Color.kWhite));
 
-    LoggedMechanismRoot2d root = mechanism.getRoot("superstructure", MechanismConstants.rootPosition.getX(), MechanismConstants.rootPosition.getY());
+    LoggedMechanismRoot2d root =
+        mechanism.getRoot(
+            "superstructure",
+            MechanismConstants.rootPosition.getX(),
+            MechanismConstants.rootPosition.getY());
 
     elevator =
         new LoggedMechanismLigament2d(
             "elevator",
             MechanismConstants.elevatorInitialHeight,
             MechanismConstants.elevatorRotation.getDegrees(),
-            MechanismConstants.lineWidth,
+            lineWidth,
             new Color8Bit(elevatorColor));
     root.append(elevator);
 
@@ -46,8 +52,8 @@ public class SuperStructureMechanism {
     coralPosition =
         new LoggedMechanismLigament2d(
             "coralPosition",
-            MechanismConstants.coralElevatorOffset,
-            MechanismConstants.elevatorRotation.getDegrees(),
+            MechanismConstants.coralPositionOffset,
+            0.0,
             0.0, // Hides the line
             new Color8Bit(Color.kWhite));
     elevator.append(coralPosition);
@@ -55,24 +61,25 @@ public class SuperStructureMechanism {
         new LoggedMechanismLigament2d(
             "coralPivot",
             MechanismConstants.coralPivotLength,
-            MechanismConstants.coralInitialAngle.getDegrees(),
-            MechanismConstants.lineWidth,
+            CoralPivotConstants.initialAngle.getDegrees(),
+            lineWidth,
             new Color8Bit(coralColor));
     coralPosition.append(coralPivot);
 
     algaePosition =
         new LoggedMechanismLigament2d(
             "algaePosition",
-            MechanismConstants.algaeElevatorOffset,
-            MechanismConstants.elevatorRotation.getDegrees(),
+            MechanismConstants.algaePositionOffset,
+            0.0,
             0.0,
             new Color8Bit(Color.kWhite));
+    coralPivot.append(algaePosition);
     algaePivot =
         new LoggedMechanismLigament2d(
             "algaePivot",
             MechanismConstants.algaePivotLength,
-            MechanismConstants.algaeInitialAngle.getDegrees(),
-            MechanismConstants.lineWidth,
+            AlgaePivotConstants.initialAngle.getDegrees(),
+            lineWidth,
             new Color8Bit(algaeColor));
     algaePosition.append(algaePivot);
   }

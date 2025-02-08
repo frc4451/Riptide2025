@@ -31,10 +31,12 @@ public class SuperStructure extends SubsystemBase {
   private final Pivot algaePivot;
   private final SingleRoller algaeShooter;
 
-  private final SuperStructureMechanism measuredMechanism =
-      new SuperStructureMechanism("Measured", Color.kGreen, Color.kGreen, Color.kGreen);
   private final SuperStructureMechanism goalMechanism =
-      new SuperStructureMechanism("Goal", Color.kBlueViolet, Color.kBlueViolet, Color.kBlueViolet);
+      new SuperStructureMechanism(
+          "Goal", Color.kLightBlue, Color.kLightGreen, Color.kTurquoise, 10.0);
+  private final SuperStructureMechanism measuredMechanism =
+      new SuperStructureMechanism(
+          "Measured", Color.kDarkBlue, Color.kDarkGreen, Color.kDarkTurquoise, 3.0);
 
   private SuperStructureModes mode = SuperStructureModes.TUCKED;
 
