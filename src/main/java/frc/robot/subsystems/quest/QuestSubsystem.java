@@ -31,28 +31,11 @@ public class QuestSubsystem extends VirtualSubsystem {
     Logger.processInputs("Oculus", inputs);
 
     disconnectedAlert.set(!inputs.connected && Constants.currentMode != Mode.SIM);
+
     lowBatteryAlert.set(inputs.batteryLevel < 25 && !disconnectedAlert.get());
-
-    // We should only be offering measurements if the robot is enabled & if we did not only recently
-    // just reconnect
-    boolean offeringMeasurements = false;
-    if (inputs.connected) {
-      if (DriverStation.isEnabled() && !hasDisconnected) {
-        BobotState.offerQuestMeasurment(new TimestampedPose(inputs.robotPose, inputs.timestamp));
-        offeringMeasurements = true;
-      }
-
-      // If the we lose then regain connection in a match we want to reset to our global pose,
-      // lest our robot measurements forever be wrong
-      if (hasDisconnected) {
-        resetPose(BobotState.getGlobalPose());
-        hasDisconnected = false;
-      }
-    } else {
-      hasDisconnected = true;
+    if (DriverStation.isEnabled()) {
+      BobotState.offerQuestMeasurment(new TimestampedPose(inputs.robotPose, inputs.timestamp));
     }
-
-    Logger.recordOutput("Oculus/OfferingMeasurements", offeringMeasurements);
   }
 
   public void resetPose(Pose2d pose) {
