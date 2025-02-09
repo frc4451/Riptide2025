@@ -55,16 +55,18 @@ public class QuestIOReal implements QuestIO {
   }
 
   private boolean isConnected() {
+    // microseconds
     return ((RobotController.getFPGATime() - questTimestamp.getLastChange()) < 250_000);
   }
 
   /** Sets supplied pose as origin of all calculations */
   public void resetPose(Pose2d pose) {
+    zeroAbsolutePosition();
     resetPose = pose.plus(QuestConstants.robotToQuest);
   }
 
   /** Zeroes the absolute 3D position of the robot (similar to long-pressing the quest logo) */
-  public void zeroAbsolutePosition() {
+  private void zeroAbsolutePosition() {
     if (questMiso.get() != 99) {
       questMosi.set(1);
     }

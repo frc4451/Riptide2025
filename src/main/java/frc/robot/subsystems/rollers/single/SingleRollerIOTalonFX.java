@@ -5,6 +5,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -29,6 +30,8 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   private final StatusSignal<Temperature> tempCelsius;
 
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+  private final VelocityVoltage velocityOut =
+      new VelocityVoltage(0).withEnableFOC(true).withUpdateFreqHz(0);
   private final PositionVoltage positionOut =
       new PositionVoltage(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final NeutralOut neutralOut = new NeutralOut();
@@ -89,6 +92,10 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   @Override
   public void runVolts(double volts) {
     talon.setControl(voltageOut.withOutput(volts));
+  }
+
+  public void runVelocity(double velocityRadPerSecond) {
+    talon.setControl(velocityOut.withVelocity(velocityRadPerSecond));
   }
 
   /** Run roller at set position */

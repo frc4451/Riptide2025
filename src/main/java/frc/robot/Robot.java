@@ -122,19 +122,17 @@ public class Robot extends LoggedRobot {
     if (robotContainer.driverController.b().getAsBoolean()) {
       robotContainer.drive.setPose(Pose2d.kZero);
       robotContainer.quest.resetPose(Pose2d.kZero);
-      robotContainer.quest.zeroAbsolutePosition();
     }
   }
 
   @Override
   public void disabledExit() {
+    robotContainer.quest.resetPose(BobotState.getGlobalPose());
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    robotContainer.quest.resetPose(BobotState.getGlobalPose());
-    robotContainer.quest.zeroAbsolutePosition();
 
     autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -151,13 +149,6 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // We want to set the Quest's initial pose when we're testing at home
-    // We can check this by seeing if the FMS is attached
-    if (!DriverStation.isFMSAttached()) {
-      robotContainer.quest.resetPose(BobotState.getGlobalPose());
-      robotContainer.quest.zeroAbsolutePosition();
-    }
-
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

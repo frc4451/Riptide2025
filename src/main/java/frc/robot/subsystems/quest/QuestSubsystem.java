@@ -14,14 +14,15 @@ public class QuestSubsystem extends VirtualSubsystem {
   private final QuestIO io;
   private final QuestIOInputsAutoLogged inputs = new QuestIOInputsAutoLogged();
 
+  private boolean hasDisconnected = true;
+
   private final Alert disconnectedAlert = new Alert("Quest Disconnected!", AlertType.kWarning);
   private final Alert lowBatteryAlert =
       new Alert("Quest Battery is Low! (<25%)", AlertType.kWarning);
 
   public QuestSubsystem(QuestIO io) {
     this.io = io;
-    io.resetPose(Pose2d.kZero);
-    io.zeroAbsolutePosition();
+    resetPose(Pose2d.kZero);
   }
 
   @Override
@@ -30,21 +31,15 @@ public class QuestSubsystem extends VirtualSubsystem {
     Logger.processInputs("Oculus", inputs);
 
     disconnectedAlert.set(!inputs.connected && Constants.currentMode != Mode.SIM);
-    lowBatteryAlert.set(inputs.batteryLevel < 25 && !disconnectedAlert.get());
 
-    if (DriverStation.isEnabled() && inputs.connected) {
+    lowBatteryAlert.set(inputs.batteryLevel < 25 && !disconnectedAlert.get());
+    if (DriverStation.isEnabled()) {
       BobotState.offerQuestMeasurment(new TimestampedPose(inputs.robotPose, inputs.timestamp));
-    } else {
-      io.resetPose(BobotState.getGlobalPose());
     }
   }
 
   public void resetPose(Pose2d pose) {
     io.resetPose(pose);
-  }
-
-  public void zeroAbsolutePosition() {
-    io.zeroAbsolutePosition();
   }
 
   @Override

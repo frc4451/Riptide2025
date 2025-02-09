@@ -13,10 +13,14 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
@@ -30,15 +34,11 @@ import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.quest.QuestIO;
 import frc.robot.subsystems.quest.QuestIOReal;
 import frc.robot.subsystems.quest.QuestSubsystem;
-import frc.robot.subsystems.rollers.elevators.ElevatorIO;
-import frc.robot.subsystems.rollers.elevators.ElevatorIOSim;
-import frc.robot.subsystems.rollers.elevators.ElevatorSubsystem;
-import frc.robot.subsystems.rollers.pivot.PivotIO;
-import frc.robot.subsystems.rollers.pivot.PivotIOSim;
-import frc.robot.subsystems.rollers.pivot.PivotSubsystem;
+import frc.robot.subsystems.superstructure.SuperStructure;
+import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -50,8 +50,7 @@ public class RobotContainer {
   // Subsystems
   public final Drive drive;
   private final Vision vision = new Vision();
-  private final PivotSubsystem pivotSubsystem;
-  private final ElevatorSubsystem elevatorSubsystem;
+  private final SuperStructure superStructure = new SuperStructure();
 
   public final QuestSubsystem quest;
 
@@ -60,7 +59,8 @@ public class RobotContainer {
   private final CommandCustomXboxController operatorController = new CommandCustomXboxController(1);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+  // private final LoggedDashboardChooser<Command> autoChooser;
+  private final AutoChooser autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -76,8 +76,6 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
-        pivotSubsystem = new PivotSubsystem(new PivotIO() {});
-        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
         quest = new QuestSubsystem(new QuestIOReal());
         break;
 
@@ -90,8 +88,6 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        pivotSubsystem = new PivotSubsystem(new PivotIOSim());
-        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIOSim());
         quest = new QuestSubsystem(new QuestIO() {});
         break;
 
@@ -104,36 +100,43 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        pivotSubsystem = new PivotSubsystem(new PivotIO() {});
-        elevatorSubsystem = new ElevatorSubsystem(new ElevatorIO() {});
         quest = new QuestSubsystem(new QuestIO() {});
         break;
     }
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    autoChooser = new AutoChooser();
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
+    autoChooser.addCmd(
+        "Drive Wheel Radius Characterization",
+        () -> DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addCmd(
+        "Drive Simple FF Characterization", () -> DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addCmd(
         "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
+        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addCmd(
         "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addCmd(
+        "Drive SysId (Dynamic Forward)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addCmd(
+        "Drive SysId (Dynamic Reverse)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addRoutine("2 Meters", () -> getTestAuto("2 Meters"));
+    autoChooser.addRoutine("3 Meters", () -> getTestAuto("3 Meters"));
+    autoChooser.addRoutine("5 Meters", () -> getTestAuto("5 Meters"));
+
+    SmartDashboard.putData("Auto chooser?", autoChooser);
 
     // Configure the button bindings
     configureButtonBindings();
 
-    elevatorSubsystem.setDefaultCommand(elevatorSubsystem.runTrapezoidProfileCommand());
-    pivotSubsystem.setDefaultCommand(pivotSubsystem.runTrapezoidProfileCommand());
+    // superStructure.setDefaultCommand(superStructure.elevatorManualCommand(() ->
+    // -operatorController.getRightYSquared()));
+    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.INTAKE));
   }
 
   /**
@@ -152,15 +155,6 @@ public class RobotContainer {
             () -> -driverController.getRightXSquared()));
 
     configureAlignmentBindings();
-
-    // TEMP -> Test Pivot Subsystem
-    operatorController.povDown().whileTrue(pivotSubsystem.runRoller(-6.0));
-    operatorController.povUp().whileTrue(pivotSubsystem.runRoller(6.0));
-    operatorController.x().whileTrue(elevatorSubsystem.runRoller(1));
-
-    operatorController.b().onTrue(pivotSubsystem.setGoalRadCommand(0));
-    operatorController.y().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI / 2.0));
-    operatorController.a().onTrue(pivotSubsystem.setGoalRadCommand(Math.PI));
   }
 
   private void configureAlignmentBindings() {
@@ -221,6 +215,34 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
+    return autoChooser.selectedCommand();
+  }
+
+  // These should be moved into it's own auto files
+  private Command logAutoTrajectory(AutoTrajectory trajectory) {
+    return Commands.runOnce(
+        () ->
+            Logger.recordOutput(
+                "Odometry/Choreo/Trajectory", trajectory.getRawTrajectory().getPoses()));
+  }
+
+  private AutoRoutine getTestAuto(String name) {
+    AutoRoutine routine = drive.autoFactory.newRoutine("testAuto");
+
+    AutoTrajectory trajectory = routine.trajectory(name);
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                logAutoTrajectory(trajectory),
+                Commands.runOnce(
+                    () -> {
+                      trajectory.getInitialPose().ifPresent((pose) -> quest.resetPose(pose));
+                    }),
+                trajectory.resetOdometry(),
+                trajectory.cmd()));
+
+    return routine;
   }
 }
