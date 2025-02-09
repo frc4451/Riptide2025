@@ -268,6 +268,7 @@ public class Drive extends SubsystemBase {
     runVelocity(speeds);
 
     Logger.recordOutput("Odometry/Choreo/Sample/Pose", sample.getPose());
+    Logger.recordOutput("Odometry/Choreo/Sample/PoseError", sample.getPose().minus(pose));
     Logger.recordOutput("Odometry/Choreo/Sample/ChassisSpeeds", sample.getChassisSpeeds());
   }
 
