@@ -38,6 +38,7 @@ import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -217,7 +218,15 @@ public class RobotContainer {
     return autoChooser.selectedCommand();
   }
 
-  public AutoRoutine getTestAuto(String name) {
+  // These should be moved into it's own auto files
+  private Command logAutoTrajectory(AutoTrajectory trajectory) {
+    return Commands.runOnce(
+        () ->
+            Logger.recordOutput(
+                "Odometry/Choreo/Trajectory", trajectory.getRawTrajectory().getPoses()));
+  }
+
+  private AutoRoutine getTestAuto(String name) {
     AutoRoutine routine = drive.autoFactory.newRoutine("testAuto");
 
     AutoTrajectory trajectory = routine.trajectory(name);
@@ -226,6 +235,7 @@ public class RobotContainer {
         .active()
         .onTrue(
             Commands.sequence(
+                logAutoTrajectory(trajectory),
                 Commands.runOnce(
                     () -> {
                       trajectory.getInitialPose().ifPresent((pose) -> quest.resetPose(pose));
