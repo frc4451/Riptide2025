@@ -67,9 +67,9 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   public AutoFactory autoFactory;
-  private PIDController xController = new PIDController(1.0, 0.0, 0.0);
-  private PIDController yController = new PIDController(1.0, 0.0, 0.0);
-  private PIDController angleController = new PIDController(1.0, 0.0, 0.0);
+  private PIDController xController = new PIDController(5.0, 0.0, 0.0);
+  private PIDController yController = new PIDController(5.0, 0.0, 0.0);
+  private PIDController angleController = new PIDController(5.0, 0.0, 0.0);
 
   public Drive(
       GyroIO gyroIO,
