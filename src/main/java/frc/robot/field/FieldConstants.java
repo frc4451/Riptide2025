@@ -18,7 +18,7 @@ public class FieldConstants {
 
   public static record ReefFace(AprilTagStruct tag) {
     /**
-     * Attempts to calculate the `Left Pole` position to feed to PathPlanner
+     * Attempts to calculate the `Left Pole` position
      *
      * @return Pose2d representation of the `left pole` on the reef
      */
@@ -27,7 +27,7 @@ public class FieldConstants {
     }
 
     /**
-     * Attempts to calculate the `Right Pole` position to feed to PathPlanner
+     * Attempts to calculate the `Right Pole` position
      *
      * @return Pose2d representation of the `right pole` on the reef
      */

@@ -3,11 +3,7 @@ package frc.robot.util;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Subsystems that are intended to run periodically, independently of the CommandScheduler.
- *
- * <p>Examples could be: - VisionSubsystem - PathPlannerSubsystem
- */
+/** Subsystems that are intended to run periodically, independently of the CommandScheduler. */
 public abstract class VirtualSubsystem {
   private static final List<VirtualSubsystem> virtualSubsystems = new ArrayList<>();
 

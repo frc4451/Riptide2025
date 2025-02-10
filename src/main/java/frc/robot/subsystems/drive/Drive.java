@@ -93,28 +93,6 @@ public class Drive extends SubsystemBase {
     autoFactory =
         new AutoFactory(this::getPose, this::setPose, this::followTrajectory, false, this);
 
-    // // Configure AutoBuilder for PathPlanner
-    // AutoBuilder.configure(
-    //     this::getPose,
-    //     this::setPose,
-    //     this::getChassisSpeeds,
-    //     this::runVelocity,
-    //     new PPHolonomicDriveController(
-    //         new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
-    //     DriveConstants.ppConfig,
-    //     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-    //     this);
-    // Pathfinding.setPathfinder(new LocalADStarAK());
-    // PathPlannerLogging.setLogActivePathCallback(
-    //     (activePath) -> {
-    //       Logger.recordOutput(
-    //           "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
-    //     });
-    // PathPlannerLogging.setLogTargetPoseCallback(
-    //     (targetPose) -> {
-    //       Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
-    //     });
-
     // Configure SysId
     sysId =
         new SysIdRoutine(
