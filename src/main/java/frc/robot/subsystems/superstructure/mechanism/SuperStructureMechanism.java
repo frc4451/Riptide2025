@@ -1,6 +1,7 @@
 package frc.robot.subsystems.superstructure.mechanism;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.subsystems.superstructure.constants.AlgaePivotConstants;
@@ -86,7 +87,8 @@ public class SuperStructureMechanism {
 
   /** Update arm visualizer with current arm angle */
   public void update(double elevatorHeightInches, Rotation2d coralAngle, Rotation2d algaeAngle) {
-    elevator.setLength(MechanismConstants.elevatorInitialHeight + elevatorHeightInches);
+    elevator.setLength(
+        MechanismConstants.elevatorInitialHeight + Units.inchesToMeters(elevatorHeightInches));
 
     coralPivot.setAngle(coralAngle);
     algaePivot.setAngle(algaeAngle);
