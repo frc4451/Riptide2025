@@ -12,24 +12,27 @@ import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
+import frc.robot.subsystems.superstructure.can_range.CanRange;
+import frc.robot.subsystems.superstructure.can_range.CanRangeConstants;
+import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
+import frc.robot.subsystems.superstructure.can_range.CanRangeIOReal;
+import frc.robot.subsystems.superstructure.can_range.CanRangeIOSim;
 import frc.robot.subsystems.superstructure.constants.AlgaePivotConstants;
-import frc.robot.subsystems.superstructure.constants.AlgaeShooterConstants;
 import frc.robot.subsystems.superstructure.constants.CoralPivotConstants;
-import frc.robot.subsystems.superstructure.constants.CoralShooterConstants;
 import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
+import frc.robot.subsystems.superstructure.constants.ShooterConstants;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.mechanism.SuperStructureMechanism;
-import frc.robot.subsystems.superstructure.modes.AlgaeShooterModes;
-import frc.robot.subsystems.superstructure.modes.CoralShooterModes;
+import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.pivot.Pivot;
 
 public class SuperStructure extends SubsystemBase {
   private final Elevator elevator;
   private final Pivot coralPivot;
-  private final SingleRoller coralShooter;
+  private final SingleRoller shooter;
   private final Pivot algaePivot;
-  private final SingleRoller algaeShooter;
+  private final CanRange canRange;
 
   private final SuperStructureMechanism goalMechanism =
       new SuperStructureMechanism(
@@ -39,13 +42,14 @@ public class SuperStructure extends SubsystemBase {
           "Measured", Color.kDarkBlue, Color.kDarkGreen, Color.kDarkTurquoise, 3.0);
 
   private SuperStructureModes mode = SuperStructureModes.TUCKED;
+  private ShooterModes shooterMode = ShooterModes.NONE;
 
   public SuperStructure() {
     FollowRollersIO elevatorIO;
     SingleRollerIO coralPivotIO;
-    SingleRollerIO coralShooterIO;
+    SingleRollerIO shooterIO;
     SingleRollerIO algaePivotIO;
-    SingleRollerIO algaeShooterIO;
+    CanRangeIO canRangeIO;
 
     switch (Constants.currentMode) {
       case REAL:
@@ -64,12 +68,12 @@ public class SuperStructure extends SubsystemBase {
                 CoralPivotConstants.currentLimitAmps,
                 CoralPivotConstants.invert);
 
-        coralShooterIO =
+        shooterIO =
             new SingleRollerIOTalonFX(
-                CoralShooterConstants.canId,
-                CoralShooterConstants.reduction,
-                CoralShooterConstants.currentLimitAmps,
-                CoralShooterConstants.invert);
+                ShooterConstants.canId,
+                ShooterConstants.reduction,
+                ShooterConstants.currentLimitAmps,
+                ShooterConstants.invert);
 
         algaePivotIO =
             new SingleRollerIOTalonFX(
@@ -78,21 +82,15 @@ public class SuperStructure extends SubsystemBase {
                 AlgaePivotConstants.currentLimitAmps,
                 AlgaePivotConstants.invert);
 
-        algaeShooterIO =
-            new SingleRollerIOTalonFX(
-                AlgaeShooterConstants.canId,
-                AlgaeShooterConstants.reduction,
-                AlgaeShooterConstants.currentLimitAmps,
-                AlgaeShooterConstants.invert);
-
+        canRangeIO = new CanRangeIOReal(CanRangeConstants.canID);
         break;
 
       case REPLAY:
         elevatorIO = new FollowRollersIO() {};
         coralPivotIO = new SingleRollerIO() {};
-        coralShooterIO = new SingleRollerIO() {};
+        shooterIO = new SingleRollerIO() {};
         algaePivotIO = new SingleRollerIO() {};
-        algaeShooterIO = new SingleRollerIO() {};
+        canRangeIO = new CanRangeIO() {};
         break;
 
       case SIM:
@@ -111,11 +109,9 @@ public class SuperStructure extends SubsystemBase {
                 CoralPivotConstants.reduction,
                 CoralPivotConstants.moi);
 
-        coralShooterIO =
+        shooterIO =
             new SingleRollerIOSim(
-                CoralShooterConstants.gearbox,
-                CoralShooterConstants.reduction,
-                CoralShooterConstants.moi);
+                ShooterConstants.gearbox, ShooterConstants.reduction, ShooterConstants.moi);
 
         algaePivotIO =
             new SingleRollerIOSim(
@@ -123,11 +119,7 @@ public class SuperStructure extends SubsystemBase {
                 AlgaePivotConstants.reduction,
                 AlgaePivotConstants.moi);
 
-        algaeShooterIO =
-            new SingleRollerIOSim(
-                AlgaePivotConstants.gearbox,
-                AlgaePivotConstants.reduction,
-                AlgaePivotConstants.moi);
+        canRangeIO = new CanRangeIOSim();
         break;
     }
 
@@ -146,7 +138,7 @@ public class SuperStructure extends SubsystemBase {
             CoralPivotConstants.trapezoidConstraints,
             CoralPivotConstants.pivotConstraints);
 
-    coralShooter = new SingleRoller("Superstructure/Coral/Shooter", coralShooterIO);
+    shooter = new SingleRoller("Superstructure/Shooter", shooterIO);
 
     algaePivot =
         new Pivot(
@@ -155,20 +147,26 @@ public class SuperStructure extends SubsystemBase {
             AlgaePivotConstants.trapezoidConstraints,
             AlgaePivotConstants.pivotConstraints);
 
-    algaeShooter = new SingleRoller("Superstructure/Algae/Shooter", algaeShooterIO);
+    canRange = new CanRange("Superstructure/Shooter/CanRange", canRangeIO);
   }
 
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
       setMode(SuperStructureModes.TUCKED);
+      setShooterMode(ShooterModes.NONE);
+    }
+
+    if (shooterMode.useCanRange && canRange.withinThreshold()) {
+      shooter.stop();
+    } else {
+      shooter.runVolts(shooterMode.voltage);
     }
 
     elevator.periodic();
     coralPivot.periodic();
-    coralShooter.periodic();
+    shooter.periodic();
     algaePivot.periodic();
-    algaeShooter.periodic();
 
     measuredMechanism.update(
         elevator.getHeightInches(), coralPivot.getPosition(), algaePivot.getPosition());
@@ -189,11 +187,13 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(() -> setMode(mode));
   }
 
-  private void runAlgaeShooter(AlgaeShooterModes mode) {
-    algaeShooter.runVolts(mode.voltage);
+  private void setShooterMode(ShooterModes shooterMode) {
+    if (this.shooterMode != shooterMode) {
+      this.shooterMode = shooterMode;
+    }
   }
 
-  private void runCoralShooter(CoralShooterModes mode) {
-    coralShooter.runVolts(mode.voltage);
+  public Command setShooterModeCommand(ShooterModes shooterMode) {
+    return runOnce(() -> setShooterMode(shooterMode));
   }
 }
