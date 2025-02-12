@@ -14,14 +14,12 @@
 package frc.robot;
 
 import choreo.auto.AutoChooser;
-import choreo.auto.AutoRoutine;
-import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DrivePerpendicularToPoseCommand;
@@ -38,7 +36,6 @@ import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -59,8 +56,8 @@ public class RobotContainer {
   private final CommandCustomXboxController operatorController = new CommandCustomXboxController(1);
 
   // Dashboard inputs
-  // private final LoggedDashboardChooser<Command> autoChooser;
   private final AutoChooser autoChooser;
+  private final Autos autos;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -91,6 +88,7 @@ public class RobotContainer {
         quest = new QuestSubsystem(new QuestIO() {});
         break;
 
+      case REPLAY:
       default:
         // Replayed robot, disable IO implementations
         drive =
@@ -104,10 +102,21 @@ public class RobotContainer {
         break;
     }
 
-    // Set up auto routines
-    // autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
     autoChooser = new AutoChooser();
+    autos = new Autos(drive, quest);
 
+    configureAutos();
+
+    // Configure the button bindings
+    configureButtonBindings();
+
+    // superStructure.setDefaultCommand(superStructure.elevatorManualCommand(() ->
+    // -operatorController.getRightYSquared()));
+    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.INTAKE));
+  }
+
+  private void configureAutos() {
     // Set up SysId routines
     autoChooser.addCmd(
         "Drive Wheel Radius Characterization",
@@ -124,19 +133,12 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addCmd(
         "Drive SysId (Dynamic Reverse)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addRoutine("2 Meters", () -> getTestAuto("2 Meters"));
-    autoChooser.addRoutine("3 Meters", () -> getTestAuto("3 Meters"));
-    autoChooser.addRoutine("5 Meters", () -> getTestAuto("5 Meters"));
 
-    SmartDashboard.putData("Auto chooser?", autoChooser);
+    autoChooser.addRoutine("2 Meters", autos::twoMeters);
+    autoChooser.addRoutine("3 Meters", autos::threeMeters);
+    autoChooser.addRoutine("5 Meters", autos::fiveMeters);
 
-    // Configure the button bindings
-    configureButtonBindings();
-
-    // superStructure.setDefaultCommand(superStructure.elevatorManualCommand(() ->
-    // -operatorController.getRightYSquared()));
-    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-    operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.INTAKE));
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   /**
@@ -216,33 +218,5 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.selectedCommand();
-  }
-
-  // These should be moved into it's own auto files
-  private Command logAutoTrajectory(AutoTrajectory trajectory) {
-    return Commands.runOnce(
-        () ->
-            Logger.recordOutput(
-                "Odometry/Choreo/Trajectory", trajectory.getRawTrajectory().getPoses()));
-  }
-
-  private AutoRoutine getTestAuto(String name) {
-    AutoRoutine routine = drive.autoFactory.newRoutine("testAuto");
-
-    AutoTrajectory trajectory = routine.trajectory(name);
-
-    routine
-        .active()
-        .onTrue(
-            Commands.sequence(
-                logAutoTrajectory(trajectory),
-                Commands.runOnce(
-                    () -> {
-                      trajectory.getInitialPose().ifPresent((pose) -> quest.resetPose(pose));
-                    }),
-                trajectory.resetOdometry(),
-                trajectory.cmd()));
-
-    return routine;
   }
 }
