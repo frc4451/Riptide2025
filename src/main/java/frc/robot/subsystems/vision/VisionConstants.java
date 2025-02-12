@@ -95,7 +95,7 @@ public class VisionConstants {
               SimCameraConfig.THRIFTY_CAM_80));
 
   public static final List<AprilTagCameraConfig> aprilTagCamerasConfigs =
-      Constants.currentBot == Constants.Bot.GUIDO ? guidoConfigs : riptideConfigs;
+      Constants.isGuido ? guidoConfigs : riptideConfigs;
 
   public static final double ambiguityCutoff = 0.05;
   public static final double singleTagPoseCutoffMeters = 4;

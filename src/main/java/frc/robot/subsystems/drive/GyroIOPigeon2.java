@@ -30,7 +30,7 @@ import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
 public class GyroIOPigeon2 implements GyroIO {
-  private final Pigeon2 pigeon = new Pigeon2(DriveConstants.pigeonCanId);
+  private final Pigeon2 pigeon = new Pigeon2(DriveConstants.pigeonCanId, Constants.alternateCanBus);
   private final StatusSignal<Angle> yaw = pigeon.getYaw();
   private final StatusSignal<LinearAcceleration> accelX = pigeon.getAccelerationX();
   private final StatusSignal<LinearAcceleration> accelY = pigeon.getAccelerationX();
@@ -46,7 +46,9 @@ public class GyroIOPigeon2 implements GyroIO {
         .withMountPosePitch(DriveConstants.mountPosePitchDeg)
         .withMountPoseRoll(DriveConstants.mountPoseRollDeg);
 
-    config.GyroTrim.withGyroScalarX(1.501).withGyroScalarY(1.501).withGyroScalarZ(1.501);
+    config.GyroTrim.withGyroScalarX(DriveConstants.gyroTrimScalar)
+        .withGyroScalarY(DriveConstants.gyroTrimScalar)
+        .withGyroScalarZ(DriveConstants.gyroTrimScalar);
 
     pigeon.getConfigurator().setYaw(0.0);
     pigeon.getConfigurator().apply(config);
