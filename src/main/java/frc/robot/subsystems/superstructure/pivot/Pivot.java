@@ -12,6 +12,8 @@ import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import org.littletonrobotics.junction.Logger;
 
 public class Pivot extends SingleRoller {
+  private static final double atGoalToleranceRad = Units.degreesToRadians(3);
+
   private final TrapezoidProfile trapezoidProfile;
 
   private final PivotConstraints pivotConstraints;
@@ -87,6 +89,10 @@ public class Pivot extends SingleRoller {
 
   public Rotation2d getGoalVelocity() {
     return new Rotation2d(goal.velocity);
+  }
+
+  public boolean atGoal() {
+    return MathUtil.isNear(goal.position, inputs.positionRad, atGoalToleranceRad);
   }
 
   private void resetController() {

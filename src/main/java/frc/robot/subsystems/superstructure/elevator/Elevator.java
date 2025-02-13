@@ -7,6 +7,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.follow.FollowRollers;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
+import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends FollowRollers {
@@ -77,6 +78,10 @@ public class Elevator extends FollowRollers {
 
   public double getGoalHeightInches() {
     return goal.position * inchesPerRad;
+  }
+
+  public boolean underL4Threshold() {
+    return getHeightInches() < ElevatorConstants.l4ThresholdInches;
   }
 
   private void resetController() {

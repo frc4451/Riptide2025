@@ -109,11 +109,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-
-    // superStructure.setDefaultCommand(superStructure.elevatorManualCommand(() ->
-    // -operatorController.getRightYSquared()));
-    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-    operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.INTAKE));
   }
 
   private void configureAutos() {
@@ -157,6 +152,7 @@ public class RobotContainer {
             () -> -driverController.getRightXSquared()));
 
     configureAlignmentBindings();
+    configureSuperBindings();
   }
 
   private void configureAlignmentBindings() {
@@ -209,6 +205,18 @@ public class RobotContainer {
                 () -> -driverController.getLeftYSquared(),
                 () -> -driverController.getLeftXSquared(),
                 () -> BobotState.getRotationToClosestBargeIfPresent()));
+  }
+
+  private void configureSuperBindings() {
+    // superStructure.setDefaultCommand(superStructure.elevatorManualCommand(() ->
+    // -operatorController.getRightYSquared()));
+    operatorController
+        .rightBumper()
+        .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.L1));
+    operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.L2));
+    operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.L3));
+    operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.L4));
   }
 
   /**

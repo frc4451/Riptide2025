@@ -18,6 +18,7 @@ public class ElevatorConstants {
   public static final boolean invertFollower = true;
   public static final double currentLimitAmps = 30;
 
+  public static final double l4ThresholdInches = 25; // TODO: find actual number
   public static final ElevatorConstraints elevatorConstraints = new ElevatorConstraints(0, 40);
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =

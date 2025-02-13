@@ -44,6 +44,9 @@ public class SuperStructure extends SubsystemBase {
   private SuperStructureModes mode = SuperStructureModes.TUCKED;
   private ShooterModes shooterMode = ShooterModes.NONE;
 
+  private boolean rotateBeforeElevator = false;
+  private boolean elevatorBeforeRotate = false;
+
   public SuperStructure() {
     FollowRollersIO elevatorIO;
     SingleRollerIO coralPivotIO;
@@ -163,6 +166,15 @@ public class SuperStructure extends SubsystemBase {
       shooter.runVolts(shooterMode.voltage);
     }
 
+    if (rotateBeforeElevator && coralPivot.atGoal() && algaePivot.atGoal()) {
+      elevator.setGoalHeightInches(mode.elevatorHeightInches);
+    }
+
+    if (elevatorBeforeRotate && elevator.underL4Threshold()) {
+      coralPivot.setGoal(mode.coralPos);
+      algaePivot.setGoal(mode.algaePos);
+    }
+
     elevator.periodic();
     coralPivot.periodic();
     shooter.periodic();
@@ -176,10 +188,19 @@ public class SuperStructure extends SubsystemBase {
 
   private void setMode(SuperStructureModes mode) {
     if (this.mode != mode) {
+      rotateBeforeElevator = mode.rotateBeforeElevator;
+      elevatorBeforeRotate = this.mode.elevatorBeforeRotate;
+
+      if (rotateBeforeElevator || !elevatorBeforeRotate) {
+        coralPivot.setGoal(mode.coralPos);
+        algaePivot.setGoal(mode.algaePos);
+      }
+
+      if (elevatorBeforeRotate || !rotateBeforeElevator) {
+        elevator.setGoalHeightInches(mode.elevatorHeightInches);
+      }
+
       this.mode = mode;
-      elevator.setGoalHeightInches(mode.elevatorHeightInches);
-      coralPivot.setGoal(mode.coralPos.getRadians());
-      algaePivot.setGoal(mode.algaePos.getRadians());
     }
   }
 
