@@ -1,6 +1,9 @@
 package frc.robot.util;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -101,6 +104,15 @@ public class CommandCustomXboxController extends CommandXboxController {
   @Override
   public Trigger rightTrigger() {
     return rightTrigger(Constants.triggerPressedThreshold);
+  }
+
+  public Command runRumble(RumbleType type, double value) {
+    return Commands.startEnd(
+        () -> setRumble(type, value), () -> setRumble(type, 0));
+  }
+
+  public Command runRumbleSeconds(RumbleType type, double value, double time) {
+    return runRumble(type, value).withTimeout(time);
   }
 
   private double squareJoystickValue(double value) {

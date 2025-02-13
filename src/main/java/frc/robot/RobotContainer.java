@@ -15,9 +15,11 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
@@ -205,6 +207,12 @@ public class RobotContainer {
                 () -> -driverController.getLeftYSquared(),
                 () -> -driverController.getLeftXSquared(),
                 () -> BobotState.getRotationToClosestBargeIfPresent()));
+
+    BobotState.isCoralIntaked()
+        .onTrue(
+            Commands.parallel(
+                driverController.runRumbleSeconds(RumbleType.kBothRumble, 1.0, 1.0),
+                operatorController.runRumbleSeconds(RumbleType.kBothRumble, 1.0, 1.0)));
   }
 
   private void configureSuperBindings() {
