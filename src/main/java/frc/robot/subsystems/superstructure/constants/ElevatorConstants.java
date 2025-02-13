@@ -5,6 +5,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.subsystems.superstructure.elevator.ElevatorConstraints;
 
 public class ElevatorConstants {
+  public static final int heightSensorId = 0;
+
   public static final int leaderCanId = 0;
   public static final DCMotor leaderGearbox = DCMotor.getFalcon500Foc(1);
 

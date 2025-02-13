@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Alert;
 import org.littletonrobotics.junction.Logger;
 
 public class CanRange {
+  private static final double thresholdMeters = 0.25;
 
   protected final String name;
   protected final CanRangeIO io;
@@ -25,7 +26,11 @@ public class CanRange {
     disconnected.set(!inputs.connected);
   }
 
-  public boolean withinThreshold() {
-    return inputs.distanceMeters < CanRangeConstants.thresholdMeters;
+  public double getDistanceMeters() {
+    return inputs.distanceMeters;
+  }
+
+  public boolean isNear() {
+    return getDistanceMeters() < thresholdMeters;
   }
 }

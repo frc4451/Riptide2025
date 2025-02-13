@@ -13,7 +13,6 @@ import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
 import frc.robot.subsystems.superstructure.can_range.CanRange;
-import frc.robot.subsystems.superstructure.can_range.CanRangeConstants;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIOReal;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIOSim;
@@ -32,7 +31,7 @@ public class SuperStructure extends SubsystemBase {
   private final Pivot coralPivot;
   private final SingleRoller shooter;
   private final Pivot algaePivot;
-  private final CanRange canRange;
+  private final CanRange coralSensor;
 
   private final SuperStructureMechanism goalMechanism =
       new SuperStructureMechanism(
@@ -49,10 +48,11 @@ public class SuperStructure extends SubsystemBase {
 
   public SuperStructure() {
     FollowRollersIO elevatorIO;
+    CanRangeIO heightSensorIO;
     SingleRollerIO coralPivotIO;
     SingleRollerIO shooterIO;
     SingleRollerIO algaePivotIO;
-    CanRangeIO canRangeIO;
+    CanRangeIO coralSensorIO;
 
     switch (Constants.currentMode) {
       case REAL:
@@ -63,6 +63,8 @@ public class SuperStructure extends SubsystemBase {
                 ElevatorConstants.reduction,
                 ElevatorConstants.currentLimitAmps,
                 ElevatorConstants.invertFollower);
+
+        heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
 
         coralPivotIO =
             new SingleRollerIOTalonFX(
@@ -85,19 +87,10 @@ public class SuperStructure extends SubsystemBase {
                 AlgaePivotConstants.currentLimitAmps,
                 AlgaePivotConstants.invert);
 
-        canRangeIO = new CanRangeIOReal(CanRangeConstants.canID);
-        break;
-
-      case REPLAY:
-        elevatorIO = new FollowRollersIO() {};
-        coralPivotIO = new SingleRollerIO() {};
-        shooterIO = new SingleRollerIO() {};
-        algaePivotIO = new SingleRollerIO() {};
-        canRangeIO = new CanRangeIO() {};
+        coralSensorIO = new CanRangeIOReal(ShooterConstants.coralSensorId, false);
         break;
 
       case SIM:
-      default:
         elevatorIO =
             new FollowRollersIOSim(
                 ElevatorConstants.leaderGearbox,
@@ -105,6 +98,8 @@ public class SuperStructure extends SubsystemBase {
                 ElevatorConstants.reduction,
                 ElevatorConstants.moi,
                 ElevatorConstants.invertFollower);
+
+        heightSensorIO = new CanRangeIOSim();
 
         coralPivotIO =
             new SingleRollerIOSim(
@@ -122,7 +117,17 @@ public class SuperStructure extends SubsystemBase {
                 AlgaePivotConstants.reduction,
                 AlgaePivotConstants.moi);
 
-        canRangeIO = new CanRangeIOSim();
+        coralSensorIO = new CanRangeIOSim();
+        break;
+
+      case REPLAY:
+      default:
+        elevatorIO = new FollowRollersIO() {};
+        heightSensorIO = new CanRangeIO() {};
+        coralPivotIO = new SingleRollerIO() {};
+        shooterIO = new SingleRollerIO() {};
+        algaePivotIO = new SingleRollerIO() {};
+        coralSensorIO = new CanRangeIO() {};
         break;
     }
 
@@ -130,6 +135,7 @@ public class SuperStructure extends SubsystemBase {
         new Elevator(
             "Superstructure/Elevator",
             elevatorIO,
+            heightSensorIO,
             ElevatorConstants.trapezoidConstraints,
             ElevatorConstants.inchesPerRad,
             ElevatorConstants.elevatorConstraints);
@@ -150,7 +156,7 @@ public class SuperStructure extends SubsystemBase {
             AlgaePivotConstants.trapezoidConstraints,
             AlgaePivotConstants.pivotConstraints);
 
-    canRange = new CanRange("Superstructure/Shooter/CanRange", canRangeIO);
+    coralSensor = new CanRange("Superstructure/Shooter/CoralSensor", coralSensorIO);
   }
 
   @Override
@@ -160,7 +166,7 @@ public class SuperStructure extends SubsystemBase {
       setShooterMode(ShooterModes.NONE);
     }
 
-    if (shooterMode.useCanRange && canRange.withinThreshold()) {
+    if (shooterMode.useCanRange && coralSensor.isNear()) {
       shooter.stop();
     } else {
       shooter.runVolts(shooterMode.voltage);

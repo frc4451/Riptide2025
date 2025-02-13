@@ -2,16 +2,20 @@ package frc.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.follow.FollowRollers;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
+import frc.robot.subsystems.superstructure.can_range.CanRange;
+import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
 import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends FollowRollers {
   private final TrapezoidProfile trapezoidProfile;
+  private final CanRange heightSensor;
 
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
 
@@ -23,11 +27,13 @@ public class Elevator extends FollowRollers {
   public Elevator(
       String name,
       FollowRollersIO io,
+      CanRangeIO heightSensorIO,
       TrapezoidProfile.Constraints trapezoidConstraints,
       double inchesPerRad,
       ElevatorConstraints elevatorConstraints) {
     super(name, io);
-    trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
+    this.heightSensor = new CanRange(name + "/HeightSensor", heightSensorIO);
+    this.trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
     this.inchesPerRad = inchesPerRad;
     this.elevatorConstraints = elevatorConstraints;
   }
@@ -55,11 +61,21 @@ public class Elevator extends FollowRollers {
         name + "/Profile/Goal/In",
         new LoggedTrapezoidState(goal.position * inchesPerRad, goal.velocity * inchesPerRad));
 
+    Logger.recordOutput(name + "/EncoderHeightInches", getEncoderHeightInches());
+    Logger.recordOutput(name + "/SensorHeightInches", getSensorHeightInches());
     Logger.recordOutput(name + "/HeightInches", getHeightInches());
   }
 
-  public double getHeightInches() {
+  public double getEncoderHeightInches() {
     return inputs.leaderPositionRad * inchesPerRad;
+  }
+
+  public double getSensorHeightInches() {
+    return Units.metersToInches(heightSensor.getDistanceMeters());
+  }
+
+  public double getHeightInches() {
+    return getSensorHeightInches();
   }
 
   public void runTrapezoidProfile() {
