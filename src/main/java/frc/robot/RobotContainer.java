@@ -174,19 +174,43 @@ public class RobotContainer {
         .a()
         .and(driverController.leftBumper())
         .whileTrue(
-            new DrivePerpendicularToPoseCommand(
+            DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
                 () -> BobotState.getPoseToLeftPoleIfPresent(),
-                () -> -driverController.getLeftYSquared()));
+                () -> -driverController.getLeftYSquared(),
+                Commands.parallel(
+                    driverController
+                        .runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25)
+                        .andThen(Commands.waitSeconds(0.25))
+                        .andThen(
+                            driverController.runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25),
+                            operatorController
+                                .runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25)
+                                .andThen(Commands.waitSeconds(0.25))
+                                .andThen(
+                                    operatorController.runRumbleSeconds(
+                                        RumbleType.kBothRumble, 1, 0.25))))));
 
     driverController
         .a()
         .and(driverController.rightBumper())
         .whileTrue(
-            new DrivePerpendicularToPoseCommand(
+            DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
                 () -> BobotState.getPoseToRightPoleIfPresent(),
-                () -> -driverController.getLeftYSquared()));
+                () -> -driverController.getLeftYSquared(),
+                Commands.parallel(
+                    driverController
+                        .runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25)
+                        .andThen(Commands.waitSeconds(0.25))
+                        .andThen(
+                            driverController.runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25),
+                            operatorController
+                                .runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25)
+                                .andThen(Commands.waitSeconds(0.25))
+                                .andThen(
+                                    operatorController.runRumbleSeconds(
+                                        RumbleType.kBothRumble, 1, 0.25))))));
 
     // Human Player Stations
     driverController
@@ -212,13 +236,11 @@ public class RobotContainer {
         .isCoralIntaked()
         .onTrue(
             Commands.parallel(
-                driverController.runRumbleSeconds(RumbleType.kBothRumble, 1.0, 1.0),
-                operatorController.runRumbleSeconds(RumbleType.kBothRumble, 1.0, 1.0)));
+                driverController.runRumbleSeconds(RumbleType.kBothRumble, 1.0, 0.5),
+                operatorController.runRumbleSeconds(RumbleType.kBothRumble, 1.0, 0.5)));
   }
 
   private void configureSuperBindings() {
-    // superStructure.setDefaultCommand(superStructure.elevatorManualCommand(() ->
-    // -operatorController.getRightYSquared()));
     operatorController
         .rightBumper()
         .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));

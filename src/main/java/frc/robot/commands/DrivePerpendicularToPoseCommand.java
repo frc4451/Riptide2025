@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -22,12 +24,25 @@ public class DrivePerpendicularToPoseCommand extends Command {
   private final Supplier<Double> perpendicularInput;
 
   public DrivePerpendicularToPoseCommand(
-      Drive drive, Supplier<Pose2d> maybeTargetPose, Supplier<Double> perpendicularInput) {
+      Drive drive, Supplier<Pose2d> targetPoseSupplier, Supplier<Double> perpendicularInput) {
     addRequirements(drive);
 
     this.drive = drive;
-    this.targetPoseSupplier = maybeTargetPose;
+    this.targetPoseSupplier = targetPoseSupplier;
     this.perpendicularInput = perpendicularInput;
+  }
+
+  public static DrivePerpendicularToPoseCommand withJoystickRumble(
+      Drive drive,
+      Supplier<Pose2d> targetPoseSupplier,
+      Supplier<Double> perpendicularInput,
+      Command rumbleCommand) {
+    DrivePerpendicularToPoseCommand command =
+        new DrivePerpendicularToPoseCommand(drive, targetPoseSupplier, perpendicularInput);
+
+    command.atSetpoint().onTrue(Commands.deferredProxy(() -> rumbleCommand));
+
+    return command;
   }
 
   @Override
@@ -60,5 +75,9 @@ public class DrivePerpendicularToPoseCommand extends Command {
             desiredTheta);
 
     drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
+  }
+
+  public Trigger atSetpoint() {
+    return new Trigger(() -> parallelController.atSetpoint() && angleController.atSetpoint());
   }
 }
