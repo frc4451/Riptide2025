@@ -32,6 +32,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.Constants;
 import frc.robot.util.SparkUtil;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
@@ -71,16 +72,29 @@ public class ModuleIOSpark implements ModuleIO {
           case 3 -> DriveConstants.backRightZeroRotation;
           default -> new Rotation2d();
         };
-    driveSpark =
-        new SparkFlex(
-            switch (module) {
-              case 0 -> DriveConstants.frontLeftDriveCanId;
-              case 1 -> DriveConstants.frontRightDriveCanId;
-              case 2 -> DriveConstants.backLeftDriveCanId;
-              case 3 -> DriveConstants.backRightDriveCanId;
-              default -> 0;
-            },
-            MotorType.kBrushless);
+    if (Constants.isGuido) {
+      driveSpark =
+          new SparkMax(
+              switch (module) {
+                case 0 -> DriveConstants.frontLeftDriveCanId;
+                case 1 -> DriveConstants.frontRightDriveCanId;
+                case 2 -> DriveConstants.backLeftDriveCanId;
+                case 3 -> DriveConstants.backRightDriveCanId;
+                default -> 0;
+              },
+              MotorType.kBrushless);
+    } else {
+      driveSpark =
+          new SparkFlex(
+              switch (module) {
+                case 0 -> DriveConstants.frontLeftDriveCanId;
+                case 1 -> DriveConstants.frontRightDriveCanId;
+                case 2 -> DriveConstants.backLeftDriveCanId;
+                case 3 -> DriveConstants.backRightDriveCanId;
+                default -> 0;
+              },
+              MotorType.kBrushless);
+    }
     turnSpark =
         new SparkMax(
             switch (module) {
@@ -97,7 +111,7 @@ public class ModuleIOSpark implements ModuleIO {
     turnController = turnSpark.getClosedLoopController();
 
     // Configure drive motor
-    var driveConfig = new SparkFlexConfig();
+    var driveConfig = Constants.isGuido ? new SparkMaxConfig() : new SparkFlexConfig();
     driveConfig
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(DriveConstants.driveMotorCurrentLimit)
