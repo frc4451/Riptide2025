@@ -25,6 +25,7 @@ import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DrivePerpendicularToPoseCommand;
+import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -168,7 +169,7 @@ public class RobotContainer {
                 drive,
                 () -> -driverController.getLeftYSquared(),
                 () -> -driverController.getLeftXSquared(),
-                () -> BobotState.getRotationToClosestReefIfPresent()));
+                () -> BobotState.getRotationToClosestReef()));
 
     driverController
         .a()
@@ -176,7 +177,7 @@ public class RobotContainer {
         .whileTrue(
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
-                () -> BobotState.getPoseToLeftPoleIfPresent(),
+                () -> FieldUtils.getClosestReef().leftPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
                 Commands.parallel(
                     driverController
@@ -197,7 +198,7 @@ public class RobotContainer {
         .whileTrue(
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
-                () -> BobotState.getPoseToRightPoleIfPresent(),
+                () -> FieldUtils.getClosestReef().rightPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
                 Commands.parallel(
                     driverController
@@ -220,7 +221,7 @@ public class RobotContainer {
                 drive,
                 () -> -driverController.getLeftYSquared(),
                 () -> -driverController.getLeftXSquared(),
-                () -> BobotState.getRotationToClosestHPSIfPresent()));
+                () -> BobotState.getRotationToClosestHPS()));
 
     // Barge
     driverController
@@ -230,7 +231,7 @@ public class RobotContainer {
                 drive,
                 () -> -driverController.getLeftYSquared(),
                 () -> -driverController.getLeftXSquared(),
-                () -> BobotState.getRotationToClosestBargeIfPresent()));
+                () -> BobotState.getRotationToClosestBarge()));
 
     superStructure
         .isCoralIntaked()

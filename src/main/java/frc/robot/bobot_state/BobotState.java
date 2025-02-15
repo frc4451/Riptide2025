@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
-import frc.robot.field.FieldConstants.ReefFace;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
@@ -55,30 +54,16 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.globalPose;
   }
 
-  public static Rotation2d getRotationToClosestReefIfPresent() {
-    return BobotState.reefTracker.getRotationTarget().orElse(BobotState.globalPose.getRotation());
+  public static Rotation2d getRotationToClosestReef() {
+    return BobotState.reefTracker.getRotationTarget();
   }
 
-  public static Rotation2d getRotationToClosestHPSIfPresent() {
-    return BobotState.hpsTracker.getRotationTarget().orElse(BobotState.globalPose.getRotation());
+  public static Rotation2d getRotationToClosestHPS() {
+    return BobotState.hpsTracker.getRotationTarget();
   }
 
-  public static Rotation2d getRotationToClosestBargeIfPresent() {
-    return BobotState.bargeTracker.getRotationTarget().orElse(BobotState.globalPose.getRotation());
-  }
-
-  public static Pose2d getPoseToLeftPoleIfPresent() {
-    if (BobotState.reefTracker.getClosestReef().isPresent()) {
-      return BobotState.reefTracker.getClosestReef().get().getLeftPole();
-    }
-    return BobotState.getGlobalPose();
-  }
-
-  public static Pose2d getPoseToRightPoleIfPresent() {
-    if (BobotState.reefTracker.getClosestReef().isPresent()) {
-      return BobotState.reefTracker.getClosestReef().get().getRightPole();
-    }
-    return BobotState.getGlobalPose();
+  public static Rotation2d getRotationToClosestBarge() {
+    return BobotState.bargeTracker.getRotationTarget();
   }
 
   @Override
@@ -92,19 +77,13 @@ public class BobotState extends VirtualSubsystem {
       reefTracker.update();
 
       String calcLogRoot = logRoot + "Reef/";
-      Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestReef());
+      Logger.recordOutput(calcLogRoot + "ClosestTag", FieldUtils.getClosestReef().tag);
       Logger.recordOutput(
-          calcLogRoot + "TargetAngleDeg",
-          reefTracker.getRotationTarget().map(Rotation2d::getDegrees).orElse(Double.NaN));
+          calcLogRoot + "TargetAngleDeg", reefTracker.getRotationTarget().getDegrees());
       Logger.recordOutput(
-          calcLogRoot + "TargetAngleRad",
-          reefTracker.getRotationTarget().map(Rotation2d::getRadians).orElse(Double.NaN));
-      Logger.recordOutput(
-          calcLogRoot + "Left Pole",
-          reefTracker.getClosestReef().map(ReefFace::getLeftPole).orElse(Pose2d.kZero));
-      Logger.recordOutput(
-          calcLogRoot + "Right Pole",
-          reefTracker.getClosestReef().map(ReefFace::getRightPole).orElse(Pose2d.kZero));
+          calcLogRoot + "TargetAngleRad", reefTracker.getRotationTarget().getRadians());
+      Logger.recordOutput(calcLogRoot + "Left Pole", FieldUtils.getClosestReef().leftPole);
+      Logger.recordOutput(calcLogRoot + "Right Pole", FieldUtils.getClosestReef().rightPole);
     }
 
     {
@@ -113,11 +92,9 @@ public class BobotState extends VirtualSubsystem {
       String calcLogRoot = logRoot + "HPS/";
       Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPSTag());
       Logger.recordOutput(
-          calcLogRoot + "TargetAngleDeg",
-          hpsTracker.getRotationTarget().map(Rotation2d::getDegrees).orElse(Double.NaN));
+          calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());
       Logger.recordOutput(
-          calcLogRoot + "TargetAngleRad",
-          hpsTracker.getRotationTarget().map(Rotation2d::getRadians).orElse(Double.NaN));
+          calcLogRoot + "TargetAngleRad", hpsTracker.getRotationTarget().getRadians());
     }
 
     {
@@ -125,11 +102,9 @@ public class BobotState extends VirtualSubsystem {
 
       String calcLogRoot = logRoot + "Barge/";
       Logger.recordOutput(
-          calcLogRoot + "TargetAngleDeg",
-          hpsTracker.getRotationTarget().map(Rotation2d::getDegrees).orElse(Double.NaN));
+          calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());
       Logger.recordOutput(
-          calcLogRoot + "TargetAngleRad",
-          hpsTracker.getRotationTarget().map(Rotation2d::getRadians).orElse(Double.NaN));
+          calcLogRoot + "TargetAngleRad", hpsTracker.getRotationTarget().getRadians());
     }
   }
 

@@ -1,13 +1,10 @@
 package frc.robot.field;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.field.FieldConstants.AprilTagStruct;
-import frc.robot.field.FieldConstants.ReefFace;
-import frc.robot.subsystems.vision.VisionConstants;
 import java.util.List;
 
 public class FieldUtils {
@@ -27,15 +24,6 @@ public class FieldUtils {
     return FieldUtils.isRedAlliance() ? -1 : 1;
   }
 
-  public static Rotation2d getAngleOfTag17() {
-    return VisionConstants.fieldLayout
-        .getTagPose(17)
-        .get()
-        .getRotation()
-        .toRotation2d()
-        .plus(new Rotation2d(Math.PI));
-  }
-
   public static ReefFace getClosestReef() {
     List<ReefFace> reefTags =
         FieldUtils.isBlueAlliance() ? FieldConstants.blueReefTags : FieldConstants.redReefTags;
@@ -46,12 +34,12 @@ public class FieldUtils {
             .reduce(
                 (ReefFace reef1, ReefFace reef2) ->
                     robotTranslation.getDistance(
-                                reef1.tag().pose().getTranslation().toTranslation2d())
+                                reef1.tag.pose().getTranslation().toTranslation2d())
                             < robotTranslation.getDistance(
-                                reef2.tag().pose().getTranslation().toTranslation2d())
+                                reef2.tag.pose().getTranslation().toTranslation2d())
                         ? reef1
                         : reef2)
-            .orElse(null);
+            .get();
 
     return closestReef;
   }
@@ -71,7 +59,7 @@ public class FieldUtils {
                                 tag2.pose().getTranslation().toTranslation2d())
                         ? tag1
                         : tag2)
-            .orElse(null);
+            .get();
 
     return closestTag;
   }

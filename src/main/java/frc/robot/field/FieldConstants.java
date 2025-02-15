@@ -1,10 +1,8 @@
 package frc.robot.field;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.vision.VisionConstants;
-import frc.robot.util.PoseUtils;
 import java.util.List;
 
 public class FieldConstants {
@@ -15,26 +13,6 @@ public class FieldConstants {
   public static final double tagToReef = Units.inchesToMeters(6.469);
 
   public static final double distanceToTag = Units.inchesToMeters(10);
-
-  public static record ReefFace(AprilTagStruct tag) {
-    /**
-     * Attempts to calculate the `Left Pole` position
-     *
-     * @return Pose2d representation of the `left pole` on the reef
-     */
-    public Pose2d getLeftPole() {
-      return PoseUtils.getParallelOffsetPose(tag.pose.toPose2d(), -tagToReef);
-    }
-
-    /**
-     * Attempts to calculate the `Right Pole` position
-     *
-     * @return Pose2d representation of the `right pole` on the reef
-     */
-    public Pose2d getRightPole() {
-      return PoseUtils.getParallelOffsetPose(tag.pose.toPose2d(), tagToReef);
-    }
-  }
 
   public static final double fieldLength = Units.inchesToMeters(690.876);
   public static final double fieldWidth = Units.inchesToMeters(317);

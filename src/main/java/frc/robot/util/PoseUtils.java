@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class PoseUtils {
@@ -17,13 +18,13 @@ public class PoseUtils {
     return new Pose2d(offsetTranslation, pose.getRotation());
   }
 
-  public static Pose2d getPerpendicularOffsetPose(Pose2d pose, double perpendicularOffset) {
+  public static Pose2d getPerpendicularOffsetPose(Pose2d pose, double perpendicularOffsetMeters) {
     Translation2d offsetTranslation =
         pose.getTranslation()
             .plus(
                 new Translation2d(
-                    perpendicularOffset * pose.getRotation().getCos(),
-                    perpendicularOffset * pose.getRotation().getSin()));
+                    perpendicularOffsetMeters * pose.getRotation().getCos(),
+                    perpendicularOffsetMeters * pose.getRotation().getSin()));
 
     return new Pose2d(offsetTranslation, pose.getRotation());
   }
@@ -32,5 +33,27 @@ public class PoseUtils {
       Pose2d pose, double parellelOffsetMeters, double perpendicularOffsetMeters) {
     return getPerpendicularOffsetPose(
         getParallelOffsetPose(pose, parellelOffsetMeters), perpendicularOffsetMeters);
+  }
+
+  /**
+   * @see https://en.wikipedia.org/wiki/Vector_projection#Scalar_projection
+   */
+  public static double getParallelError(Pose2d origin, Pose2d target) {
+    Translation2d originToTarget = origin.minus(target).getTranslation();
+    Rotation2d angleBetween = originToTarget.getAngle();
+    double parallelError = -originToTarget.getNorm() * angleBetween.getSin();
+
+    return parallelError;
+  }
+
+  /**
+   * @see https://en.wikipedia.org/wiki/Vector_projection#Scalar_projection
+   */
+  public static double getPerpendicularError(Pose2d origin, Pose2d target) {
+    Translation2d originToTarget = origin.minus(target).getTranslation();
+    Rotation2d angleBetween = originToTarget.getAngle();
+    double perpendicularError = -originToTarget.getNorm() * angleBetween.getCos();
+
+    return perpendicularError;
   }
 }

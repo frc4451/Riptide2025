@@ -45,7 +45,7 @@ public class Elevator extends FollowRollers {
     // If we are close enough to our sensor, use that instead of our motor encoders.
     // We trust our height sensor more than our encoders at this point, this should account for
     // chain skipping. This doesn't happen in simulation.
-    if (getHeightInches() < ElevatorConstants.resetFromHeightSensorThresholdInches
+    if (getEncoderHeightInches() < ElevatorConstants.resetFromHeightSensorThresholdInches
         && Constants.currentMode != Mode.SIM) {
       io.resetPosition(getSensorHeightInches() / inchesPerRad);
     }
@@ -83,8 +83,9 @@ public class Elevator extends FollowRollers {
     return Units.metersToInches(heightSensor.getDistanceMeters());
   }
 
+  /** Defaults to using Encoder Height Inches */
   public double getHeightInches() {
-    return getSensorHeightInches();
+    return getEncoderHeightInches();
   }
 
   public void runTrapezoidProfile() {
