@@ -41,7 +41,7 @@ public class PoseUtils {
   public static double getParallelError(Pose2d origin, Pose2d target) {
     Translation2d originToTarget = origin.minus(target).getTranslation();
     Rotation2d angleBetween = originToTarget.getAngle();
-    double parallelError = -originToTarget.getNorm() * angleBetween.getSin();
+    double parallelError = originToTarget.getNorm() * angleBetween.getSin();
 
     return parallelError;
   }
@@ -52,7 +52,7 @@ public class PoseUtils {
   public static double getPerpendicularError(Pose2d origin, Pose2d target) {
     Translation2d originToTarget = origin.minus(target).getTranslation();
     Rotation2d angleBetween = originToTarget.getAngle();
-    double perpendicularError = -originToTarget.getNorm() * angleBetween.getCos();
+    double perpendicularError = originToTarget.getNorm() * angleBetween.getCos();
 
     return perpendicularError;
   }
