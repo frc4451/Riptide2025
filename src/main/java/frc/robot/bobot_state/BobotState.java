@@ -2,7 +2,6 @@ package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
@@ -31,8 +30,6 @@ public class BobotState extends VirtualSubsystem {
   private static ReefTagTracker reefTracker = new ReefTagTracker();
   private static HPSTagTracker hpsTracker = new HPSTagTracker();
   private static BargeTagTracker bargeTracker = new BargeTagTracker();
-
-  public static boolean coralIntaked = false;
 
   public static void offerVisionObservation(PoseObservation observation) {
     BobotState.poseObservations.offer(observation);
@@ -82,10 +79,6 @@ public class BobotState extends VirtualSubsystem {
       return BobotState.reefTracker.getClosestReef().get().getRightPole();
     }
     return BobotState.getGlobalPose();
-  }
-
-  public static Trigger isCoralIntaked() {
-    return new Trigger(() -> coralIntaked);
   }
 
   @Override

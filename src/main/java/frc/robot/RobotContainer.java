@@ -208,7 +208,8 @@ public class RobotContainer {
                 () -> -driverController.getLeftXSquared(),
                 () -> BobotState.getRotationToClosestBargeIfPresent()));
 
-    BobotState.isCoralIntaked()
+    superStructure
+        .isCoralIntaked()
         .onTrue(
             Commands.parallel(
                 driverController.runRumbleSeconds(RumbleType.kBothRumble, 1.0, 1.0),

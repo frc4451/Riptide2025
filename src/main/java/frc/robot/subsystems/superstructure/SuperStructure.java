@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOSim;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOTalonFX;
@@ -168,10 +168,8 @@ public class SuperStructure extends SubsystemBase {
     }
 
     if (shooterMode.useCanRange && coralSensor.isNear()) {
-      BobotState.coralIntaked = true;
       shooter.stop();
     } else {
-      BobotState.coralIntaked = false;
       shooter.runVolts(shooterMode.voltage);
     }
 
@@ -225,5 +223,9 @@ public class SuperStructure extends SubsystemBase {
 
   public Command setShooterModeCommand(ShooterModes shooterMode) {
     return runOnce(() -> setShooterMode(shooterMode));
+  }
+
+  public Trigger isCoralIntaked() {
+    return new Trigger(coralSensor::isNear);
   }
 }
