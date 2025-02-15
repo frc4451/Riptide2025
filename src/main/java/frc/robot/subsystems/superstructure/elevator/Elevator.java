@@ -5,6 +5,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.follow.FollowRollers;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
@@ -40,6 +41,14 @@ public class Elevator extends FollowRollers {
 
   public void periodic() {
     super.periodic();
+
+    // If we are close enough to our sensor, use that instead of our motor encoders.
+    // We trust our height sensor more than our encoders at this point, this should account for
+    // chain skipping. This doesn't happen in simulation.
+    if (getHeightInches() < ElevatorConstants.resetFromHeightSensorThresholdInches
+        && Constants.currentMode != Mode.SIM) {
+      io.resetPosition(getSensorHeightInches() / inchesPerRad);
+    }
 
     if (DriverStation.isDisabled()) {
       resetController();
