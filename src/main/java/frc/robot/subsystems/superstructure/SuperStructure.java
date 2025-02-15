@@ -23,6 +23,8 @@ import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import frc.robot.subsystems.superstructure.constants.ShooterConstants;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.mechanism.SuperStructureMechanism;
+import frc.robot.subsystems.superstructure.modes.ExitInstructions;
+import frc.robot.subsystems.superstructure.modes.IntoInstructions;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.pivot.Pivot;
@@ -41,11 +43,11 @@ public class SuperStructure extends SubsystemBase {
       new SuperStructureMechanism(
           "Measured", Color.kDarkBlue, Color.kDarkGreen, Color.kDarkTurquoise, 3.0);
 
-  private SuperStructureModes mode = SuperStructureModes.TUCKED;
-  private ShooterModes shooterMode = ShooterModes.NONE;
+  private SuperStructureModes currentMode = SuperStructureModes.TUCKED;
+  private ShooterModes currentShooterMode = ShooterModes.NONE;
 
-  private boolean rotateBeforeElevator = false;
-  private boolean elevatorBeforeRotate = false;
+  private IntoInstructions intoInstructions = IntoInstructions.NONE;
+  private ExitInstructions exitInstructions = ExitInstructions.NONE;
 
   public SuperStructure() {
     FollowRollersIO elevatorIO;
@@ -163,23 +165,26 @@ public class SuperStructure extends SubsystemBase {
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
-      setMode(SuperStructureModes.TUCKED);
-      setShooterMode(ShooterModes.NONE);
+      setCurrentMode(SuperStructureModes.TUCKED);
+      setCurrentShooterMode(ShooterModes.NONE);
     }
 
-    if (shooterMode.useCanRange && coralSensor.isNear()) {
+    if (currentShooterMode.useCanRange && coralSensor.isNear()) {
       shooter.stop();
     } else {
-      shooter.runVolts(shooterMode.voltage);
+      shooter.runVolts(currentShooterMode.voltage);
     }
 
-    if (rotateBeforeElevator && coralPivot.atGoal() && algaePivot.atGoal()) {
-      elevator.setGoalHeightInches(mode.elevatorHeightInches);
+    if (intoInstructions == IntoInstructions.PIVOTS_BEFORE_ELEVATOR
+        && coralPivot.atGoal()
+        && algaePivot.atGoal()) {
+      elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
     }
 
-    if (elevatorBeforeRotate && elevator.underL4Threshold()) {
-      coralPivot.setGoal(mode.coralPos);
-      algaePivot.setGoal(mode.algaePos);
+    if (exitInstructions == ExitInstructions.ELEVATOR_BEFORE_PIVOTS
+        && elevator.underL4Threshold()) {
+      coralPivot.setGoal(currentMode.coralPos);
+      algaePivot.setGoal(currentMode.algaePos);
     }
 
     elevator.periodic();
@@ -193,36 +198,38 @@ public class SuperStructure extends SubsystemBase {
         elevator.getGoalHeightInches(), coralPivot.getGoalPosition(), algaePivot.getGoalPosition());
   }
 
-  private void setMode(SuperStructureModes mode) {
-    if (this.mode != mode) {
-      rotateBeforeElevator = mode.rotateBeforeElevator;
-      elevatorBeforeRotate = this.mode.elevatorBeforeRotate;
+  private void setCurrentMode(SuperStructureModes nextMode) {
+    if (currentMode != nextMode) {
+      intoInstructions = nextMode.intoInstructions;
+      exitInstructions = currentMode.exitInstructions;
 
-      if (rotateBeforeElevator || !elevatorBeforeRotate) {
-        coralPivot.setGoal(mode.coralPos);
-        algaePivot.setGoal(mode.algaePos);
+      if (intoInstructions == IntoInstructions.PIVOTS_BEFORE_ELEVATOR
+          || exitInstructions == ExitInstructions.NONE) {
+        coralPivot.setGoal(nextMode.coralPos);
+        algaePivot.setGoal(nextMode.algaePos);
       }
 
-      if (elevatorBeforeRotate || !rotateBeforeElevator) {
-        elevator.setGoalHeightInches(mode.elevatorHeightInches);
+      if (exitInstructions == ExitInstructions.ELEVATOR_BEFORE_PIVOTS
+          || intoInstructions == IntoInstructions.NONE) {
+        elevator.setGoalHeightInches(nextMode.elevatorHeightInches);
       }
 
-      this.mode = mode;
+      currentMode = nextMode;
     }
   }
 
-  public Command setModeCommand(SuperStructureModes mode) {
-    return runOnce(() -> setMode(mode));
+  public Command setModeCommand(SuperStructureModes nextMode) {
+    return runOnce(() -> setCurrentMode(nextMode));
   }
 
-  private void setShooterMode(ShooterModes shooterMode) {
-    if (this.shooterMode != shooterMode) {
-      this.shooterMode = shooterMode;
+  private void setCurrentShooterMode(ShooterModes nextShooterMode) {
+    if (currentShooterMode != nextShooterMode) {
+      currentShooterMode = nextShooterMode;
     }
   }
 
-  public Command setShooterModeCommand(ShooterModes shooterMode) {
-    return runOnce(() -> setShooterMode(shooterMode));
+  public Command setShooterModeCommand(ShooterModes nextShooterMode) {
+    return runOnce(() -> setCurrentShooterMode(nextShooterMode));
   }
 
   public Trigger isCoralIntaked() {
