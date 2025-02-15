@@ -145,21 +145,24 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     inputs.followerTemperatureCelsius = followerTempCelsius.getValueAsDouble();
   }
 
-  /** Run roller at set voltage */
   public void runVolts(double volts) {
     leader.setControl(voltageOut.withOutput(volts));
   }
 
   public void runVelocity(double velocityRadPerSecond) {
-    leader.setControl(velocityOut.withVelocity(velocityRadPerSecond));
+    leader.setControl(velocityOut.withVelocity(Units.radiansToRotations(velocityRadPerSecond)));
   }
 
-  /** Run roller at set position */
   public void runPosition(double positionRad) {
-    leader.setControl(positionOut.withPosition(positionRad * reduction));
+    leader.setControl(positionOut.withPosition(Units.radiansToRotations(positionRad) * reduction));
   }
 
-  /** Stop roller */
+  @Override
+  public void resetPosition(double positionRad) {
+    leader.setPosition(Units.radiansToRotations(positionRad) * reduction);
+    follower.setPosition(Units.radiansToRotations(positionRad) * reduction);
+  }
+
   public void stop() {
     leader.setControl(neutralOut);
   }

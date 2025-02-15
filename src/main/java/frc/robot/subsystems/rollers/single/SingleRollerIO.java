@@ -21,10 +21,14 @@ public interface SingleRollerIO {
   /** Run roller at set voltage */
   public default void runVolts(double volts) {}
 
-  public default void runVelocity(double velocity) {}
+  /** Run roller at set velocity */
+  public default void runVelocity(double velocityRadPerSec) {}
 
-  /** Run roller at set position */
+  /** Run roller to set position */
   public default void runPosition(double positionRad) {}
+
+  /** Reset encoder to position */
+  public default void resetPosition(double positionRad) {}
 
   /** Stop roller */
   public default void stop() {}

@@ -81,6 +81,11 @@ public class FollowRollersIOSim implements FollowRollersIO {
   }
 
   @Override
+  public void resetPosition(double positionRad) {
+    leader.setAngle(positionRad);
+  }
+
+  @Override
   public void stop() {
     runVolts(0.0);
   }

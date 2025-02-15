@@ -59,6 +59,11 @@ public class SingleRollerIOSim implements SingleRollerIO {
   }
 
   @Override
+  public void resetPosition(double positionRad) {
+    sim.setAngle(positionRad);
+  }
+
+  @Override
   public void stop() {
     runVolts(0.0);
   }

@@ -88,23 +88,25 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
     inputs.temperatureCelsius = tempCelsius.getValueAsDouble();
   }
 
-  /** Run roller at set voltage */
   @Override
   public void runVolts(double volts) {
     talon.setControl(voltageOut.withOutput(volts));
   }
 
   public void runVelocity(double velocityRadPerSecond) {
-    talon.setControl(velocityOut.withVelocity(velocityRadPerSecond));
+    talon.setControl(velocityOut.withVelocity(Units.radiansToRotations(velocityRadPerSecond)));
   }
 
-  /** Run roller at set position */
   @Override
   public void runPosition(double positionRad) {
-    talon.setControl(positionOut.withPosition(positionRad * reduction));
+    talon.setControl(positionOut.withPosition(Units.radiansToRotations(positionRad) * reduction));
   }
 
-  /** Stop roller */
+  @Override
+  public void resetPosition(double positionRad) {
+    talon.setPosition(Units.radiansToRotations(positionRad) * reduction);
+  }
+
   @Override
   public void stop() {
     talon.setControl(neutralOut);

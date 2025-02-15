@@ -50,6 +50,11 @@ public class SingleRollerIOTalonSRX implements SingleRollerIO {
   }
 
   @Override
+  public void resetPosition(double positionRad) {
+    throw new IllegalStateException("There is no position for a TalonSRX");
+  }
+
+  @Override
   public void stop() {
     talon.set(TalonSRXControlMode.Disabled, 0);
   }
