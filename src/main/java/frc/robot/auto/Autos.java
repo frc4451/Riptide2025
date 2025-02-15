@@ -30,6 +30,10 @@ public class Autos {
     return basicRoutine(drive.autoFactory.newRoutine("5 Meters"), ChoreoPaths.FIVE_METERS);
   }
 
+  public AutoRoutine curvy() {
+    return basicRoutine(drive.autoFactory.newRoutine("Curvy"), ChoreoPaths.CURVY);
+  }
+
   // Helpers
   private Command followTrajectory(AutoTrajectory trajectory) {
     return Commands.sequence(

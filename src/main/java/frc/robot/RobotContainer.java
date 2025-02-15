@@ -134,6 +134,7 @@ public class RobotContainer {
     autoChooser.addRoutine("2 Meters", autos::twoMeters);
     autoChooser.addRoutine("3 Meters", autos::threeMeters);
     autoChooser.addRoutine("5 Meters", autos::fiveMeters);
+    autoChooser.addRoutine("Curvy", autos::curvy);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
