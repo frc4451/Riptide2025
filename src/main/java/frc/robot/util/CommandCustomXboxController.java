@@ -106,12 +106,20 @@ public class CommandCustomXboxController extends CommandXboxController {
     return rightTrigger(Constants.triggerPressedThreshold);
   }
 
-  public Command runRumble(RumbleType type, double value) {
-    return Commands.startEnd(() -> setRumble(type, value), () -> setRumble(type, 0));
+  public Command rumble(double strength) {
+    return Commands.startEnd(
+        () -> setRumble(RumbleType.kBothRumble, strength),
+        () -> setRumble(RumbleType.kBothRumble, 0));
   }
 
-  public Command runRumbleSeconds(RumbleType type, double value, double time) {
-    return runRumble(type, value).withTimeout(time);
+  public Command rumbleSeconds(double strength, double time) {
+    return rumble(strength).withTimeout(time);
+  }
+
+  public Command rumbleOnOff(double strength, double rumbleTime, double waitTime, int loops) {
+    return Commands.repeatingSequence(
+            rumbleSeconds(strength, rumbleTime), Commands.waitSeconds(waitTime))
+        .withTimeout((rumbleTime + waitTime) * loops);
   }
 
   private double squareJoystickValue(double value) {

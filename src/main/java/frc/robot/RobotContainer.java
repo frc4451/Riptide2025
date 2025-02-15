@@ -15,7 +15,6 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -180,17 +179,8 @@ public class RobotContainer {
                 () -> FieldUtils.getClosestReef().leftPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
                 Commands.parallel(
-                    driverController
-                        .runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25)
-                        .andThen(Commands.waitSeconds(0.25))
-                        .andThen(
-                            driverController.runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25),
-                            operatorController
-                                .runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25)
-                                .andThen(Commands.waitSeconds(0.25))
-                                .andThen(
-                                    operatorController.runRumbleSeconds(
-                                        RumbleType.kBothRumble, 1, 0.25))))));
+                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
+                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
 
     driverController
         .a()
@@ -201,17 +191,8 @@ public class RobotContainer {
                 () -> FieldUtils.getClosestReef().rightPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
                 Commands.parallel(
-                    driverController
-                        .runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25)
-                        .andThen(Commands.waitSeconds(0.25))
-                        .andThen(
-                            driverController.runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25),
-                            operatorController
-                                .runRumbleSeconds(RumbleType.kBothRumble, 1, 0.25)
-                                .andThen(Commands.waitSeconds(0.25))
-                                .andThen(
-                                    operatorController.runRumbleSeconds(
-                                        RumbleType.kBothRumble, 1, 0.25))))));
+                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
+                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
 
     // Human Player Stations
     driverController
@@ -237,8 +218,8 @@ public class RobotContainer {
         .isCoralIntaked()
         .onTrue(
             Commands.parallel(
-                driverController.runRumbleSeconds(RumbleType.kBothRumble, 1.0, 0.5),
-                operatorController.runRumbleSeconds(RumbleType.kBothRumble, 1.0, 0.5)));
+                driverController.rumbleSeconds(1.0, 0.5),
+                operatorController.rumbleSeconds(1.0, 0.5)));
   }
 
   private void configureSuperBindings() {
