@@ -107,8 +107,7 @@ public class CommandCustomXboxController extends CommandXboxController {
   }
 
   public Command runRumble(RumbleType type, double value) {
-    return Commands.startEnd(
-        () -> setRumble(type, value), () -> setRumble(type, 0));
+    return Commands.startEnd(() -> setRumble(type, value), () -> setRumble(type, 0));
   }
 
   public Command runRumbleSeconds(RumbleType type, double value, double time) {
