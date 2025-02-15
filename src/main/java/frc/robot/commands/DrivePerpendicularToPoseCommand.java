@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -22,6 +23,8 @@ public class DrivePerpendicularToPoseCommand extends Command {
   private final Drive drive;
   private final Supplier<Pose2d> targetPoseSupplier;
   private final Supplier<Double> perpendicularInput;
+
+  private double perpendicularError = 0;
 
   public DrivePerpendicularToPoseCommand(
       Drive drive, Supplier<Pose2d> targetPoseSupplier, Supplier<Double> perpendicularInput) {
@@ -52,13 +55,16 @@ public class DrivePerpendicularToPoseCommand extends Command {
 
     Rotation2d desiredTheta = targetPose.getRotation().plus(Rotation2d.kPi);
 
+    perpendicularError = PoseUtils.getPerpendicularError(robotPose, targetPose);
+    Logger.recordOutput("Commands/" + getName() + "/PerpendicularError", perpendicularError);
+
     double parallelError = PoseUtils.getParallelError(robotPose, targetPose);
-    Logger.recordOutput("Commands/" + getName() + "/parallelError", parallelError);
+    Logger.recordOutput("Commands/" + getName() + "/ParallelError", parallelError);
 
     double thetaError = robotPose.getRotation().minus(desiredTheta).getRadians();
-    Logger.recordOutput("Commands/" + getName() + "/thetaError", thetaError);
+    Logger.recordOutput("Commands/" + getName() + "/ThetaError", thetaError);
 
-    double parallelSpeed = parallelController.calculate(parallelError, 0);
+    double parallelSpeed = parallelController.calculate(-parallelError, 0);
     parallelSpeed = !parallelController.atSetpoint() ? parallelSpeed : 0;
 
     double angularSpeed = angleController.calculate(thetaError, 0);
@@ -75,6 +81,10 @@ public class DrivePerpendicularToPoseCommand extends Command {
   }
 
   public Trigger atSetpoint() {
-    return new Trigger(() -> parallelController.atSetpoint() && angleController.atSetpoint());
+    return new Trigger(
+        () ->
+            parallelController.atSetpoint()
+                && angleController.atSetpoint()
+                && perpendicularError < Units.feetToMeters(2.5));
   }
 }
