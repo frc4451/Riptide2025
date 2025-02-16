@@ -9,7 +9,6 @@ import frc.robot.bobot_state.varc.ReefTagTracker;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
-import frc.robot.util.PoseUtils;
 import frc.robot.util.VirtualSubsystem;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -68,11 +67,12 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.bargeTracker.getRotationTarget();
   }
 
+  public static double getDistanceMetersFromClosestHPS() {
+    return BobotState.hpsTracker.getDistanceMeters();
+  }
+
   public static Trigger isRobotCloseToHPS() {
-    return new Trigger(
-        () ->
-            PoseUtils.isCloseToPose(
-                BobotState.getGlobalPose(), FieldUtils.getClosestHPSTag().pose().toPose2d(), 2));
+    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 2);
   }
 
   @Override
@@ -100,12 +100,7 @@ public class BobotState extends VirtualSubsystem {
 
       String calcLogRoot = logRoot + "HPS/";
       Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPSTag());
-      Logger.recordOutput(
-          calcLogRoot + "Distance",
-          BobotState.getGlobalPose()
-              .minus(FieldUtils.getClosestHPSTag().pose().toPose2d())
-              .getTranslation()
-              .getNorm());
+      Logger.recordOutput(calcLogRoot + "Distance", BobotState.hpsTracker.getDistanceMeters());
       Logger.recordOutput(calcLogRoot + "IsClose", BobotState.isRobotCloseToHPS());
       Logger.recordOutput(
           calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());
