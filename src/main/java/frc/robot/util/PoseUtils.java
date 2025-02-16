@@ -35,6 +35,10 @@ public class PoseUtils {
         getParallelOffsetPose(pose, parellelOffsetMeters), perpendicularOffsetMeters);
   }
 
+  public static boolean isCloseToPose(Pose2d origin, Pose2d target, double distanceMeters) {
+    return origin.minus(target).getTranslation().getNorm() < distanceMeters;
+  }
+
   /**
    * @see https://en.wikipedia.org/wiki/Vector_projection#Scalar_projection
    */

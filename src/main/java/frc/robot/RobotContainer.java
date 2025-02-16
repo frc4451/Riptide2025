@@ -25,6 +25,10 @@ import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DrivePerpendicularToPoseCommand;
 import frc.robot.field.FieldUtils;
+import frc.robot.subsystems.blinkin.Blinkin;
+import frc.robot.subsystems.blinkin.BlinkinIO;
+import frc.robot.subsystems.blinkin.BlinkinIOSim;
+import frc.robot.subsystems.blinkin.BlinkinState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -51,6 +55,8 @@ public class RobotContainer {
   private final Vision vision = new Vision();
   private final SuperStructure superStructure = new SuperStructure();
 
+  public final Blinkin blinkin;
+
   public final QuestSubsystem quest;
 
   // Controller
@@ -76,6 +82,9 @@ public class RobotContainer {
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
         quest = new QuestSubsystem(new QuestIOReal());
+
+        // not attached to the robot yet
+        blinkin = new Blinkin(new BlinkinIO() {});
         break;
 
       case SIM:
@@ -88,6 +97,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim());
         quest = new QuestSubsystem(new QuestIO() {});
+        blinkin = new Blinkin(new BlinkinIOSim());
         break;
 
       case REPLAY:
@@ -101,6 +111,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         quest = new QuestSubsystem(new QuestIO() {});
+        blinkin = new Blinkin(new BlinkinIO() {});
         break;
     }
 
@@ -111,6 +122,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Configure lights
+    configureLights();
   }
 
   private void configureAutos() {
@@ -156,6 +170,14 @@ public class RobotContainer {
 
     configureAlignmentBindings();
     configureSuperBindings();
+  }
+
+  /** Handle visual cues from the robot */
+  private void configureLights() {
+    // Tell the Human Player to get ready to throw Coral
+    BobotState.isRobotCloseToHPS()
+        .onTrue(blinkin.addStateCommand(BlinkinState.NEAR_HPS))
+        .onFalse(blinkin.removeStateCommand(BlinkinState.NEAR_HPS));
   }
 
   private void configureAlignmentBindings() {
