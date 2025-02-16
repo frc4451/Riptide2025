@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.littletonrobotics.junction.Logger;
@@ -19,21 +18,9 @@ public class Blinkin extends SubsystemBase {
 
   private final Timer blinkController = new Timer();
 
-  public Blinkin() {
+  public Blinkin(BlinkinIO io) {
     possibleStates.add(BlinkinState.DEFAULT);
-
-    switch (Constants.currentMode) {
-      case REAL:
-        io = new BlinkinIOSpark();
-        break;
-      case SIM:
-        io = new BlinkinIOSim();
-        break;
-      case REPLAY:
-      default:
-        io = new BlinkinIO() {};
-        break;
-    }
+    this.io = io;
     blinkController.start();
   }
 
@@ -58,6 +45,7 @@ public class Blinkin extends SubsystemBase {
     }
 
     String stateLogRoot = "Blinkin/CurrentState/";
+    Logger.recordOutput(stateLogRoot + "Name", currentState.name());
     Logger.recordOutput(stateLogRoot + "ColorSetpoint", currentState.color);
     Logger.recordOutput(
         stateLogRoot + "TimeUntilBlink",

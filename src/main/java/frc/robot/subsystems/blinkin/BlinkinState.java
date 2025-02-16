@@ -3,6 +3,8 @@ package frc.robot.subsystems.blinkin;
 public enum BlinkinState {
   // Priority is determined by definition order,
   // e.g. NOTE has precedence over DEFAULT
+  NEAR_HPS(BlinkinColors.SOLID_LIME, BlinkinPattern.BLINK),
+
   IN_RANGE(BlinkinColors.SOLID_BLUE, BlinkinPattern.SOLID),
   PAST_OPP_WING(BlinkinColors.SOLID_VIOLET, BlinkinPattern.SOLID),
   NOTE(BlinkinColors.SOLID_GOLD, BlinkinPattern.BLINK),
