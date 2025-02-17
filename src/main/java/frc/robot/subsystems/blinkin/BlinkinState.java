@@ -2,12 +2,12 @@ package frc.robot.subsystems.blinkin;
 
 public enum BlinkinState {
   // Priority is determined by definition order,
-  // e.g. NOTE has precedence over DEFAULT
-  NEAR_HPS(BlinkinColors.SOLID_LIME, BlinkinPattern.BLINK),
-
-  IN_RANGE(BlinkinColors.SOLID_BLUE, BlinkinPattern.SOLID),
-  PAST_OPP_WING(BlinkinColors.SOLID_VIOLET, BlinkinPattern.SOLID),
-  NOTE(BlinkinColors.SOLID_GOLD, BlinkinPattern.BLINK),
+  // e.g. CORAL_IN has precedence over DEFAULT
+  CORAL_IN(BlinkinColors.SOLID_WHITE, BlinkinPattern.BLINK),
+  /** Let the human player know that they should throw the Coral in */
+  HUMAN_PLAYER_SHOULD_THROW(BlinkinColors.SOLID_GOLD, BlinkinPattern.SOLID),
+  /** Let the human player know that they should prepare to throw the Coral in */
+  NEAR_HUMAN_PLAYER(BlinkinColors.SOLID_LIME, BlinkinPattern.BLINK),
   DEFAULT(BlinkinColors.SOLID_BLACK, BlinkinPattern.SOLID);
 
   public final BlinkinColors color;

@@ -175,9 +175,19 @@ public class RobotContainer {
   /** Handle visual cues from the robot */
   private void configureLights() {
     // Tell the Human Player to get ready to throw Coral
-    BobotState.isRobotCloseToHPS()
-        .onTrue(blinkin.addStateCommand(BlinkinState.NEAR_HPS))
-        .onFalse(blinkin.removeStateCommand(BlinkinState.NEAR_HPS));
+    BobotState.nearHumanPlayer()
+        .onTrue(blinkin.addStateCommand(BlinkinState.NEAR_HUMAN_PLAYER))
+        .onFalse(blinkin.removeStateCommand(BlinkinState.NEAR_HUMAN_PLAYER));
+
+    // YEET
+    BobotState.humanPlayerShouldReady()
+        .onTrue(blinkin.addStateCommand(BlinkinState.HUMAN_PLAYER_SHOULD_THROW))
+        .onFalse(blinkin.removeStateCommand(BlinkinState.HUMAN_PLAYER_SHOULD_THROW));
+
+    superStructure
+        .isCoralIntaked()
+        .onTrue(blinkin.addStateCommand(BlinkinState.CORAL_IN))
+        .onFalse(blinkin.removeStateCommand(BlinkinState.CORAL_IN));
   }
 
   private void configureAlignmentBindings() {
