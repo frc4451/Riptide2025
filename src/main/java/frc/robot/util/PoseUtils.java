@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
+// We kept these because we could not part with them, it was too sad
+// (and post-hoc found the justification that this makes less objects)
 public class PoseUtils {
   public static Pose2d getParallelOffsetPose(Pose2d pose, double offsetMeters) {
     Translation2d offsetTranslation =
@@ -16,6 +18,9 @@ public class PoseUtils {
                     offsetMeters * pose.getRotation().getCos()));
 
     return new Pose2d(offsetTranslation, pose.getRotation());
+
+    // But this way simpler to reason about & understand
+    // return pose.transformBy(new Transform2d(0, offsetMeters, Rotation2d.kZero));
   }
 
   public static Pose2d getPerpendicularOffsetPose(Pose2d pose, double perpendicularOffsetMeters) {
@@ -27,6 +32,9 @@ public class PoseUtils {
                     perpendicularOffsetMeters * pose.getRotation().getSin()));
 
     return new Pose2d(offsetTranslation, pose.getRotation());
+
+    // But this way simpler to reason about & understand
+    // return pose.transformBy(new Transform2d(perpendicularOffsetMeters, 0, Rotation2d.kZero));
   }
 
   public static Pose2d getOffsetPose(
@@ -44,6 +52,8 @@ public class PoseUtils {
     double parallelError = originToTarget.getNorm() * angleBetween.getSin();
 
     return parallelError;
+
+    // return -origin.minus(target).getY();
   }
 
   /**
@@ -55,5 +65,7 @@ public class PoseUtils {
     double perpendicularError = originToTarget.getNorm() * angleBetween.getCos();
 
     return perpendicularError;
+
+    // return -origin.minus(target).getX();
   }
 }
