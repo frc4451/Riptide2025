@@ -71,8 +71,12 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.hpsTracker.getDistanceMeters();
   }
 
-  public static Trigger isRobotCloseToHPS() {
+  public static Trigger nearHumanPlayer() {
     return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 2);
+  }
+
+  public static Trigger humanPlayerShouldReady() {
+    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 0.5);
   }
 
   @Override
@@ -101,7 +105,7 @@ public class BobotState extends VirtualSubsystem {
       String calcLogRoot = logRoot + "HPS/";
       Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPSTag());
       Logger.recordOutput(calcLogRoot + "Distance", BobotState.hpsTracker.getDistanceMeters());
-      Logger.recordOutput(calcLogRoot + "IsClose", BobotState.isRobotCloseToHPS());
+      Logger.recordOutput(calcLogRoot + "IsClose", BobotState.nearHumanPlayer());
       Logger.recordOutput(
           calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());
       Logger.recordOutput(
