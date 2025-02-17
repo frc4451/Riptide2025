@@ -52,6 +52,7 @@ public class DrivePerpendicularToPoseCommand extends Command {
   public void execute() {
     Pose2d robotPose = drive.getPose();
     Pose2d targetPose = targetPoseSupplier.get();
+    Logger.recordOutput("Commands/" + getName() + "/targetPose", targetPose);
 
     Rotation2d desiredTheta = targetPose.getRotation().plus(Rotation2d.kPi);
 
@@ -71,13 +72,12 @@ public class DrivePerpendicularToPoseCommand extends Command {
     angularSpeed = !angleController.atSetpoint() ? angularSpeed : 0;
 
     ChassisSpeeds speeds =
-        ChassisSpeeds.fromRobotRelativeSpeeds(
+        new ChassisSpeeds(
             perpendicularInput.get() * drive.getMaxLinearSpeedMetersPerSec(),
             parallelSpeed,
-            angularSpeed,
-            desiredTheta);
+            angularSpeed);
 
-    drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, drive.getRotation()));
+    drive.runVelocity(speeds);
   }
 
   public Trigger atSetpoint() {
