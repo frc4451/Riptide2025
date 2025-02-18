@@ -2,6 +2,7 @@ package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
@@ -66,6 +67,18 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.bargeTracker.getRotationTarget();
   }
 
+  public static double getDistanceMetersFromClosestHPS() {
+    return BobotState.hpsTracker.getDistanceMeters();
+  }
+
+  public static Trigger nearHumanPlayer() {
+    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 2);
+  }
+
+  public static Trigger humanPlayerShouldReady() {
+    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 0.5);
+  }
+
   @Override
   public void periodic() {
     {
@@ -91,6 +104,8 @@ public class BobotState extends VirtualSubsystem {
 
       String calcLogRoot = logRoot + "HPS/";
       Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPSTag());
+      Logger.recordOutput(calcLogRoot + "Distance", BobotState.hpsTracker.getDistanceMeters());
+      Logger.recordOutput(calcLogRoot + "IsClose", BobotState.nearHumanPlayer());
       Logger.recordOutput(
           calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());
       Logger.recordOutput(
