@@ -15,6 +15,8 @@ import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends FollowRollers {
+  private static final double atGoalToleranceInches = 1;
+
   private final TrapezoidProfile trapezoidProfile;
   private final CanRange heightSensor;
 
@@ -113,5 +115,9 @@ public class Elevator extends FollowRollers {
   private void resetController() {
     setGoalHeightInches(0.0);
     setpoint = new TrapezoidProfile.State(0.0, 0.0);
+  }
+
+  public boolean atGoal() {
+    return MathUtil.isNear(getGoalHeightInches(), getHeightInches(), atGoalToleranceInches);
   }
 }

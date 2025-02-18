@@ -37,13 +37,13 @@ public class DriveToPoseCommand extends Command {
     Transform2d error = robotPose.minus(targetPose);
     Logger.recordOutput("Commands/" + getName() + "/Error", error);
 
-    double perpendicularSpeed = perpendicularController.calculate(error.getX(), 0);
+    double perpendicularSpeed = perpendicularController.calculate(-error.getX(), 0);
     perpendicularSpeed = !perpendicularController.atSetpoint() ? perpendicularSpeed : 0;
 
-    double parallelSpeed = parallelController.calculate(error.getY(), 0);
+    double parallelSpeed = parallelController.calculate(-error.getY(), 0);
     parallelSpeed = !parallelController.atSetpoint() ? parallelSpeed : 0;
 
-    double angularSpeed = angleController.calculate(error.getRotation().getRadians(), 0);
+    double angularSpeed = angleController.calculate(-error.getRotation().getRadians(), 0);
     angularSpeed = !angleController.atSetpoint() ? angularSpeed : 0;
 
     ChassisSpeeds speeds = new ChassisSpeeds(perpendicularSpeed, parallelSpeed, angularSpeed);

@@ -92,6 +92,7 @@ public class Drive extends SubsystemBase {
     // Configure AutoFactory for Choreo
     autoFactory =
         new AutoFactory(this::getPose, this::setPose, this::followTrajectory, false, this);
+    angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Configure SysId
     sysId =
@@ -232,15 +233,15 @@ public class Drive extends SubsystemBase {
 
   public void followTrajectory(SwerveSample sample) {
     // Get the current pose of the robot
-    Pose2d pose = BobotState.getGlobalPose();
+    Pose2d pose = getPose();
 
     // Generate the next speeds for the robot
     ChassisSpeeds speeds =
-        new ChassisSpeeds(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
             sample.vx + xController.calculate(pose.getX(), sample.x),
             sample.vy + yController.calculate(pose.getY(), sample.y),
             sample.omega
-                + angleController.calculate(pose.getRotation().getRadians(), sample.heading));
+                + angleController.calculate(pose.getRotation().getRadians(), sample.heading), getRotation());
 
     // Apply the generated speeds
     runVelocity(speeds);

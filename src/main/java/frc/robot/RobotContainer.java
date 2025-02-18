@@ -36,7 +36,6 @@ import frc.robot.subsystems.quest.QuestIOReal;
 import frc.robot.subsystems.quest.QuestSubsystem;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
-import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
 
 /**
@@ -48,7 +47,7 @@ import frc.robot.util.CommandCustomXboxController;
 public class RobotContainer {
   // Subsystems
   public final Drive drive;
-  private final Vision vision = new Vision();
+  //   private final Vision vision = new Vision();
   private final SuperStructure superStructure = new SuperStructure();
 
   public final QuestSubsystem quest;
@@ -105,7 +104,7 @@ public class RobotContainer {
     }
 
     autoChooser = new AutoChooser();
-    autos = new Autos(drive, quest);
+    autos = new Autos(drive, superStructure, quest);
 
     configureAutos();
 
@@ -135,6 +134,7 @@ public class RobotContainer {
     autoChooser.addRoutine("3 Meters", autos::threeMeters);
     autoChooser.addRoutine("5 Meters", autos::fiveMeters);
     autoChooser.addRoutine("Curvy", autos::curvy);
+    autoChooser.addRoutine("Fish", autos::fish);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
