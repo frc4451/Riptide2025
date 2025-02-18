@@ -232,6 +232,10 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(() -> setCurrentShooterMode(nextShooterMode));
   }
 
+  public Trigger isAtMode() {
+    return new Trigger(() -> elevator.atGoal() && coralPivot.atGoal() && algaePivot.atGoal());
+  }
+
   public Trigger isCoralIntaked() {
     return new Trigger(coralSensor::isNear);
   }
