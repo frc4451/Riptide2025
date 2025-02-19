@@ -9,7 +9,6 @@ import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.RobotController;
 
 public class QuestIOReal implements QuestIO {
   // Configure Network Tables topics (questnav/...) to communicate with the Quest
@@ -41,22 +40,22 @@ public class QuestIOReal implements QuestIO {
   }
 
   public void updateInputs(QuestIOInputs inputs) {
-    inputs.connected = isConnected();
-
     inputs.questPose = getQuestPose();
     inputs.robotPose = getRobotPose();
 
     inputs.rawPose = getRawPose();
 
-    inputs.timestamp = questTimestamp.get();
+    double timestamp = questTimestamp.get();
+    inputs.timestampDelta = timestamp - inputs.timestamp;
+    inputs.timestamp = timestamp;
+
     inputs.batteryLevel = questBattery.get();
 
+    // The timestamp delta is calculated between the current and last robot loop
+    // The delta is zero if the new measurement is from the same time as the last measurement,
+    // meaning we have not received new data and as such can assume the quest is not connected
+    inputs.connected = inputs.timestampDelta != 0;
     cleanUpOculusMessages();
-  }
-
-  private boolean isConnected() {
-    // microseconds
-    return ((RobotController.getFPGATime() - questTimestamp.getLastChange()) < 250_000);
   }
 
   /** Sets supplied pose as origin of all calculations */

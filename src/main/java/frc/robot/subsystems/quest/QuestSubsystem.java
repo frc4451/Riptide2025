@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
-import frc.robot.Constants.Mode;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.util.VirtualSubsystem;
 import org.littletonrobotics.junction.Logger;
@@ -13,8 +12,6 @@ import org.littletonrobotics.junction.Logger;
 public class QuestSubsystem extends VirtualSubsystem {
   private final QuestIO io;
   private final QuestIOInputsAutoLogged inputs = new QuestIOInputsAutoLogged();
-
-  private boolean hasDisconnected = true;
 
   private final Alert disconnectedAlert = new Alert("Quest Disconnected!", AlertType.kWarning);
   private final Alert lowBatteryAlert =
@@ -30,11 +27,13 @@ public class QuestSubsystem extends VirtualSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Oculus", inputs);
 
-    disconnectedAlert.set(!inputs.connected && Constants.currentMode != Mode.SIM);
+    disconnectedAlert.set(!inputs.connected);
+    lowBatteryAlert.set(inputs.batteryLevel < 25 && inputs.connected);
 
-    lowBatteryAlert.set(inputs.batteryLevel < 25 && !disconnectedAlert.get());
-    if (DriverStation.isEnabled() && Constants.currentMode == Constants.Mode.REAL) {
-      BobotState.offerQuestMeasurment(new TimestampedPose(inputs.robotPose, inputs.timestamp));
+    if (DriverStation.isEnabled()
+        && inputs.connected
+        && Constants.currentMode == Constants.Mode.REAL) {
+      BobotState.offerQuestMeasurement(new TimestampedPose(inputs.robotPose, inputs.timestamp));
     }
   }
 

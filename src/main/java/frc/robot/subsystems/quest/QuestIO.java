@@ -15,6 +15,7 @@ public interface QuestIO extends AutoCloseable {
     public Pose2d rawPose = new Pose2d();
 
     public double timestamp = 0;
+    public double timestampDelta = 0;
     public double batteryLevel = 0;
   }
 

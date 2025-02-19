@@ -39,7 +39,7 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.poseObservations;
   }
 
-  public static void offerQuestMeasurment(TimestampedPose observation) {
+  public static void offerQuestMeasurement(TimestampedPose observation) {
     BobotState.questMeasurements.offer(observation);
   }
 
