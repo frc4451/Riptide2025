@@ -90,8 +90,7 @@ public class Drive extends SubsystemBase {
     SparkOdometryThread.getInstance().start();
 
     // Configure AutoFactory for Choreo
-    autoFactory =
-        new AutoFactory(this::getPose, this::setPose, this::followTrajectory, false, this);
+    autoFactory = new AutoFactory(this::getPose, this::setPose, this::followTrajectory, true, this);
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Configure SysId

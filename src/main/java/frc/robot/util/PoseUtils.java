@@ -68,4 +68,8 @@ public class PoseUtils {
 
     // return -origin.minus(target).getX();
   }
+
+  public static Pose2d plusRotation(Pose2d pose, Rotation2d rotation) {
+    return new Pose2d(pose.getTranslation(), pose.getRotation().plus(rotation));
+  }
 }

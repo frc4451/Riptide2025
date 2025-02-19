@@ -2,6 +2,7 @@ package frc.robot.auto;
 
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveToPoseCommand;
@@ -12,6 +13,7 @@ import frc.robot.subsystems.quest.QuestSubsystem;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
+import frc.robot.util.PoseUtils;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -81,7 +83,11 @@ public class Autos {
 
   private Command positionToPole(Supplier<ReefPole> pole) {
     return new DriveToPoseCommand(
-        drive, () -> pole.get().getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters));
+        drive,
+        () ->
+            PoseUtils.plusRotation(
+                pole.get().getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
+                Rotation2d.kPi));
   }
 
   private Command score(SuperStructureModes mode) {

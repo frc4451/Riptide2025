@@ -14,17 +14,23 @@
 package frc.robot;
 
 import choreo.auto.AutoChooser;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.Mode;
+import frc.robot.auto.AutoConstants;
 import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DrivePerpendicularToPoseCommand;
+import frc.robot.commands.DriveToPoseCommand;
+import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
+import frc.robot.field.ReefFaces;
 import frc.robot.subsystems.blinkin.Blinkin;
 import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
@@ -41,6 +47,8 @@ import frc.robot.subsystems.quest.QuestSubsystem;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.util.CommandCustomXboxController;
+import frc.robot.util.PoseUtils;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -170,6 +178,10 @@ public class RobotContainer {
 
     configureAlignmentBindings();
     configureSuperBindings();
+
+    if (Constants.currentMode == Mode.SIM) {
+      debugSetup();
+    }
   }
 
   /** Handle visual cues from the robot */
@@ -263,6 +275,59 @@ public class RobotContainer {
     operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.L2));
     operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.L3));
     operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.L4));
+  }
+
+  private void debugSetup() {
+    String logRoot = "ChoreoWaypoints";
+
+    // Calculating Reef Offsets for Choreo
+    for (ReefFaces face : ReefFaces.values()) {
+      Logger.recordOutput(
+          logRoot + "/Faces/" + face.name() + "/Left",
+          PoseUtils.plusRotation(
+              face.blue.leftPole.getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
+              Rotation2d.kPi));
+      Logger.recordOutput(
+          logRoot + "/Faces/" + face.name() + "/Right",
+          PoseUtils.plusRotation(
+              face.blue.rightPole.getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
+              Rotation2d.kPi));
+    }
+
+    Logger.recordOutput(
+        logRoot + "/HPS/Left",
+        PoseUtils.getPerpendicularOffsetPose(
+            FieldConstants.blueHPSDriverLeft.pose().toPose2d(),
+            AutoConstants.reefScoreOffsetMeters));
+    Logger.recordOutput(
+        logRoot + "/HPS/Right",
+        PoseUtils.getPerpendicularOffsetPose(
+            FieldConstants.blueHPSDriverRight.pose().toPose2d(),
+            AutoConstants.reefScoreOffsetMeters));
+
+    driverController
+        .back()
+        .whileTrue(
+            new DriveToPoseCommand(
+                drive,
+                () ->
+                    PoseUtils.plusRotation(
+                        FieldUtils.getClosestReef()
+                            .leftPole
+                            .getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
+                        Rotation2d.kPi)));
+
+    driverController
+        .start()
+        .whileTrue(
+            new DriveToPoseCommand(
+                drive,
+                () ->
+                    PoseUtils.plusRotation(
+                        FieldUtils.getClosestReef()
+                            .rightPole
+                            .getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
+                        Rotation2d.kPi)));
   }
 
   /**
