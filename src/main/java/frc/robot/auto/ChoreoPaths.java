@@ -5,7 +5,7 @@ public enum ChoreoPaths {
   THREE_METERS("3 Meters"),
   FIVE_METERS("5 Meters"),
   CURVY("Curvy"),
-  START_MID_TO_J("StartMid--J");
+  START_MID_TO_G("StartMid--G");
 
   public final String name;
 

@@ -15,7 +15,7 @@ import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends FollowRollers {
-  private static final double atGoalToleranceInches = 1;
+  public static final double atGoalToleranceInches = 1;
 
   private final TrapezoidProfile trapezoidProfile;
   private final CanRange heightSensor;

@@ -5,12 +5,14 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveToPoseCommand;
-import frc.robot.field.FieldUtils;
+import frc.robot.field.ReefFaces;
+import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.quest.QuestSubsystem;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Autos {
@@ -41,10 +43,10 @@ public class Autos {
     return basicRoutine(drive.autoFactory.newRoutine("Curvy"), ChoreoPaths.CURVY);
   }
 
-  public AutoRoutine fish() {
-    AutoRoutine routine = drive.autoFactory.newRoutine("Fish");
+  public AutoRoutine magikarp() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Magikarp");
 
-    AutoTrajectory trajectory = routine.trajectory(ChoreoPaths.START_MID_TO_J.name);
+    AutoTrajectory trajectory = routine.trajectory(ChoreoPaths.START_MID_TO_G.name);
 
     routine
         .active()
@@ -53,15 +55,8 @@ public class Autos {
                 resetOdometry(trajectory),
                 followTrajectory(trajectory),
                 Commands.parallel(
-                    new DriveToPoseCommand(
-                        drive, () -> FieldUtils.getClosestReef().leftPole.getPose()),
-                    Commands.sequence(
-                        superStructure.setModeCommand(SuperStructureModes.L4),
-                        Commands.waitUntil(superStructure.isAtMode()),
-                        superStructure.setShooterModeCommand(ShooterModes.SHOOT),
-                        Commands.waitUntil(superStructure.isCoralIntaked().negate())
-                            .andThen(Commands.waitSeconds(0.1)),
-                        superStructure.setShooterModeCommand(ShooterModes.NONE)))));
+                    positionToPole(() -> ReefFaces.GH.get().leftPole),
+                    score(SuperStructureModes.L4))));
 
     return routine;
   }
@@ -82,6 +77,26 @@ public class Autos {
 
   private Command resetOdometry(AutoTrajectory trajectory) {
     return trajectory.resetOdometry().andThen(resetQuest());
+  }
+
+  private Command positionToPole(Supplier<ReefPole> pole) {
+    return new DriveToPoseCommand(
+        drive, () -> pole.get().getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters));
+  }
+
+  private Command score(SuperStructureModes mode) {
+    return Commands.sequence(
+        superStructure.setModeCommand(mode),
+        Commands.waitUntil(superStructure.isAtMode()),
+        Commands.sequence(
+                superStructure.setShooterModeCommand(ShooterModes.SHOOT),
+                Commands.sequence(
+                    Commands.waitUntil(superStructure.isCoralIntaked().negate()),
+                    Commands.waitSeconds(0.1)),
+                superStructure.setShooterModeCommand(ShooterModes.NONE))
+            .onlyIf(superStructure.isCoralIntaked()),
+        superStructure.setModeCommand(SuperStructureModes.TUCKED),
+        Commands.waitUntil(superStructure.isAtMode()));
   }
 
   // Routine Logic

@@ -241,7 +241,8 @@ public class Drive extends SubsystemBase {
             sample.vx + xController.calculate(pose.getX(), sample.x),
             sample.vy + yController.calculate(pose.getY(), sample.y),
             sample.omega
-                + angleController.calculate(pose.getRotation().getRadians(), sample.heading), getRotation());
+                + angleController.calculate(pose.getRotation().getRadians(), sample.heading),
+            getRotation());
 
     // Apply the generated speeds
     runVelocity(speeds);

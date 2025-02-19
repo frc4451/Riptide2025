@@ -22,7 +22,7 @@ public class CanRange {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(name, inputs);
-
+    Logger.recordOutput(name + "/IsNear", isNear());
     disconnected.set(!inputs.connected);
   }
 

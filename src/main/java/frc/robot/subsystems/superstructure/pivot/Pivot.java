@@ -12,7 +12,7 @@ import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import org.littletonrobotics.junction.Logger;
 
 public class Pivot extends SingleRoller {
-  private static final double atGoalToleranceRad = Units.degreesToRadians(3);
+  public static final double atGoalToleranceRad = Units.degreesToRadians(3);
 
   private final TrapezoidProfile trapezoidProfile;
 

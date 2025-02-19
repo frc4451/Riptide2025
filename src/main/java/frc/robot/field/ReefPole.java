@@ -12,4 +12,8 @@ public record ReefPole(AprilTagStruct tag, double tagToReef) {
   public double getParallellError(Pose2d robotPose) {
     return PoseUtils.getParallelError(robotPose, tag.pose().toPose2d());
   }
+
+  public Pose2d getPerpendicularOffsetPose(double offsetMeters) {
+    return PoseUtils.getPerpendicularOffsetPose(getPose(), offsetMeters);
+  }
 }

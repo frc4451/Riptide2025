@@ -1,5 +1,6 @@
 package frc.robot.subsystems.superstructure;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,8 +29,11 @@ import frc.robot.subsystems.superstructure.modes.IntoInstructions;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.pivot.Pivot;
+import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure extends SubsystemBase {
+  private final String name = "Superstructure";
+
   private final Elevator elevator;
   private final Pivot coralPivot;
   private final SingleRoller shooter;
@@ -48,6 +52,8 @@ public class SuperStructure extends SubsystemBase {
 
   private IntoInstructions intoInstructions = IntoInstructions.NONE;
   private ExitInstructions exitInstructions = ExitInstructions.NONE;
+
+  private boolean isAtMode = false;
 
   public SuperStructure() {
     FollowRollersIO elevatorIO;
@@ -136,7 +142,7 @@ public class SuperStructure extends SubsystemBase {
 
     elevator =
         new Elevator(
-            "Superstructure/Elevator",
+            name + "/Elevator",
             elevatorIO,
             heightSensorIO,
             ElevatorConstants.trapezoidConstraints,
@@ -145,21 +151,21 @@ public class SuperStructure extends SubsystemBase {
 
     coralPivot =
         new Pivot(
-            "Superstructure/Coral/Pivot",
+            name + "/Coral/Pivot",
             coralPivotIO,
             CoralPivotConstants.trapezoidConstraints,
             CoralPivotConstants.pivotConstraints);
 
-    shooter = new SingleRoller("Superstructure/Shooter", shooterIO);
+    shooter = new SingleRoller(name + "/Shooter", shooterIO);
 
     algaePivot =
         new Pivot(
-            "Superstructure/Algae/Pivot",
+            name + "/Algae/Pivot",
             algaePivotIO,
             AlgaePivotConstants.trapezoidConstraints,
             AlgaePivotConstants.pivotConstraints);
 
-    coralSensor = new CanRange("Superstructure/Shooter/CoralSensor", coralSensorIO);
+    coralSensor = new CanRange(name + "/CoralSensor", coralSensorIO);
   }
 
   @Override
@@ -187,8 +193,27 @@ public class SuperStructure extends SubsystemBase {
       algaePivot.setGoal(currentMode.algaePos);
     }
 
+    isAtMode =
+        MathUtil.isNear(
+                elevator.getHeightInches(),
+                currentMode.elevatorHeightInches,
+                Elevator.atGoalToleranceInches)
+            && MathUtil.isNear(
+                coralPivot.getPosition().getRadians(),
+                currentMode.coralPos.getRadians(),
+                Pivot.atGoalToleranceRad)
+            && MathUtil.isNear(
+                algaePivot.getPosition().getRadians(),
+                currentMode.algaePos.getRadians(),
+                Pivot.atGoalToleranceRad);
+
+    Logger.recordOutput(name + "/IsAtMode", isAtMode);
+    Logger.recordOutput(name + "/Mode", currentMode);
+    Logger.recordOutput(name + "/ShooterMode", currentShooterMode);
+
     elevator.periodic();
     coralPivot.periodic();
+    coralSensor.periodic();
     shooter.periodic();
     algaePivot.periodic();
 
@@ -233,7 +258,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Trigger isAtMode() {
-    return new Trigger(() -> elevator.atGoal() && coralPivot.atGoal() && algaePivot.atGoal());
+    return new Trigger(() -> isAtMode);
   }
 
   public Trigger isCoralIntaked() {
