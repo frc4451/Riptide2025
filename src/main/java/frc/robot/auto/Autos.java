@@ -9,7 +9,7 @@ import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.field.ReefFaces;
 import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.quest.QuestSubsystem;
+import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
@@ -20,9 +20,9 @@ import org.littletonrobotics.junction.Logger;
 public class Autos {
   private final Drive drive;
   private final SuperStructure superStructure;
-  private final QuestSubsystem quest;
+  private final Quest quest;
 
-  public Autos(Drive drive, SuperStructure superStructure, QuestSubsystem quest) {
+  public Autos(Drive drive, SuperStructure superStructure, Quest quest) {
     this.drive = drive;
     this.superStructure = superStructure;
     this.quest = quest;

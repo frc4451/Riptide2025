@@ -9,7 +9,7 @@ import frc.robot.bobot_state.BobotState;
 import frc.robot.util.VirtualSubsystem;
 import org.littletonrobotics.junction.Logger;
 
-public class QuestSubsystem extends VirtualSubsystem {
+public class Quest extends VirtualSubsystem {
   private final QuestIO io;
   private final QuestIOInputsAutoLogged inputs = new QuestIOInputsAutoLogged();
 
@@ -17,7 +17,7 @@ public class QuestSubsystem extends VirtualSubsystem {
   private final Alert lowBatteryAlert =
       new Alert("Quest Battery is Low! (<25%)", AlertType.kWarning);
 
-  public QuestSubsystem(QuestIO io) {
+  public Quest(QuestIO io) {
     this.io = io;
     resetPose(Pose2d.kZero);
   }

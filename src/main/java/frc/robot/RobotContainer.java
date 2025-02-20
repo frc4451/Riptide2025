@@ -41,9 +41,9 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.quest.QuestIO;
 import frc.robot.subsystems.quest.QuestIOReal;
-import frc.robot.subsystems.quest.QuestSubsystem;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.util.CommandCustomXboxController;
@@ -64,7 +64,7 @@ public class RobotContainer {
 
   public final Blinkin blinkin;
 
-  public final QuestSubsystem quest;
+  public final Quest quest;
 
   // Controller
   public final CommandCustomXboxController driverController = new CommandCustomXboxController(0);
@@ -88,7 +88,7 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
-        quest = new QuestSubsystem(new QuestIOReal());
+        quest = new Quest(new QuestIOReal());
 
         // not attached to the robot yet
         blinkin = new Blinkin(new BlinkinIO() {});
@@ -103,7 +103,7 @@ public class RobotContainer {
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim());
-        quest = new QuestSubsystem(new QuestIO() {});
+        quest = new Quest(new QuestIO() {});
         blinkin = new Blinkin(new BlinkinIOSim());
         break;
 
@@ -117,7 +117,7 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {});
-        quest = new QuestSubsystem(new QuestIO() {});
+        quest = new Quest(new QuestIO() {});
         blinkin = new Blinkin(new BlinkinIO() {});
         break;
     }
