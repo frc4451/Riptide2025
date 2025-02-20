@@ -92,17 +92,17 @@ public class Autos {
 
   private Command score(SuperStructureModes mode) {
     return Commands.sequence(
-        superStructure.setModeCommand(mode),
-        Commands.waitUntil(superStructure.isAtMode()),
-        Commands.sequence(
+            superStructure.setModeCommand(mode),
+            Commands.waitUntil(superStructure.isAtMode()),
+            Commands.sequence(
                 superStructure.setShooterModeCommand(ShooterModes.SHOOT),
                 Commands.sequence(
                     Commands.waitUntil(superStructure.isCoralIntaked().negate()),
                     Commands.waitSeconds(0.1)),
-                superStructure.setShooterModeCommand(ShooterModes.NONE))
-            .onlyIf(superStructure.isCoralIntaked()),
-        superStructure.setModeCommand(SuperStructureModes.TUCKED),
-        Commands.waitUntil(superStructure.isAtMode()));
+                superStructure.setShooterModeCommand(ShooterModes.NONE)),
+            superStructure.setModeCommand(SuperStructureModes.TUCKED),
+            Commands.waitUntil(superStructure.isAtMode()))
+        .onlyIf(superStructure.isCoralIntaked());
   }
 
   // Routine Logic
