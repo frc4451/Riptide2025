@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.littletonrobotics.junction.Logger;
@@ -54,7 +55,7 @@ public class Blinkin extends SubsystemBase {
         stateLogRoot + "Pattern/IntervalSecond", currentState.pattern.blinkIntervalSeconds);
   }
 
-  public void addState(BlinkinState state) {
+  private void addState(BlinkinState state) {
     possibleStates.add(state);
   }
 
@@ -62,11 +63,16 @@ public class Blinkin extends SubsystemBase {
     return new InstantCommand(() -> addState(state));
   }
 
-  public void removeState(BlinkinState state) {
+  private void removeState(BlinkinState state) {
     possibleStates.remove(state);
   }
 
   public Command removeStateCommand(BlinkinState state) {
     return new InstantCommand(() -> removeState(state));
+  }
+
+  /** Add/remove state based on whether the trigger is true */
+  public void addConditionalState(Trigger trigger, BlinkinState state) {
+    trigger.onTrue(addStateCommand(state)).onFalse(removeStateCommand(state));
   }
 }

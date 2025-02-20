@@ -228,18 +228,12 @@ public class RobotContainer {
      * this will make it easier to see the priority of the states at a glance
      */
     {
-      BobotState.humanPlayerShouldThrow()
-          .onTrue(blinkin.addStateCommand(BlinkinState.HUMAN_PLAYER_SHOULD_THROW))
-          .onFalse(blinkin.removeStateCommand(BlinkinState.HUMAN_PLAYER_SHOULD_THROW));
+      blinkin.addConditionalState(
+          BobotState.humanPlayerShouldThrow(), BlinkinState.HUMAN_PLAYER_SHOULD_THROW);
 
-      BobotState.nearHumanPlayer()
-          .onTrue(blinkin.addStateCommand(BlinkinState.NEAR_HUMAN_PLAYER))
-          .onFalse(blinkin.removeStateCommand(BlinkinState.NEAR_HUMAN_PLAYER));
+      blinkin.addConditionalState(BobotState.nearHumanPlayer(), BlinkinState.NEAR_HUMAN_PLAYER);
 
-      superStructure
-          .isCoralIntaked()
-          .onTrue(blinkin.addStateCommand(BlinkinState.CORAL_IN))
-          .onFalse(blinkin.removeStateCommand(BlinkinState.CORAL_IN));
+      blinkin.addConditionalState(superStructure.isCoralIntaked(), BlinkinState.CORAL_IN);
     }
   }
 
