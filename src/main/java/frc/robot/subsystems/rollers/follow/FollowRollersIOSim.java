@@ -14,8 +14,6 @@ public class FollowRollersIOSim implements FollowRollersIO {
 
   private final PIDController controller = new PIDController(5.0, 0, 0);
 
-  private double appliedVoltage = 0.0;
-
   private boolean closedLoop = false;
 
   private final boolean invertFollower;
@@ -42,7 +40,7 @@ public class FollowRollersIOSim implements FollowRollersIO {
     if (DriverStation.isDisabled()) {
       stop();
     } else if (closedLoop) {
-      runVolts(controller.calculate(leader.getAngularPositionRad()));
+      setSimInputVoltage(controller.calculate(leader.getAngularPositionRad()));
     }
 
     inputs.connected = true;
@@ -51,27 +49,33 @@ public class FollowRollersIOSim implements FollowRollersIO {
     inputs.leaderPositionRad = leader.getAngularPositionRad();
     inputs.leaderVelocityRadPerSec = leader.getAngularVelocityRadPerSec();
 
-    inputs.leaderAppliedVoltage = appliedVoltage;
+    inputs.leaderAppliedVoltage = leader.getInputVoltage();
     inputs.leaderSupplyCurrentAmps = leader.getCurrentDrawAmps();
 
     inputs.followerPositionRad = leader.getAngularPositionRad();
     inputs.followerVelocityRadPerSec = leader.getAngularVelocityRadPerSec();
 
-    inputs.followerAppliedVoltage = appliedVoltage;
+    inputs.followerAppliedVoltage = follower.getInputVoltage();
     inputs.followerSupplyCurrentAmps = leader.getCurrentDrawAmps();
+  }
+
+  private void setSimInputVoltage(double volts) {
+    double voltage = MathUtil.clamp(volts, -12.0, 12.0);
+    leader.setInputVoltage(voltage);
+    follower.setInputVoltage(invertFollower ? -voltage : voltage);
   }
 
   @Override
   public void runVolts(double volts) {
-    appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
-    leader.setInputVoltage(appliedVoltage);
-    follower.setInputVoltage(invertFollower ? appliedVoltage : -appliedVoltage);
+    closedLoop = false;
+    setSimInputVoltage(volts);
   }
 
   @Override
   public void runVelocity(double velocityRadPerSecond) {
+    closedLoop = false;
     leader.setAngularVelocity(velocityRadPerSecond);
-    follower.setAngularVelocity(invertFollower ? velocityRadPerSecond : -velocityRadPerSecond);
+    follower.setAngularVelocity(invertFollower ? -velocityRadPerSecond : velocityRadPerSecond);
   }
 
   @Override

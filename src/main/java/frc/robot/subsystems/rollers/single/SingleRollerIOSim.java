@@ -13,8 +13,6 @@ public class SingleRollerIOSim implements SingleRollerIO {
 
   private final PIDController controller = new PIDController(5.0, 0, 0);
 
-  private double appliedVoltage = 0.0;
-
   private boolean closedLoop = false;
 
   public SingleRollerIOSim(DCMotor motorModel, double reduction, double moi) {
@@ -28,7 +26,7 @@ public class SingleRollerIOSim implements SingleRollerIO {
     if (DriverStation.isDisabled()) {
       stop();
     } else if (closedLoop) {
-      runVolts(controller.calculate(sim.getAngularPositionRad()));
+      setSimInputVoltage(controller.calculate(sim.getAngularPositionRad()));
     }
 
     inputs.connected = true;
@@ -37,18 +35,23 @@ public class SingleRollerIOSim implements SingleRollerIO {
     inputs.positionRad = sim.getAngularPositionRad();
     inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec();
 
-    inputs.appliedVoltage = appliedVoltage;
+    inputs.appliedVoltage = sim.getInputVoltage();
     inputs.supplyCurrentAmps = sim.getCurrentDrawAmps();
+  }
+
+  private void setSimInputVoltage(double volts) {
+    sim.setInputVoltage(MathUtil.clamp(volts, -12.0, 12.0));
   }
 
   @Override
   public void runVolts(double volts) {
-    appliedVoltage = MathUtil.clamp(volts, -12.0, 12.0);
-    sim.setInputVoltage(appliedVoltage);
+    closedLoop = false;
+    setSimInputVoltage(volts);
   }
 
   @Override
   public void runVelocity(double velocityRadPerSecond) {
+    closedLoop = false;
     sim.setAngularVelocity(velocityRadPerSecond);
   }
 
