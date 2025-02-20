@@ -71,12 +71,12 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.hpsTracker.getDistanceMeters();
   }
 
-  public static Trigger nearHumanPlayer() {
-    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 2);
+  public static Trigger humanPlayerShouldThrow() {
+    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 0.5);
   }
 
-  public static Trigger humanPlayerShouldReady() {
-    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 0.5);
+  public static Trigger nearHumanPlayer() {
+    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 2);
   }
 
   @Override
