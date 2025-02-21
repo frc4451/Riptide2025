@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveToPoseCommand;
+import frc.robot.field.FieldConstants;
+import frc.robot.field.FieldConstants.AprilTagStruct;
 import frc.robot.field.ReefFaces;
 import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
@@ -47,19 +49,40 @@ public class Autos {
 
   public AutoRoutine magikarp() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Magikarp");
-
     AutoTrajectory trajectory = routine.trajectory(ChoreoPaths.START_MID_TO_G.name);
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                resetOdometry(trajectory),
-                followTrajectory(trajectory),
+                resetAndFollow(trajectory),
                 Commands.parallel(
                     positionToPole(() -> ReefFaces.GH.get().leftPole),
                     score(SuperStructureModes.L4))));
 
+    return routine;
+  }
+
+  public AutoRoutine binacle() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Binacle");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                resetAndFollow(routine.trajectory(ChoreoPaths.START_MID_TO_G.name)),
+                Commands.deadline(
+                    score(SuperStructureModes.L4),
+                    positionToPole(() -> ReefFaces.GH.get().leftPole)),
+                followTrajectory(routine.trajectory(ChoreoPaths.G_TO_HPS_RIGHT.name)),
+                Commands.deadline(
+                    superStructure.intake().andThen(Commands.waitSeconds(1.0)),
+                    positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
+                followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_C.name)),
+                Commands.deadline(
+                    score(SuperStructureModes.L4),
+                    positionToPole(() -> ReefFaces.CD.get().leftPole))));
+    
     return routine;
   }
 
@@ -81,6 +104,10 @@ public class Autos {
     return trajectory.resetOdometry().andThen(resetQuest());
   }
 
+  private Command resetAndFollow(AutoTrajectory trajectory) {
+    return Commands.sequence(resetOdometry(trajectory), followTrajectory(trajectory));
+  }
+
   private Command positionToPole(Supplier<ReefPole> pole) {
     return new DriveToPoseCommand(
         drive,
@@ -88,6 +115,14 @@ public class Autos {
             PoseUtils.plusRotation(
                 pole.get().getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
                 Rotation2d.kPi));
+  }
+
+  private Command positionToHPS(Supplier<AprilTagStruct> hps) {
+    return new DriveToPoseCommand(
+        drive,
+        () ->
+            PoseUtils.getPerpendicularOffsetPose(
+                hps.get().pose().toPose2d(), AutoConstants.reefScoreOffsetMeters));
   }
 
   private Command score(SuperStructureModes mode) {

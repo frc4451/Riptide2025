@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -263,5 +264,9 @@ public class SuperStructure extends SubsystemBase {
 
   public Trigger isCoralIntaked() {
     return new Trigger(coralSensor::isNear);
+  }
+
+  public Command intake() {
+    return Commands.none();
   }
 }

@@ -157,6 +157,7 @@ public class RobotContainer {
     autoChooser.addRoutine("5 Meters", autos::fiveMeters);
     autoChooser.addRoutine("Curvy", autos::curvy);
     autoChooser.addRoutine("Magikarp", autos::magikarp);
+    autoChooser.addRoutine("Binacle", autos::binacle);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
