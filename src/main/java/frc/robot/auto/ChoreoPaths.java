@@ -10,7 +10,18 @@ public enum ChoreoPaths {
   CURVY("Curvy"),
 
   // Start to ___
+  START_MID_TO_A("StartMid-A"),
+  START_MID_TO_B("StartMid-B"),
+  START_MID_TO_C("StartMid-C"),
+  START_MID_TO_D("StartMid-D"),
+  START_MID_TO_E("StartMid-E"),
+  START_MID_TO_F("StartMid-F"),
   START_MID_TO_G("StartMid-G"),
+  START_MID_TO_H("StartMid-H"),
+  START_MID_TO_I("StartMid-I"),
+  START_MID_TO_J("StartMid-J"),
+  START_MID_TO_K("StartMid-K"),
+  START_MID_TO_L("StartMid-L"),
 
   // ___ to HPS
   A_TO_HPS_RIGHT("A-HPSRight"),

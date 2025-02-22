@@ -70,11 +70,11 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                resetAndFollowTrajectory(routine.trajectory(ChoreoPaths.START_MID_TO_G.name)),
+                resetAndFollowTrajectory(routine.trajectory(ChoreoPaths.START_MID_TO_C.name)),
                 Commands.deadline(
                     superStructure.score(SuperStructureModes.L4),
                     positionToPole(() -> ReefFaces.GH.get().leftPole)),
-                followTrajectory(routine.trajectory(ChoreoPaths.G_TO_HPS_RIGHT.name)),
+                followTrajectory(routine.trajectory(ChoreoPaths.C_TO_HPS_RIGHT.name)),
                 Commands.deadline(
                     superStructure.intake().andThen(Commands.waitSeconds(1.0)),
                     positionToHPS(() -> FieldConstants.blueHPSDriverRight)
