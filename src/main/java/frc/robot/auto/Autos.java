@@ -77,8 +77,7 @@ public class Autos {
                 followTrajectory(routine.trajectory(ChoreoPaths.C_TO_HPS_RIGHT.name)),
                 Commands.deadline(
                     superStructure.intake().andThen(Commands.waitSeconds(1.0)),
-                    positionToHPS(() -> FieldConstants.blueHPSDriverRight)
-                    ),
+                    positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
                 followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_C.name)),
                 Commands.deadline(
                     superStructure.score(SuperStructureModes.L4),
