@@ -45,6 +45,7 @@ import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.quest.QuestIO;
 import frc.robot.subsystems.quest.QuestIOReal;
 import frc.robot.subsystems.superstructure.SuperStructure;
+import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.util.CommandCustomXboxController;
 import frc.robot.util.PoseUtils;
@@ -126,12 +127,10 @@ public class RobotContainer {
     autos = new Autos(drive, superStructure, quest);
 
     configureAutos();
+    configureHumanPlayerStation();
 
     // Configure the button bindings
     configureButtonBindings();
-
-    // Configure lights
-    configureLights();
   }
 
   private void configureAutos() {
@@ -185,22 +184,58 @@ public class RobotContainer {
     }
   }
 
-  /** Handle visual cues from the robot */
-  private void configureLights() {
-    // Tell the Human Player to get ready to throw Coral
-    BobotState.nearHumanPlayer()
-        .onTrue(blinkin.addStateCommand(BlinkinState.NEAR_HUMAN_PLAYER))
-        .onFalse(blinkin.removeStateCommand(BlinkinState.NEAR_HUMAN_PLAYER));
+  /** All callbacks & binds related to the Coral Human Player Stations */
+  private void configureHumanPlayerStation() {
+    /* Drive Assist, automatically align rotation to the closest Human Player Station */
+    {
+      driverController
+          .b()
+          .whileTrue(
+              DriveCommands.joystickDriveAtAngle(
+                  drive,
+                  () -> -driverController.getLeftYSquared(),
+                  () -> -driverController.getLeftXSquared(),
+                  () -> BobotState.getRotationToClosestHPS()));
+    }
 
-    // YEET
-    BobotState.humanPlayerShouldReady()
-        .onTrue(blinkin.addStateCommand(BlinkinState.HUMAN_PLAYER_SHOULD_THROW))
-        .onFalse(blinkin.removeStateCommand(BlinkinState.HUMAN_PLAYER_SHOULD_THROW));
+    /* Auto Intake */
+    {
+      // This will automatically run the intake when the robot is close
+      // to the human player station, taking some mental load off the drive team.
+      BobotState.humanPlayerShouldThrow()
+          .and(superStructure.isCoralIntaked().negate())
+          .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
+          .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
-    superStructure
-        .isCoralIntaked()
-        .onTrue(blinkin.addStateCommand(BlinkinState.CORAL_IN))
-        .onFalse(blinkin.removeStateCommand(BlinkinState.CORAL_IN));
+      // Automatically stop intake & signal to drive team once the coral is in the robot.
+      // This will mean the drive team's coral pick up loop will look like:
+      // 1) Get to the human player station
+      //    - The intake will automatically turn on
+      // 2) Wait for the human player to put in the coral
+      // 3) The drive team will be signaled by rumble & lights that they have a coral
+      //    - The intake will automatically turn off
+      // 4) Drive away
+      superStructure
+          .isCoralIntaked()
+          .onTrue(
+              Commands.parallel(
+                  superStructure.setShooterModeCommand(ShooterModes.NONE),
+                  driverController.rumbleSeconds(1.0, 0.5),
+                  operatorController.rumbleSeconds(1.0, 0.5)));
+    }
+
+    /*
+     * Lights: Please sort the distance triggers closest to farthest,
+     * this will make it easier to see the priority of the states at a glance
+     */
+    {
+      blinkin.addConditionalState(
+          BobotState.humanPlayerShouldThrow(), BlinkinState.HUMAN_PLAYER_SHOULD_THROW);
+
+      blinkin.addConditionalState(BobotState.nearHumanPlayer(), BlinkinState.NEAR_HUMAN_PLAYER);
+
+      blinkin.addConditionalState(superStructure.isCoralIntaked(), BlinkinState.CORAL_IN);
+    }
   }
 
   private void configureAlignmentBindings() {
@@ -240,16 +275,6 @@ public class RobotContainer {
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
 
-    // Human Player Stations
-    driverController
-        .b()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftYSquared(),
-                () -> -driverController.getLeftXSquared(),
-                () -> BobotState.getRotationToClosestHPS()));
-
     // Barge
     driverController
         .x()
@@ -259,13 +284,6 @@ public class RobotContainer {
                 () -> -driverController.getLeftYSquared(),
                 () -> -driverController.getLeftXSquared(),
                 () -> BobotState.getRotationToClosestBarge()));
-
-    superStructure
-        .isCoralIntaked()
-        .onTrue(
-            Commands.parallel(
-                driverController.rumbleSeconds(1.0, 0.5),
-                operatorController.rumbleSeconds(1.0, 0.5)));
   }
 
   private void configureSuperBindings() {
