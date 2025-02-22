@@ -1,5 +1,6 @@
 package frc.robot.bobot_state.varc;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.field.FieldUtils;
@@ -9,11 +10,10 @@ public class HPSTagTracker extends TargetAngleTracker {
   private double distanceMeters = 0.0;
 
   public void update() {
-    rotationTarget = FieldUtils.getClosestHPSTag().pose().getRotation().toRotation2d();
+    Pose2d closestPose = FieldUtils.getClosestHPSTag().pose().toPose2d();
+    rotationTarget = closestPose.getRotation();
     distanceMeters =
-        BobotState.getGlobalPose()
-            .getTranslation()
-            .getDistance(FieldUtils.getClosestHPSTag().pose().toPose2d().getTranslation());
+        closestPose.getTranslation().getDistance(BobotState.getGlobalPose().getTranslation());
   }
 
   public Rotation2d getRotationTarget() {

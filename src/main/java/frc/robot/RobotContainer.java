@@ -168,15 +168,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -driverController.getLeftYSquared(),
-            () -> -driverController.getLeftXSquared(),
-            () -> -driverController.getRightXSquared()));
-
-    configureAlignmentBindings();
+    configureRotationModes();
+    configurePoleBindings();
     configureSuperBindings();
 
     if (Constants.currentMode == Mode.SIM) {
@@ -184,20 +177,38 @@ public class RobotContainer {
     }
   }
 
+  private void configureRotationModes() {
+    // Default, auto-align to closest tracker
+    drive.setDefaultCommand(
+        DriveCommands.joystickDriveAtAngle(
+            drive,
+            () -> -driverController.getLeftYSquared(),
+            () -> -driverController.getLeftXSquared(),
+            () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
+
+    // Normal field-relative drive when overridden via a button
+    driverController
+        .leftTrigger()
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
+                () -> -driverController.getRightXSquared()));
+
+    // // Barge
+    // driverController
+    //     .x()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driverController.getLeftYSquared(),
+    //             () -> -driverController.getLeftXSquared(),
+    //             () -> BobotState.getRotationToClosestBarge()));
+  }
+
   /** All callbacks & binds related to the Coral Human Player Stations */
   private void configureHumanPlayerStation() {
-    /* Drive Assist, automatically align rotation to the closest Human Player Station */
-    {
-      driverController
-          .b()
-          .whileTrue(
-              DriveCommands.joystickDriveAtAngle(
-                  drive,
-                  () -> -driverController.getLeftYSquared(),
-                  () -> -driverController.getLeftXSquared(),
-                  () -> BobotState.getRotationToClosestHPS()));
-    }
-
     /* Auto Intake */
     {
       // This will automatically run the intake when the robot is close
@@ -238,22 +249,9 @@ public class RobotContainer {
     }
   }
 
-  private void configureAlignmentBindings() {
-    // Coral
+  private void configurePoleBindings() {
     driverController
-        .a()
-        .and(driverController.leftBumper().negate())
-        .and(driverController.rightBumper().negate())
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftYSquared(),
-                () -> -driverController.getLeftXSquared(),
-                () -> BobotState.getRotationToClosestReef()));
-
-    driverController
-        .a()
-        .and(driverController.leftBumper())
+        .leftBumper()
         .whileTrue(
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
@@ -264,8 +262,7 @@ public class RobotContainer {
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
 
     driverController
-        .a()
-        .and(driverController.rightBumper())
+        .rightBumper()
         .whileTrue(
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
@@ -274,16 +271,6 @@ public class RobotContainer {
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
-
-    // Barge
-    driverController
-        .x()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftYSquared(),
-                () -> -driverController.getLeftXSquared(),
-                () -> BobotState.getRotationToClosestBarge()));
   }
 
   private void configureSuperBindings() {

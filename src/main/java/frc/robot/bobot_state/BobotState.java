@@ -6,10 +6,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
+import frc.robot.bobot_state.varc.TargetAngleTracker;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
 import frc.robot.util.VirtualSubsystem;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.littletonrobotics.junction.Logger;
@@ -30,6 +32,9 @@ public class BobotState extends VirtualSubsystem {
   private static ReefTagTracker reefTracker = new ReefTagTracker();
   private static HPSTagTracker hpsTracker = new HPSTagTracker();
   private static BargeTagTracker bargeTracker = new BargeTagTracker();
+
+  private static List<TargetAngleTracker> autoAlignmentTrackers =
+      List.of(BobotState.hpsTracker, BobotState.reefTracker);
 
   public static void offerVisionObservation(PoseObservation observation) {
     BobotState.poseObservations.offer(observation);
@@ -76,7 +81,13 @@ public class BobotState extends VirtualSubsystem {
   }
 
   public static Trigger nearHumanPlayer() {
-    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 2);
+    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 1);
+  }
+
+  public static TargetAngleTracker getClosestAlignmentTracker() {
+    return autoAlignmentTrackers.stream()
+        .reduce((a, b) -> a.getDistanceMeters() < b.getDistanceMeters() ? a : b)
+        .get();
   }
 
   @Override
@@ -120,6 +131,12 @@ public class BobotState extends VirtualSubsystem {
           calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());
       Logger.recordOutput(
           calcLogRoot + "TargetAngleRad", hpsTracker.getRotationTarget().getRadians());
+    }
+
+    {
+      String calcLogRoot = logRoot + "ClosestAlignment/";
+      Logger.recordOutput(
+          calcLogRoot + "Type", getClosestAlignmentTracker().getClass().getSimpleName());
     }
   }
 

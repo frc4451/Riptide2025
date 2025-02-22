@@ -6,4 +6,6 @@ public abstract class TargetAngleTracker {
   public abstract void update();
 
   public abstract Rotation2d getRotationTarget();
+
+  public abstract double getDistanceMeters();
 }
