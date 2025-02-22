@@ -189,6 +189,7 @@ public class RobotContainer {
     // Normal field-relative drive when overridden via a button
     driverController
         .leftTrigger()
+        .or(BobotState.onTeamSide().negate())
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,

@@ -2,11 +2,13 @@ package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
 import frc.robot.bobot_state.varc.TargetAngleTracker;
+import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
@@ -58,6 +60,14 @@ public class BobotState extends VirtualSubsystem {
 
   public static Pose2d getGlobalPose() {
     return BobotState.globalPose;
+  }
+
+  public static Trigger onTeamSide() {
+    return new Trigger(
+        () ->
+            FieldUtils.getAlliance() == Alliance.Blue
+                ? getGlobalPose().getX() < FieldConstants.fieldLength / 2.0
+                : getGlobalPose().getX() > FieldConstants.fieldLength / 2.0);
   }
 
   public static Rotation2d getRotationToClosestReef() {
