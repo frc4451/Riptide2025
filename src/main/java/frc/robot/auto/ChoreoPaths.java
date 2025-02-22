@@ -2,7 +2,6 @@ package frc.robot.auto;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 public enum ChoreoPaths {
   TWO_METERS("2 Meters"),
@@ -11,7 +10,7 @@ public enum ChoreoPaths {
   CURVY("Curvy"),
   
   // Start to ___
-  START_MID_TO_G("StartMid--G"),
+  START_MID_TO_G("StartMid-G"),
 
   // ___ to HPS
   A_TO_HPS_RIGHT("A-HPSRight"),

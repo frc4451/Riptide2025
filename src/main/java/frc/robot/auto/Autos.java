@@ -17,7 +17,6 @@ import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.util.PoseUtils;
 
-import java.util.Iterator;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -68,24 +67,19 @@ public class Autos {
   public AutoRoutine binacle() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Binacle");
 
-    Iterator<String> trajectories = ChoreoPaths.pathSequence(
-      ChoreoPaths.START_MID_TO_G,
-      ChoreoPaths.G_TO_HPS_RIGHT,
-      ChoreoPaths.HPS_RIGHT_TO_C);
-
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                resetAndFollow(routine.trajectory(trajectories.next())),
+                resetAndFollow(routine.trajectory(ChoreoPaths.START_MID_TO_G.name)),
                 Commands.deadline(
                     score(SuperStructureModes.L4),
                     positionToPole(() -> ReefFaces.GH.get().leftPole)),
-                followTrajectory(routine.trajectory(trajectories.next())),
+                followTrajectory(routine.trajectory(ChoreoPaths.G_TO_HPS_RIGHT.name)),
                Commands.deadline(
                     superStructure.intake().andThen(Commands.waitSeconds(1.0)),
                     positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
-                followTrajectory(routine.trajectory(trajectories.next())),
+                followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_C.name)),
                 Commands.deadline(
                     score(SuperStructureModes.L4),
                     positionToPole(() -> ReefFaces.CD.get().leftPole))));
