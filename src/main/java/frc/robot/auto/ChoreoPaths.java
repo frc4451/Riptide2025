@@ -8,7 +8,7 @@ public enum ChoreoPaths {
   THREE_METERS("3 Meters"),
   FIVE_METERS("5 Meters"),
   CURVY("Curvy"),
-  
+
   // Start to ___
   START_MID_TO_G("StartMid-G"),
 
@@ -47,8 +47,6 @@ public enum ChoreoPaths {
   }
 
   public static Iterator<String> pathSequence(ChoreoPaths... paths) {
-    return Arrays.stream(paths)
-      .map(path -> path.name)
-      .iterator();
+    return Arrays.stream(paths).map(path -> path.name).iterator();
   }
 }

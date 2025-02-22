@@ -16,7 +16,6 @@ import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.util.PoseUtils;
-
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -76,7 +75,7 @@ public class Autos {
                     score(SuperStructureModes.L4),
                     positionToPole(() -> ReefFaces.GH.get().leftPole)),
                 followTrajectory(routine.trajectory(ChoreoPaths.G_TO_HPS_RIGHT.name)),
-               Commands.deadline(
+                Commands.deadline(
                     superStructure.intake().andThen(Commands.waitSeconds(1.0)),
                     positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
                 followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_C.name)),
