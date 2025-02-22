@@ -281,7 +281,7 @@ public class SuperStructure extends SubsystemBase {
                 setShooterModeCommand(ShooterModes.NONE)),
             setModeCommand(SuperStructureModes.TUCKED),
             Commands.waitUntil(isAtMode()))
-        // .onlyIf(isCoralIntaked())
+        .onlyIf(isCoralIntaked())
         .finallyDo(
             () -> {
               setCurrentShooterMode(ShooterModes.NONE);
