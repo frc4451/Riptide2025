@@ -3,6 +3,7 @@ package frc.robot.auto;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveToPoseCommand;
@@ -13,7 +14,6 @@ import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.superstructure.SuperStructure;
-import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.util.PoseUtils;
 import java.util.function.Supplier;
@@ -55,10 +55,10 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                resetAndFollow(trajectory),
+                resetAndFollowTrajectory(trajectory),
                 Commands.parallel(
                     positionToPole(() -> ReefFaces.GH.get().leftPole),
-                    score(SuperStructureModes.L4))));
+                    superStructure.score(SuperStructureModes.L4))));
 
     return routine;
   }
@@ -70,17 +70,18 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                resetAndFollow(routine.trajectory(ChoreoPaths.START_MID_TO_G.name)),
+                resetAndFollowTrajectory(routine.trajectory(ChoreoPaths.START_MID_TO_G.name)),
                 Commands.deadline(
-                    score(SuperStructureModes.L4),
+                    superStructure.score(SuperStructureModes.L4),
                     positionToPole(() -> ReefFaces.GH.get().leftPole)),
                 followTrajectory(routine.trajectory(ChoreoPaths.G_TO_HPS_RIGHT.name)),
                 Commands.deadline(
                     superStructure.intake().andThen(Commands.waitSeconds(1.0)),
-                    positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
+                    positionToHPS(() -> FieldConstants.blueHPSDriverRight)
+                    ),
                 followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_C.name)),
                 Commands.deadline(
-                    score(SuperStructureModes.L4),
+                    superStructure.score(SuperStructureModes.L4),
                     positionToPole(() -> ReefFaces.CD.get().leftPole))));
 
     return routine;
@@ -93,7 +94,8 @@ public class Autos {
             () ->
                 Logger.recordOutput(
                     "Odometry/Choreo/Trajectory", trajectory.getRawTrajectory().getPoses())),
-        trajectory.cmd());
+        trajectory.cmd(),
+        Commands.runOnce(() -> drive.runVelocity(new ChassisSpeeds()), drive));
   }
 
   private Command resetQuest() {
@@ -104,7 +106,7 @@ public class Autos {
     return trajectory.resetOdometry().andThen(resetQuest());
   }
 
-  private Command resetAndFollow(AutoTrajectory trajectory) {
+  private Command resetAndFollowTrajectory(AutoTrajectory trajectory) {
     return Commands.sequence(resetOdometry(trajectory), followTrajectory(trajectory));
   }
 
@@ -123,21 +125,6 @@ public class Autos {
         () ->
             PoseUtils.getPerpendicularOffsetPose(
                 hps.get().pose().toPose2d(), AutoConstants.reefScoreOffsetMeters));
-  }
-
-  private Command score(SuperStructureModes mode) {
-    return Commands.sequence(
-            superStructure.setModeCommand(mode),
-            Commands.waitUntil(superStructure.isAtMode()),
-            Commands.sequence(
-                superStructure.setShooterModeCommand(ShooterModes.SHOOT),
-                Commands.sequence(
-                    Commands.waitUntil(superStructure.isCoralIntaked().negate()),
-                    Commands.waitSeconds(0.1)),
-                superStructure.setShooterModeCommand(ShooterModes.NONE)),
-            superStructure.setModeCommand(SuperStructureModes.TUCKED),
-            Commands.waitUntil(superStructure.isAtMode()))
-        .onlyIf(superStructure.isCoralIntaked());
   }
 
   // Routine Logic

@@ -269,4 +269,23 @@ public class SuperStructure extends SubsystemBase {
   public Command intake() {
     return Commands.none();
   }
+
+  public Command score(SuperStructureModes mode) {
+    return Commands.sequence(
+            setModeCommand(mode),
+            Commands.waitUntil(isAtMode()),
+            Commands.sequence(
+                setShooterModeCommand(ShooterModes.SHOOT),
+                Commands.sequence(
+                    Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.1)),
+                setShooterModeCommand(ShooterModes.NONE)),
+            setModeCommand(SuperStructureModes.TUCKED),
+            Commands.waitUntil(isAtMode()))
+        // .onlyIf(isCoralIntaked())
+        .finallyDo(
+            () -> {
+              setCurrentShooterMode(ShooterModes.NONE);
+              setCurrentMode(SuperStructureModes.TUCKED);
+            });
+  }
 }

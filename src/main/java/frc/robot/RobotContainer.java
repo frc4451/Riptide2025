@@ -278,10 +278,10 @@ public class RobotContainer {
     operatorController
         .rightBumper()
         .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.L1));
-    operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.L2));
-    operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.L3));
-    operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.L4));
+    operatorController.a().whileTrue(superStructure.score(SuperStructureModes.L1));
+    operatorController.x().whileTrue(superStructure.score(SuperStructureModes.L2));
+    operatorController.b().whileTrue(superStructure.score(SuperStructureModes.L3));
+    operatorController.y().whileTrue(superStructure.score(SuperStructureModes.L4));
   }
 
   private void debugSetup() {
