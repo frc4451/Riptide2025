@@ -10,6 +10,7 @@ import frc.robot.bobot_state.varc.ReefTagTracker;
 import frc.robot.bobot_state.varc.TargetAngleTracker;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
+import frc.robot.field.ReefPole;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
 import frc.robot.util.VirtualSubsystem;
@@ -116,8 +117,13 @@ public class BobotState extends VirtualSubsystem {
           calcLogRoot + "TargetAngleDeg", reefTracker.getRotationTarget().getDegrees());
       Logger.recordOutput(
           calcLogRoot + "TargetAngleRad", reefTracker.getRotationTarget().getRadians());
-      Logger.recordOutput(calcLogRoot + "Left Pole", FieldUtils.getClosestReef().leftPole);
-      Logger.recordOutput(calcLogRoot + "Right Pole", FieldUtils.getClosestReef().rightPole);
+
+      ReefPole leftPole = FieldUtils.getClosestReef().leftPole;
+      Logger.recordOutput(calcLogRoot + "Left Pole", leftPole);
+      Logger.recordOutput(calcLogRoot + "Left Pole/Pose", leftPole.getPose());
+      ReefPole rightPole = FieldUtils.getClosestReef().rightPole;
+      Logger.recordOutput(calcLogRoot + "Right Pole", rightPole);
+      Logger.recordOutput(calcLogRoot + "Right Pole/Pose", rightPole.getPose());
     }
 
     {
