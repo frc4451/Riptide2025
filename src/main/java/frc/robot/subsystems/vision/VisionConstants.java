@@ -25,7 +25,7 @@ public class VisionConstants {
   }
 
   public static final AprilTagFieldLayout fieldLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
   public static final Optional<VisionSystemSim> aprilTagSim =
       Constants.currentMode == Mode.SIM
