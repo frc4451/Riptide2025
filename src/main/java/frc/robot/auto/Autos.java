@@ -58,7 +58,7 @@ public class Autos {
                 resetAndFollowTrajectory(trajectory),
                 Commands.parallel(
                     positionToPole(() -> ReefFaces.GH.get().leftPole),
-                    superStructure.score(SuperStructureModes.L4))));
+                    superStructure.score(SuperStructureModes.L4Coral))));
 
     return routine;
   }
@@ -72,7 +72,7 @@ public class Autos {
             Commands.sequence(
                 resetAndFollowTrajectory(routine.trajectory(ChoreoPaths.START_MID_TO_C.name)),
                 Commands.deadline(
-                    superStructure.score(SuperStructureModes.L4),
+                    superStructure.score(SuperStructureModes.L4Coral),
                     positionToPole(() -> ReefFaces.GH.get().leftPole)),
                 followTrajectory(routine.trajectory(ChoreoPaths.C_TO_HPS_RIGHT.name)),
                 Commands.deadline(
@@ -80,7 +80,7 @@ public class Autos {
                     positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
                 followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_C.name)),
                 Commands.deadline(
-                    superStructure.score(SuperStructureModes.L4),
+                    superStructure.score(SuperStructureModes.L4Coral),
                     positionToPole(() -> ReefFaces.CD.get().leftPole))));
 
     return routine;

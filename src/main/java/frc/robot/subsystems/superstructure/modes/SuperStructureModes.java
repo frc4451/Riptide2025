@@ -4,13 +4,28 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 public enum SuperStructureModes {
   TUCKED(0, Rotation2d.kZero),
-  INTAKE(40.0, Rotation2d.kPi),
-  L1(1.0, Rotation2d.kPi),
-  L2(2.0, Rotation2d.kPi),
-  L3(3.0, Rotation2d.kPi),
-  L4(
-      40.0,
+  INTAKE(1.0, Rotation2d.kPi),
+  L1Coral(17.0, Rotation2d.kPi),
+  L2Coral(17.0, Rotation2d.kPi),
+  L3Coral(
+      33.0,
       Rotation2d.kPi,
+      IntoInstructions.PIVOTS_BEFORE_ELEVATOR,
+      ExitInstructions.ELEVATOR_BEFORE_PIVOTS),
+  L4Coral(
+      47.0,
+      Rotation2d.fromDegrees(165.0),
+      IntoInstructions.PIVOTS_BEFORE_ELEVATOR,
+      ExitInstructions.ELEVATOR_BEFORE_PIVOTS),
+  L2Algae(20, Rotation2d.fromDegrees(60.0)),
+  L3Algae(
+      31,
+      Rotation2d.fromDegrees(60.0),
+      IntoInstructions.PIVOTS_BEFORE_ELEVATOR,
+      ExitInstructions.ELEVATOR_BEFORE_PIVOTS),
+  Barge(
+      49,
+      Rotation2d.fromDegrees(180),
       IntoInstructions.PIVOTS_BEFORE_ELEVATOR,
       ExitInstructions.ELEVATOR_BEFORE_PIVOTS);
 
