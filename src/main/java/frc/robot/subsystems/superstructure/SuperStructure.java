@@ -1,6 +1,7 @@
 package frc.robot.subsystems.superstructure;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +30,8 @@ import frc.robot.subsystems.superstructure.modes.IntoInstructions;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.pivot.Pivot;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure extends SubsystemBase {
@@ -188,6 +191,22 @@ public class SuperStructure extends SubsystemBase {
     goalMechanism.update(elevator.getGoalHeightInches(), coralPivot.getGoalPosition());
   }
 
+  private void nudgeElevatorGoal(DoubleSupplier nudge) {
+    elevator.setGoalHeightInches(elevator.getGoalHeightInches() + nudge.getAsDouble());
+  }
+
+  public Command nudgeElevatorGoalCommand(DoubleSupplier nudge) {
+    return Commands.run(() -> nudgeElevatorGoal(nudge));
+  }
+
+  private void nudgePivotGoal(Supplier<Rotation2d> nudge) {
+    coralPivot.setGoal(coralPivot.getGoalPosition().plus(nudge.get()));
+  }
+
+  public Command nudgePivotGoalCommand(Supplier<Rotation2d> nudge) {
+    return Commands.run(() -> nudgePivotGoal(nudge));
+  }
+
   private void setCurrentMode(SuperStructureModes nextMode) {
     if (currentMode != nextMode) {
       intoInstructions = nextMode.intoInstructions;
@@ -235,20 +254,26 @@ public class SuperStructure extends SubsystemBase {
 
   public Command score(SuperStructureModes mode) {
     return Commands.sequence(
-            setModeCommand(mode),
-            Commands.waitUntil(isAtMode()),
-            Commands.sequence(
-                setShooterModeCommand(ShooterModes.SHOOT),
-                Commands.sequence(
-                    Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.1)),
-                setShooterModeCommand(ShooterModes.NONE)),
-            setModeCommand(SuperStructureModes.TUCKED),
-            Commands.waitUntil(isAtMode()))
-        .onlyIf(isCoralIntaked())
-        .finallyDo(
-            () -> {
-              setCurrentShooterMode(ShooterModes.NONE);
-              setCurrentMode(SuperStructureModes.TUCKED);
-            });
+            setModeAndWaitCommand(mode),
+            setShooterModeAndWaitCommand(ShooterModes.SHOOT),
+            setModeAndWaitCommand(SuperStructureModes.TUCKED))
+        // .onlyIf(isCoralIntaked())
+        .finallyDo(this::resetModes);
+  }
+
+  public Command setModeAndWaitCommand(SuperStructureModes mode) {
+    return Commands.sequence(setModeCommand(mode), Commands.waitUntil(isAtMode()));
+  }
+
+  public Command setShooterModeAndWaitCommand(ShooterModes mode) {
+    return Commands.sequence(
+        setShooterModeCommand(mode),
+        Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.1)),
+        setShooterModeCommand(ShooterModes.NONE));
+  }
+
+  public void resetModes() {
+    setCurrentShooterMode(ShooterModes.NONE);
+    setCurrentMode(SuperStructureModes.TUCKED);
   }
 }

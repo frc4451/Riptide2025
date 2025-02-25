@@ -278,10 +278,31 @@ public class RobotContainer {
     operatorController
         .rightBumper()
         .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-    operatorController.a().whileTrue(superStructure.score(SuperStructureModes.L1));
-    operatorController.x().whileTrue(superStructure.score(SuperStructureModes.L2));
-    operatorController.b().whileTrue(superStructure.score(SuperStructureModes.L3));
-    operatorController.y().whileTrue(superStructure.score(SuperStructureModes.L4));
+
+    operatorController
+        .leftY()
+        .whileTrue(superStructure.nudgeElevatorGoalCommand(() -> -operatorController.getLeftY()));
+    operatorController
+        .rightY()
+        .whileTrue(
+            superStructure.nudgePivotGoalCommand(
+                () -> Rotation2d.fromDegrees(-operatorController.getRightY())));
+
+    operatorController.a().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L1Coral));
+    operatorController.x().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L2Coral));
+    operatorController.b().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L3Coral));
+    operatorController.y().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L4Coral));
+  }
+
+  private Command teleopCoralScoreCommand(SuperStructureModes mode) {
+    return Commands.sequence(
+            superStructure.setModeAndWaitCommand(mode),
+            Commands.deadline(
+                Commands.sequence(
+                    Commands.waitUntil(operatorController.rightTrigger()),
+                    superStructure.setShooterModeAndWaitCommand(ShooterModes.SHOOT)),
+                operatorController.rumble(1.0)))
+        .finallyDo(superStructure::resetModes);
   }
 
   private void debugSetup() {
