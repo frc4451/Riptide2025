@@ -23,10 +23,9 @@ import frc.robot.subsystems.superstructure.can_range.CanRangeIOSim;
 import frc.robot.subsystems.superstructure.constants.CoralPivotConstants;
 import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import frc.robot.subsystems.superstructure.constants.ShooterConstants;
+import frc.robot.subsystems.superstructure.constants.SuperStructureConstants;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.mechanism.SuperStructureMechanism;
-import frc.robot.subsystems.superstructure.modes.ExitInstructions;
-import frc.robot.subsystems.superstructure.modes.IntoInstructions;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.pivot.Pivot;
@@ -49,9 +48,6 @@ public class SuperStructure extends SubsystemBase {
 
   private SuperStructureModes currentMode = SuperStructureModes.TUCKED;
   private ShooterModes currentShooterMode = ShooterModes.NONE;
-
-  private IntoInstructions intoInstructions = IntoInstructions.NONE;
-  private ExitInstructions exitInstructions = ExitInstructions.NONE;
 
   private boolean isAtMode = false;
 
@@ -160,26 +156,36 @@ public class SuperStructure extends SubsystemBase {
       shooter.runVolts(currentShooterMode.voltage);
     }
 
-    if (intoInstructions == IntoInstructions.PIVOTS_BEFORE_ELEVATOR && coralPivot.atGoal()) {
-      elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
-    }
+    boolean isElevatorAtMode =
+        MathUtil.isNear(
+            elevator.getHeightInches(),
+            currentMode.elevatorHeightInches,
+            Elevator.atGoalToleranceInches);
 
-    if (exitInstructions == ExitInstructions.ELEVATOR_BEFORE_PIVOTS
-        && elevator.underL4Threshold()) {
+    boolean isPivotAtMode =
+        MathUtil.isNear(
+            coralPivot.getPosition().getRadians(),
+            currentMode.coralPos.getRadians(),
+            Pivot.atGoalToleranceRad);
+
+    // Make sure Pivot is tucked while moving so that
+    if (currentMode.elevatorHeightInches > SuperStructureConstants.pivotTuckThresholdInches
+        || elevator.getHeightInches() > SuperStructureConstants.pivotTuckThresholdInches) {
+      if (!isElevatorAtMode) {
+        coralPivot.setGoal(Rotation2d.kPi);
+        if (coralPivot.atGoal()) {
+          elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
+        }
+      } else {
+        coralPivot.setGoal(currentMode.coralPos);
+      }
+    } else {
+      elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
       coralPivot.setGoal(currentMode.coralPos);
     }
 
-    isAtMode =
-        MathUtil.isNear(
-                elevator.getHeightInches(),
-                currentMode.elevatorHeightInches,
-                Elevator.atGoalToleranceInches)
-            && MathUtil.isNear(
-                coralPivot.getPosition().getRadians(),
-                currentMode.coralPos.getRadians(),
-                Pivot.atGoalToleranceRad);
-
-    Logger.recordOutput(name + "/IsAtMode", isAtMode);
+    Logger.recordOutput(name + "/IsElevatorAtMode", isElevatorAtMode);
+    Logger.recordOutput(name + "/IsPivotAtMode", isPivotAtMode);
     Logger.recordOutput(name + "/Mode", currentMode);
     Logger.recordOutput(name + "/ShooterMode", currentShooterMode);
 
@@ -210,19 +216,6 @@ public class SuperStructure extends SubsystemBase {
 
   private void setCurrentMode(SuperStructureModes nextMode) {
     if (currentMode != nextMode) {
-      intoInstructions = nextMode.intoInstructions;
-      exitInstructions = currentMode.exitInstructions;
-
-      if (intoInstructions == IntoInstructions.PIVOTS_BEFORE_ELEVATOR
-          || exitInstructions == ExitInstructions.NONE) {
-        coralPivot.setGoal(nextMode.coralPos);
-      }
-
-      if (exitInstructions == ExitInstructions.ELEVATOR_BEFORE_PIVOTS
-          || intoInstructions == IntoInstructions.NONE) {
-        elevator.setGoalHeightInches(nextMode.elevatorHeightInches);
-      }
-
       currentMode = nextMode;
     }
   }
