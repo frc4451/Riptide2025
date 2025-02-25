@@ -1,5 +1,6 @@
 package frc.robot.subsystems.superstructure.constants;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.subsystems.superstructure.elevator.ElevatorConstraints;
@@ -26,4 +27,6 @@ public class ElevatorConstants {
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
       new TrapezoidProfile.Constraints(10.0 * inchesPerRad, 10.0 * inchesPerRad);
+
+  public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(1.0, 1.0, 1.0);
 }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -24,6 +25,8 @@ public class Elevator extends FollowRollers {
 
   private TrapezoidProfile.State goal = new TrapezoidProfile.State();
 
+  private final ElevatorFeedforward feedforward;
+
   private final double inchesPerRad;
   private final ElevatorConstraints elevatorConstraints;
 
@@ -33,12 +36,14 @@ public class Elevator extends FollowRollers {
       CanRangeIO heightSensorIO,
       TrapezoidProfile.Constraints trapezoidConstraints,
       double inchesPerRad,
-      ElevatorConstraints elevatorConstraints) {
+      ElevatorConstraints elevatorConstraints,
+      ElevatorFeedforward feedforward) {
     super(name, io);
     this.heightSensor = new CanRange(name + "/HeightSensor", heightSensorIO);
     this.trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
     this.inchesPerRad = inchesPerRad;
     this.elevatorConstraints = elevatorConstraints;
+    this.feedforward = feedforward;
   }
 
   public void periodic() {
@@ -92,7 +97,8 @@ public class Elevator extends FollowRollers {
 
   public void runTrapezoidProfile() {
     setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
-    io.runPosition(setpoint.position);
+    double ff = feedforward.calculate(setpoint.velocity);
+    io.runPosition(setpoint.position, ff);
   }
 
   public void setGoalHeightInches(double positionInches) {

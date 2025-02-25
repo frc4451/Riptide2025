@@ -132,7 +132,8 @@ public class SuperStructure extends SubsystemBase {
             heightSensorIO,
             ElevatorConstants.trapezoidConstraints,
             ElevatorConstants.inchesPerRad,
-            ElevatorConstants.elevatorConstraints);
+            ElevatorConstants.elevatorConstraints,
+            ElevatorConstants.feedforward);
 
     coralPivot =
         new Pivot(

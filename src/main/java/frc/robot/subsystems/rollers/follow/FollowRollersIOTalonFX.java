@@ -153,8 +153,11 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     leader.setControl(velocityOut.withVelocity(Units.radiansToRotations(velocityRadPerSecond)));
   }
 
-  public void runPosition(double positionRad) {
-    leader.setControl(positionOut.withPosition(Units.radiansToRotations(positionRad) * reduction));
+  public void runPosition(double positionRad, double feedforwardVolts) {
+    leader.setControl(
+        positionOut.withPosition(Units.radiansToRotations(positionRad) * reduction)
+        // .withFeedForward(feedforwardVolts)
+        );
   }
 
   @Override
