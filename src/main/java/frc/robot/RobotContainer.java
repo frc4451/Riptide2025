@@ -150,6 +150,7 @@ public class RobotContainer {
         "Drive SysId (Dynamic Forward)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addCmd(
         "Drive SysId (Dynamic Reverse)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addCmd("Quest Offset Calibration", () -> quest.determineOffsetToRobotCenter(drive));
 
     autoChooser.addRoutine("2 Meters", autos::twoMeters);
     autoChooser.addRoutine("3 Meters", autos::threeMeters);
