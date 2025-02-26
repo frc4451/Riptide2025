@@ -168,6 +168,8 @@ public class SuperStructure extends SubsystemBase {
             currentMode.coralPos.getRadians(),
             Pivot.atGoalToleranceRad);
 
+    isAtMode = isElevatorAtMode && isPivotAtMode;
+
     // Make sure Pivot is tucked while moving so that
     if (currentMode.elevatorHeightInches > SuperStructureConstants.pivotTuckThresholdInches
         || elevator.getHeightInches() > SuperStructureConstants.pivotTuckThresholdInches) {
@@ -251,7 +253,7 @@ public class SuperStructure extends SubsystemBase {
             setModeAndWaitCommand(mode),
             setShooterModeAndWaitCommand(ShooterModes.SHOOT),
             setModeAndWaitCommand(SuperStructureModes.TUCKED))
-        // .onlyIf(isCoralIntaked())
+        .onlyIf(isCoralIntaked())
         .finallyDo(this::resetModes);
   }
 
