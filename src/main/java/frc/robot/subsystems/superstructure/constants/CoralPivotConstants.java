@@ -6,7 +6,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.subsystems.superstructure.pivot.PivotConstraints;
 
 public class CoralPivotConstants {
-  public static final int canId = 0;
+  public static final int canId = 5;
 
   public static final DCMotor gearbox = DCMotor.getFalcon500Foc(1);
   public static final double reduction = 5.0;

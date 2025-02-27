@@ -86,6 +86,26 @@ public class Autos {
     return routine;
   }
 
+  public AutoRoutine tripleThreat() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Triple Threat");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                resetAndFollowTrajectory(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_E.name)),
+                Commands.deadline(
+                    superStructure.score(SuperStructureModes.L4Coral),
+                    positionToPole(() -> ReefFaces.EF.get().leftPole))
+                // followTrajectory(routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name)),
+                // followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_D.name)),
+                // followTrajectory(routine.trajectory(ChoreoPaths.D_TO_HPS_RIGHT.name)),
+                // followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_C.name))
+                ));
+
+    return routine;
+  }
+
   // Helpers
   private Command followTrajectory(AutoTrajectory trajectory) {
     return Commands.sequence(

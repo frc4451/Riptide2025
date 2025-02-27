@@ -10,19 +10,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
-import frc.robot.subsystems.rollers.follow.FollowRollersIOSim;
-import frc.robot.subsystems.rollers.follow.FollowRollersIOTalonFX;
 import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
-import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
-import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
 import frc.robot.subsystems.superstructure.can_range.CanRange;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
-import frc.robot.subsystems.superstructure.can_range.CanRangeIOReal;
-import frc.robot.subsystems.superstructure.can_range.CanRangeIOSim;
 import frc.robot.subsystems.superstructure.constants.CoralPivotConstants;
 import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
-import frc.robot.subsystems.superstructure.constants.ShooterConstants;
 import frc.robot.subsystems.superstructure.constants.SuperStructureConstants;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.mechanism.SuperStructureMechanism;
@@ -59,59 +52,59 @@ public class SuperStructure extends SubsystemBase {
     CanRangeIO coralSensorIO;
 
     switch (Constants.currentMode) {
-      case REAL:
-        elevatorIO =
-            new FollowRollersIOTalonFX(
-                ElevatorConstants.leaderCanId,
-                ElevatorConstants.followerCanId,
-                ElevatorConstants.reduction,
-                ElevatorConstants.currentLimitAmps,
-                ElevatorConstants.invertFollower);
+        // case REAL:
+        //   elevatorIO =
+        //       new FollowRollersIOTalonFX(
+        //           ElevatorConstants.leaderCanId,
+        //           ElevatorConstants.followerCanId,
+        //           ElevatorConstants.reduction,
+        //           ElevatorConstants.currentLimitAmps,
+        //           ElevatorConstants.invertFollower);
 
-        heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
+        //   heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
 
-        coralPivotIO =
-            new SingleRollerIOTalonFX(
-                CoralPivotConstants.canId,
-                CoralPivotConstants.reduction,
-                CoralPivotConstants.currentLimitAmps,
-                CoralPivotConstants.invert);
+        //   coralPivotIO =
+        //       new SingleRollerIOTalonFX(
+        //           CoralPivotConstants.canId,
+        //           CoralPivotConstants.reduction,
+        //           CoralPivotConstants.currentLimitAmps,
+        //           CoralPivotConstants.invert);
 
-        shooterIO =
-            new SingleRollerIOTalonFX(
-                ShooterConstants.canId,
-                ShooterConstants.reduction,
-                ShooterConstants.currentLimitAmps,
-                ShooterConstants.invert);
+        //   shooterIO =
+        //       new SingleRollerIOTalonFX(
+        //           ShooterConstants.canId,
+        //           ShooterConstants.reduction,
+        //           ShooterConstants.currentLimitAmps,
+        //           ShooterConstants.invert);
 
-        coralSensorIO = new CanRangeIOReal(ShooterConstants.coralSensorId, false);
-        break;
+        //   coralSensorIO = new CanRangeIOReal(ShooterConstants.coralSensorId, false);
+        //   break;
 
-      case SIM:
-        elevatorIO =
-            new FollowRollersIOSim(
-                ElevatorConstants.leaderGearbox,
-                ElevatorConstants.followerGearbox,
-                ElevatorConstants.reduction,
-                ElevatorConstants.moi,
-                ElevatorConstants.invertFollower);
+        // case SIM:
+        //   elevatorIO =
+        //       new FollowRollersIOSim(
+        //           ElevatorConstants.leaderGearbox,
+        //           ElevatorConstants.followerGearbox,
+        //           ElevatorConstants.reduction,
+        //           ElevatorConstants.moi,
+        //           ElevatorConstants.invertFollower);
 
-        heightSensorIO = new CanRangeIOSim();
+        //   heightSensorIO = new CanRangeIOSim();
 
-        coralPivotIO =
-            new SingleRollerIOSim(
-                CoralPivotConstants.gearbox,
-                CoralPivotConstants.reduction,
-                CoralPivotConstants.moi);
+        //   coralPivotIO =
+        //       new SingleRollerIOSim(
+        //           CoralPivotConstants.gearbox,
+        //           CoralPivotConstants.reduction,
+        //           CoralPivotConstants.moi);
 
-        shooterIO =
-            new SingleRollerIOSim(
-                ShooterConstants.gearbox, ShooterConstants.reduction, ShooterConstants.moi);
+        //   shooterIO =
+        //       new SingleRollerIOSim(
+        //           ShooterConstants.gearbox, ShooterConstants.reduction, ShooterConstants.moi);
 
-        coralSensorIO = new CanRangeIOSim();
-        break;
+        //   coralSensorIO = new CanRangeIOSim();
+        //   break;
 
-      case REPLAY:
+        // case REPLAY:
       default:
         elevatorIO = new FollowRollersIO() {};
         heightSensorIO = new CanRangeIO() {};

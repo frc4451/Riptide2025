@@ -8,10 +8,10 @@ import frc.robot.subsystems.superstructure.elevator.ElevatorConstraints;
 public class ElevatorConstants {
   public static final int heightSensorId = 0;
 
-  public static final int leaderCanId = 0;
+  public static final int leaderCanId = 6;
   public static final DCMotor leaderGearbox = DCMotor.getFalcon500Foc(1);
 
-  public static final int followerCanId = 0;
+  public static final int followerCanId = 7;
   public static final DCMotor followerGearbox = DCMotor.getFalcon500Foc(1);
 
   public static final double reduction = 5.0;

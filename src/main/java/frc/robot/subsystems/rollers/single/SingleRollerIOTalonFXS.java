@@ -41,7 +41,7 @@ public class SingleRollerIOTalonFXS implements SingleRollerIO {
       int canId, double reduction, double currentLimitAmps, boolean invert) {
     this.reduction = reduction;
 
-    talon = new TalonFXS(canId);
+    talon = new TalonFXS(canId, Constants.alternateCanBus);
 
     position = talon.getPosition();
     velocity = talon.getVelocity();
