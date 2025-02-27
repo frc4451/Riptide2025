@@ -2,7 +2,7 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -19,29 +19,31 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class AprilTagIOPhoton implements AprilTagIO {
   protected final PhotonCamera camera;
-  private final PhotonPoseEstimator estimator;
-  private final Transform3d robotToCamera;
+  private final PhotonPoseEstimator globalEstimator;
+  private final PhotonPoseEstimator localEstimator;
 
   public AprilTagIOPhoton(VisionSource source) {
     camera = new PhotonCamera(source.name());
 
-    robotToCamera = source.robotToCamera();
-
-    estimator =
+    globalEstimator =
         new PhotonPoseEstimator(
             VisionConstants.fieldLayout,
             PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             source.robotToCamera());
 
-    estimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+    globalEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+
+    localEstimator =
+        new PhotonPoseEstimator(
+            VisionConstants.fieldLayout,
+            PhotonPoseEstimator.PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
+            source.robotToCamera());
   }
 
   @Override
   public void updateInputs(AprilTagIOInputs inputs) {
     List<PhotonPipelineResult> unreadResults = camera.getAllUnreadResults();
 
-    // List<PoseObservation> allLocalizedPoseObservations = new ArrayList<>();
-    // List<PhotonTrackedTarget> allTargets = List.of();
     List<Translation2d> validCorners = new ArrayList<>();
     List<Translation2d> rejectedCorners = new ArrayList<>();
 
@@ -51,6 +53,9 @@ public class AprilTagIOPhoton implements AprilTagIO {
     List<PoseObservation> validPoseObservations = new ArrayList<>();
     List<PoseObservation> rejectedPoseObservations = new ArrayList<>();
 
+    List<PoseObservation> validLocalPoseObservations = new ArrayList<>();
+    List<PoseObservation> rejectedLocalPoseObservations = new ArrayList<>();
+
     List<Pose3d> validPoses = new ArrayList<>();
     List<Pose3d> rejectedPoses = new ArrayList<>();
 
@@ -58,24 +63,9 @@ public class AprilTagIOPhoton implements AprilTagIO {
     List<Pose3d> rejectedAprilTagPoses = new ArrayList<>();
 
     for (PhotonPipelineResult result : unreadResults) {
-      // Filtering of tags by ambiguity threshold & validity of id
-      // Does not apply to global pose estimation
-      // List<PhotonTrackedTarget> filteredTargets =
-      // result.getTargets().stream()
-      // .filter(
-      // target ->
-      // target.getPoseAmbiguity() < VisionConstants.ambiguityCutoff
-      // && target.getFiducialId() != -1)
-      // .toList();
-
-      // allTargets.addAll(targets);
-
       // Detected Corners
       for (PhotonTrackedTarget target : result.getTargets()) {
         if (AprilTagAlgorithms.isValid(target)) {
-          // for (TargetCorner corner : target.getDetectedCorners()) {
-          //   validCorners.add(new Translation2d(corner.x, corner.y));
-          // }
           target.getDetectedCorners().stream()
               .map(corner -> new Translation2d(corner.x, corner.y))
               .forEach(validCorners::add);
@@ -85,9 +75,6 @@ public class AprilTagIOPhoton implements AprilTagIO {
           validAprilTagPoses.add(
               VisionConstants.fieldLayout.getTagPose(target.getFiducialId()).get());
         } else {
-          // for (TargetCorner corner : target.getDetectedCorners()) {
-          //   rejectedCorners.add(new Translation2d(corner.x, corner.y));
-          // }
           target.getDetectedCorners().stream()
               .map(corner -> new Translation2d(corner.x, corner.y))
               .forEach(rejectedCorners::add);
@@ -100,82 +87,11 @@ public class AprilTagIOPhoton implements AprilTagIO {
                 .ifPresent(rejectedAprilTagPoses::add);
           }
         }
-      }
 
-      // List<PoseObservation> localizedPoseObservations =
-      // filteredTargets.stream()
-      // .map(
-      // target -> {
-      // Transform3d robotToTarget =
-      // target.getBestCameraToTarget().plus(robotToCamera);
-      // Pose3d tagPose =
-      // VisionConstants.fieldLayout.getTagPose(target.getFiducialId()).get();
-      // Pose3d localizedRobotPose = tagPose.transformBy(robotToTarget.inverse());
-      // // TODO: account for gyro
-      //
-      // return new PoseObservation(
-      // localizedRobotPose,
-      // result.getTimestampSeconds(),
-      // target.getPoseAmbiguity(),
-      // // new int[] {target.getFiducialId()}
-      // target.getFiducialId(),
-      // PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
-      // })
-      // .toList();
-
-      // allLocalizedPoseObservations.addAll(localizedPoseObservations);
-
-      // Pose Estimation
-      Optional<EstimatedRobotPose> maybeEstimatedPose = estimator.update(result);
-
-      if (!maybeEstimatedPose.isPresent()) {
-        continue;
-      }
-
-      EstimatedRobotPose estimatedPose = maybeEstimatedPose.get();
-
-      if (result.getMultiTagResult().isPresent()) {
-        MultiTargetPNPResult multiTagResult = result.getMultiTagResult().get();
-
-        Pose3d pose = estimatedPose.estimatedPose;
-        Matrix<N3, N1> stdDevs =
-            AprilTagAlgorithms.getEstimationStdDevs(pose.toPose2d(), result.getTargets());
-
-        PoseObservation observation =
-            new PoseObservation(
-                estimatedPose.estimatedPose,
-                estimatedPose.timestampSeconds,
-                multiTagResult.estimatedPose.ambiguity,
-                // multiTagResult.fiducialIDsUsed.stream().mapToInt(id -> id).toArray()
-                -100,
-                stdDevs,
-                PoseEstimationMethod.MULTI_TAG);
-
-        validPoseObservations.add(observation);
-        validPoses.add(observation.robotPose());
-      } else if (!result.getTargets().isEmpty()) {
-        PhotonTrackedTarget target = result.getTargets().get(0);
-
-        Pose3d pose = estimatedPose.estimatedPose;
-        Matrix<N3, N1> stdDevs =
-            AprilTagAlgorithms.getEstimationStdDevs(pose.toPose2d(), result.getTargets());
-        PoseObservation observation =
-            new PoseObservation(
-                estimatedPose.estimatedPose,
-                estimatedPose.timestampSeconds,
-                target.poseAmbiguity,
-                // new int[] {target.fiducialId}
-                target.fiducialId,
-                stdDevs,
-                PoseEstimationMethod.SINGLE_TAG);
-
-        if (AprilTagAlgorithms.isValid(target)) {
-          validPoseObservations.add(observation);
-          validPoses.add(observation.robotPose());
-        } else {
-          rejectedPoseObservations.add(observation);
-          rejectedPoses.add(observation.robotPose());
-        }
+        // Pose Estimation
+        calcGlobalPoseObservations(result, validPoseObservations, rejectedPoseObservations);
+        calcLocalPoseObservations(
+            result, validLocalPoseObservations, rejectedLocalPoseObservations);
       }
     }
 
@@ -190,10 +106,102 @@ public class AprilTagIOPhoton implements AprilTagIO {
     inputs.validPoseObservations = validPoseObservations.toArray(PoseObservation[]::new);
     inputs.rejectedPoseObservations = rejectedPoseObservations.toArray(PoseObservation[]::new);
 
+    inputs.validLocalPoseObservations = validLocalPoseObservations.toArray(PoseObservation[]::new);
+    inputs.rejectedLocalPoseObservations =
+        rejectedLocalPoseObservations.toArray(PoseObservation[]::new);
+
     inputs.validPoses = validPoses.toArray(Pose3d[]::new);
     inputs.rejectedPoses = rejectedPoses.toArray(Pose3d[]::new);
 
     inputs.validAprilTagPoses = validAprilTagPoses.toArray(Pose3d[]::new);
     inputs.rejectedAprilTagPoses = rejectedAprilTagPoses.toArray(Pose3d[]::new);
+  }
+
+  @Override
+  public void addHeadingData(double timestampSeconds, Rotation2d heading) {
+    globalEstimator.addHeadingData(timestampSeconds, heading);
+  }
+
+  private void calcGlobalPoseObservations(
+      PhotonPipelineResult result,
+      List<PoseObservation> validPoseObservations,
+      List<PoseObservation> rejectedPoseObservations) {
+    Optional<EstimatedRobotPose> maybeEstimatedPose = globalEstimator.update(result);
+    if (maybeEstimatedPose.isEmpty()) {
+      return;
+    }
+
+    EstimatedRobotPose estimatedPose = maybeEstimatedPose.get();
+
+    if (result.getMultiTagResult().isPresent()) {
+      MultiTargetPNPResult multiTagResult = result.getMultiTagResult().get();
+
+      Pose3d pose = estimatedPose.estimatedPose;
+      Matrix<N3, N1> stdDevs =
+          AprilTagAlgorithms.getEstimationStdDevs(pose.toPose2d(), result.getTargets());
+
+      PoseObservation observation =
+          new PoseObservation(
+              estimatedPose.estimatedPose,
+              estimatedPose.timestampSeconds,
+              multiTagResult.estimatedPose.ambiguity,
+              // multiTagResult.fiducialIDsUsed.stream().mapToInt(id -> id).toArray()
+              -100,
+              stdDevs,
+              PoseEstimationMethod.MULTI_TAG);
+
+      validPoseObservations.add(observation);
+    } else if (!result.getTargets().isEmpty()) {
+      PhotonTrackedTarget target = result.getTargets().get(0);
+
+      Pose3d pose = estimatedPose.estimatedPose;
+      Matrix<N3, N1> stdDevs =
+          AprilTagAlgorithms.getEstimationStdDevs(pose.toPose2d(), result.getTargets());
+      PoseObservation observation =
+          new PoseObservation(
+              estimatedPose.estimatedPose,
+              estimatedPose.timestampSeconds,
+              target.poseAmbiguity,
+              // new int[] {target.fiducialId}
+              target.fiducialId,
+              stdDevs,
+              PoseEstimationMethod.SINGLE_TAG);
+
+      if (AprilTagAlgorithms.isValid(target)) {
+        validPoseObservations.add(observation);
+      } else {
+        rejectedPoseObservations.add(observation);
+      }
+    }
+  }
+
+  private void calcLocalPoseObservations(
+      PhotonPipelineResult result,
+      List<PoseObservation> validLocalPoseObservations,
+      List<PoseObservation> rejectedPoseObservations) {
+
+    Optional<EstimatedRobotPose> maybeEstimatedPose = localEstimator.update(result);
+    if (maybeEstimatedPose.isEmpty()) {
+      return;
+    }
+
+    EstimatedRobotPose estimatedPose = maybeEstimatedPose.get();
+
+    PhotonTrackedTarget target = result.getBestTarget();
+
+    PoseObservation observation =
+        new PoseObservation(
+            estimatedPose.estimatedPose,
+            estimatedPose.timestampSeconds,
+            target.poseAmbiguity,
+            target.fiducialId,
+            VisionConstants.trustedStdDevs,
+            PoseEstimationMethod.TRIG);
+
+    if (AprilTagAlgorithms.isValid(target)) {
+      validLocalPoseObservations.add(observation);
+    } else {
+      rejectedPoseObservations.add(observation);
+    }
   }
 }

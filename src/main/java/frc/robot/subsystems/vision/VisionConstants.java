@@ -21,7 +21,8 @@ public class VisionConstants {
 
   public static enum PoseEstimationMethod {
     MULTI_TAG,
-    SINGLE_TAG
+    SINGLE_TAG,
+    TRIG
   }
 
   public static final AprilTagFieldLayout fieldLayout =
@@ -104,4 +105,6 @@ public class VisionConstants {
   // (Fake values. Experiment and determine estimation noise on an actual robot.)
   public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(4, 4, 8);
   public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+
+  public static final Matrix<N3, N1> trustedStdDevs = VecBuilder.fill(0, 0, 0);
 }

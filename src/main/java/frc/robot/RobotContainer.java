@@ -47,6 +47,7 @@ import frc.robot.subsystems.quest.QuestIOReal;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
 import frc.robot.util.PoseUtils;
 import org.littletonrobotics.junction.Logger;
@@ -60,7 +61,10 @@ import org.littletonrobotics.junction.Logger;
 public class RobotContainer {
   // Subsystems
   public final Drive drive;
-  //   private final Vision vision = new Vision();
+
+  @SuppressWarnings("unused")
+  private final Vision vision = new Vision();
+
   private final SuperStructure superStructure = new SuperStructure();
 
   public final Blinkin blinkin;
