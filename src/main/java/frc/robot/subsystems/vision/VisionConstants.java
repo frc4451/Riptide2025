@@ -12,6 +12,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.field.FieldUtils;
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.simulation.VisionSystemSim;
@@ -43,7 +44,9 @@ public class VisionConstants {
                           6.0 / 100.0, // forward+
                           29.5 / 100.0, // left+
                           26.5 / 100.0), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-17.5), 0))),
+                      new Rotation3d(0, Units.degreesToRadians(-17.5), 0)),
+                  // The front inner camera needs to only see the closest reef tag
+                  Optional.of(FieldUtils.getReefTags())),
               SimCameraConfig.THRIFTY_CAM_90));
 
   private static final List<AprilTagCameraConfig> riptideConfigs =
@@ -69,7 +72,9 @@ public class VisionConstants {
                           Units.inchesToMeters(6.915), // forward+
                           Units.inchesToMeters(12.421), // left+
                           Units.inchesToMeters(8.141)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-25), Units.degreesToRadians(-10)))),
+                      new Rotation3d(0, Units.degreesToRadians(-25), Units.degreesToRadians(-10))),
+                  // The front inner camera needs to only see the closest reef tag
+                  Optional.of(FieldUtils.getReefTags())),
               SimCameraConfig.THRIFTY_CAM_90),
           // FRI
           new AprilTagCameraConfig(
@@ -80,7 +85,9 @@ public class VisionConstants {
                           Units.inchesToMeters(6.915), // forward+
                           Units.inchesToMeters(-12.421), // left+
                           Units.inchesToMeters(8.141)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-25), Units.degreesToRadians(10)))),
+                      new Rotation3d(0, Units.degreesToRadians(-25), Units.degreesToRadians(10))),
+                  // The front inner camera needs to only see the closest reef tag
+                  Optional.of(FieldUtils.getReefTags())),
               SimCameraConfig.THRIFTY_CAM_90),
           // FRO
           new AprilTagCameraConfig(

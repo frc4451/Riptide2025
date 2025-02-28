@@ -33,5 +33,5 @@ public interface AprilTagIO {
 
   public default void updateInputs(AprilTagIOInputs inputs) {}
 
-  public default void addHeadingData(double timestampSeconds, Rotation2d heading) {}
+  public default void addHeadingDataForTrig(double timestampSeconds, Rotation2d heading) {}
 }

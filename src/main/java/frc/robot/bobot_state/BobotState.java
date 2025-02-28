@@ -27,9 +27,12 @@ public class BobotState extends VirtualSubsystem {
   private static final String logRoot = "BobotState/";
 
   private static final Queue<PoseObservation> poseObservations = new LinkedBlockingQueue<>(20);
+  private static final Queue<PoseObservation> trigObservations = new LinkedBlockingQueue<>(20);
   private static final Queue<TimestampedPose> questMeasurements = new LinkedBlockingQueue<>(20);
 
   private static Pose2d globalPose = new Pose2d();
+
+  private static Pose2d localTrigPose = new Pose2d();
 
   private static ReefTagTracker reefTracker = new ReefTagTracker();
   private static HPSTagTracker hpsTracker = new HPSTagTracker();
@@ -46,6 +49,14 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.poseObservations;
   }
 
+  public static void offerTrigObservation(PoseObservation observation) {
+    BobotState.trigObservations.offer(observation);
+  }
+
+  public static Queue<PoseObservation> getTrigObservations() {
+    return BobotState.trigObservations;
+  }
+
   public static void offerQuestMeasurement(TimestampedPose observation) {
     BobotState.questMeasurements.offer(observation);
   }
@@ -58,8 +69,16 @@ public class BobotState extends VirtualSubsystem {
     BobotState.globalPose = pose;
   }
 
+  public static void updateTrigPose(Pose2d pose) {
+    BobotState.localTrigPose = pose;
+  }
+
   public static Pose2d getGlobalPose() {
     return BobotState.globalPose;
+  }
+
+  public static Pose2d getTrigPose() {
+    return BobotState.localTrigPose;
   }
 
   public static Trigger onTeamSide() {

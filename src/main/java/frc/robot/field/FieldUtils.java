@@ -67,4 +67,10 @@ public class FieldUtils {
   public static AprilTagStruct getBargeTag() {
     return FieldUtils.isBlueAlliance() ? FieldConstants.blueBarge : FieldConstants.redBarge;
   }
+
+  public static List<AprilTagStruct> getReefTags() {
+    return FieldUtils.isBlueAlliance()
+        ? FieldConstants.blueReefTags.stream().map(reef -> reef.tag).toList()
+        : FieldConstants.redReefTags.stream().map(reef -> reef.tag).toList();
+  }
 }

@@ -66,6 +66,9 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+  private SwerveDrivePoseEstimator trigEstimator =
+      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+
   public AutoFactory autoFactory;
   private PIDController xController = new PIDController(5.0, 0.0, 0.0);
   private PIDController yController = new PIDController(5.0, 0.0, 0.0);
@@ -178,6 +181,15 @@ public class Drive extends SubsystemBase {
             );
       }
 
+      // Trig estimation
+      PoseObservation trigObservation;
+      while ((trigObservation = BobotState.getTrigObservations().poll()) != null) {
+        trigEstimator.addVisionMeasurement(
+            trigObservation.robotPose().toPose2d(), trigObservation.timestampSeconds()
+            // ,trigObservation.stdDevs()
+            );
+      }
+
       // Quest
       if (DriverStation.isEnabled()) {
         TimestampedPose timestampedPose;
@@ -191,6 +203,7 @@ public class Drive extends SubsystemBase {
     }
 
     BobotState.updateGlobalPose(getPose());
+    BobotState.updateTrigPose(getTrigPose());
   }
 
   /**
@@ -319,10 +332,16 @@ public class Drive extends SubsystemBase {
     return output;
   }
 
-  /** Returns the current odometry pose. */
+  /** Returns the current _global_ odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  /** Returns the current odometry in relation to specific targets */
+  @AutoLogOutput(key = "Odometry/TrigSolution")
+  public Pose2d getTrigPose() {
+    return trigEstimator.getEstimatedPosition();
   }
 
   /** Returns the current odometry rotation. */

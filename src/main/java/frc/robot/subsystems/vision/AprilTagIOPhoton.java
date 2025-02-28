@@ -20,7 +20,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class AprilTagIOPhoton implements AprilTagIO {
   protected final PhotonCamera camera;
   private final PhotonPoseEstimator globalEstimator;
-  private final PhotonPoseEstimator localEstimator;
+  private final PhotonPoseEstimator localTrigEstimator;
 
   public AprilTagIOPhoton(VisionSource source) {
     camera = new PhotonCamera(source.name());
@@ -33,7 +33,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
 
     globalEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
 
-    localEstimator =
+    localTrigEstimator =
         new PhotonPoseEstimator(
             VisionConstants.fieldLayout,
             PhotonPoseEstimator.PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
@@ -90,7 +90,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
 
         // Pose Estimation
         calcGlobalPoseObservations(result, validPoseObservations, rejectedPoseObservations);
-        calcLocalPoseObservations(
+        calcLocalTrigPoseObservations(
             result, validLocalPoseObservations, rejectedLocalPoseObservations);
       }
     }
@@ -118,8 +118,11 @@ public class AprilTagIOPhoton implements AprilTagIO {
   }
 
   @Override
-  public void addHeadingData(double timestampSeconds, Rotation2d heading) {
-    globalEstimator.addHeadingData(timestampSeconds, heading);
+  public void addHeadingDataForTrig(double timestampSeconds, Rotation2d heading) {
+    // Add heading data before updating the trig estimator
+    // This is only necessary for the trig solution
+    // https://github.com/PhotonVision/photonvision/pull/1767/files#diff-57934f2b05d27fb4c9e9977f789b03174884d323f86821e937b8976088a63f01R527
+    localTrigEstimator.addHeadingData(timestampSeconds, heading);
   }
 
   private void calcGlobalPoseObservations(
@@ -175,12 +178,12 @@ public class AprilTagIOPhoton implements AprilTagIO {
     }
   }
 
-  private void calcLocalPoseObservations(
+  private void calcLocalTrigPoseObservations(
       PhotonPipelineResult result,
       List<PoseObservation> validLocalPoseObservations,
       List<PoseObservation> rejectedPoseObservations) {
 
-    Optional<EstimatedRobotPose> maybeEstimatedPose = localEstimator.update(result);
+    Optional<EstimatedRobotPose> maybeEstimatedPose = localTrigEstimator.update(result);
     if (maybeEstimatedPose.isEmpty()) {
       return;
     }
