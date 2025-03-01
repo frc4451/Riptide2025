@@ -1,6 +1,8 @@
 package frc.robot.subsystems.superstructure.pivot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -13,9 +15,13 @@ import org.littletonrobotics.junction.Logger;
 public class Pivot extends SingleRoller {
   public static final double atGoalToleranceRad = Units.degreesToRadians(3);
 
+  private final PivotConstraints pivotConstraints;
+
   private final TrapezoidProfile trapezoidProfile;
 
-  private final PivotConstraints pivotConstraints;
+  private final ArmFeedforward feedforward;
+
+  private final PIDController positionController;
 
   private TrapezoidProfile.State setpoint = new TrapezoidProfile.State();
 
@@ -25,10 +31,15 @@ public class Pivot extends SingleRoller {
       String name,
       SingleRollerIO io,
       TrapezoidProfile.Constraints trapezoidConstraints,
-      PivotConstraints pivotConstraints) {
+      PivotConstraints pivotConstraints,
+      ArmFeedforward feedforward,
+      double kP,
+      double kD) {
     super(name, io);
-    trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
     this.pivotConstraints = pivotConstraints;
+    this.trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
+    this.feedforward = feedforward;
+    this.positionController = new PIDController(kP, 0, kD);
     setPosition(0);
   }
 
@@ -62,7 +73,14 @@ public class Pivot extends SingleRoller {
 
   public void runTrapezoidProfile() {
     // setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
-    // io.runPosition(setpoint.position);
+    // runPosition(setpoint.position);
+  }
+
+  public void runPosition() {
+    // add 90 deg because our 0 is perpendicular with the floor but ArmFeedforward wants it parallel
+    double ff = feedforward.calculate(setpoint.position + Math.PI / 2.0, setpoint.velocity);
+    double output = positionController.calculate(inputs.positionRad, setpoint.position);
+    io.runVolts(output + ff);
   }
 
   public Rotation2d getPosition() {

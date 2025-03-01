@@ -1,5 +1,6 @@
 package frc.robot.subsystems.superstructure.constants;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.subsystems.superstructure.pivot.PivotConstraints;
@@ -18,4 +19,9 @@ public class CoralPivotConstants {
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
       new TrapezoidProfile.Constraints(Math.PI / 4.0, Math.PI / 4.0);
+
+  // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html#combined-feedforward-and-feedback-control
+  public static final ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0);
+  public static final double kP = 0.0;
+  public static final double kD = 0.0;
 }

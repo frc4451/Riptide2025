@@ -142,7 +142,10 @@ public class SuperStructure extends SubsystemBase {
             name + "/Coral/Pivot",
             coralPivotIO,
             CoralPivotConstants.trapezoidConstraints,
-            CoralPivotConstants.pivotConstraints);
+            CoralPivotConstants.pivotConstraints,
+            CoralPivotConstants.feedforward,
+            CoralPivotConstants.kP,
+            CoralPivotConstants.kD);
 
     shooter = new SingleRoller(name + "/Shooter", shooterIO);
 
