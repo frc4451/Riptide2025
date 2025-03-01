@@ -4,7 +4,6 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -33,8 +32,6 @@ public class SingleRollerIOTalonFXS implements SingleRollerIO {
   private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final VelocityVoltage velocityOut =
       new VelocityVoltage(0).withEnableFOC(true).withUpdateFreqHz(0);
-  private final PositionVoltage positionOut =
-      new PositionVoltage(0.0).withEnableFOC(true).withUpdateFreqHz(0);
   private final NeutralOut neutralOut = new NeutralOut();
 
   public SingleRollerIOTalonFXS(
@@ -98,11 +95,6 @@ public class SingleRollerIOTalonFXS implements SingleRollerIO {
 
   public void runVelocity(double velocityRadPerSecond) {
     talon.setControl(velocityOut.withVelocity(Units.radiansToRotations(velocityRadPerSecond)));
-  }
-
-  @Override
-  public void runPosition(double positionRad) {
-    talon.setControl(positionOut.withPosition(Units.radiansToRotations(positionRad) * reduction));
   }
 
   @Override

@@ -33,14 +33,6 @@ public class SingleRoller {
     io.runVolts(inputsVolts);
   }
 
-  public void runVelocity(double velocityRadPerSec) {
-    io.runVelocity(velocityRadPerSec);
-  }
-
-  public void runPosition(double positionRad) {
-    io.runPosition(positionRad);
-  }
-
   public void stop() {
     io.stop();
   }

@@ -10,6 +10,6 @@ public class ShooterConstants {
   public static final double reduction = 1.0;
   public static final double moi = 0.001;
 
-  public static final boolean invert = false;
+  public static final boolean invert = true;
   public static final double currentLimitAmps = 20.0;
 }

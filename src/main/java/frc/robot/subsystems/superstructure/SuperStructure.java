@@ -77,7 +77,7 @@ public class SuperStructure extends SubsystemBase {
                 CoralPivotConstants.reduction,
                 CoralPivotConstants.currentLimitAmps,
                 CoralPivotConstants.invert,
-                false);
+                true);
 
         shooterIO =
             new SingleRollerIOTalonFX(
@@ -85,7 +85,7 @@ public class SuperStructure extends SubsystemBase {
                 ShooterConstants.reduction,
                 ShooterConstants.currentLimitAmps,
                 ShooterConstants.invert,
-                false);
+                true);
 
         coralSensorIO = new CanRangeIOReal(ShooterConstants.coralSensorId, false);
         break;
@@ -132,7 +132,9 @@ public class SuperStructure extends SubsystemBase {
             ElevatorConstants.trapezoidConstraints,
             ElevatorConstants.inchesPerRad,
             ElevatorConstants.elevatorConstraints,
-            ElevatorConstants.feedforward);
+            ElevatorConstants.feedforward,
+            ElevatorConstants.kP,
+            ElevatorConstants.kD);
     elevator.setHeightInches(ElevatorConstants.startHeightInches);
 
     coralPivot =
@@ -142,7 +144,7 @@ public class SuperStructure extends SubsystemBase {
             CoralPivotConstants.trapezoidConstraints,
             CoralPivotConstants.pivotConstraints);
 
-    shooter = new SingleRoller(name + "/Shooter", new SingleRollerIO() {});
+    shooter = new SingleRoller(name + "/Shooter", shooterIO);
 
     coralSensor = new CanRange(name + "/CoralSensor", coralSensorIO);
   }
@@ -154,7 +156,7 @@ public class SuperStructure extends SubsystemBase {
       setCurrentShooterMode(ShooterModes.NONE);
     }
 
-    if (currentShooterMode.useCanRange && coralSensor.isNear()) {
+    if (currentShooterMode.useCanRange && coralSensor.isDetected()) {
       shooter.stop();
     } else {
       shooter.runVolts(currentShooterMode.voltage);
@@ -238,7 +240,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Trigger isCoralIntaked() {
-    return new Trigger(coralSensor::isNear);
+    return new Trigger(coralSensor::isDetected);
   }
 
   public Command intake() {

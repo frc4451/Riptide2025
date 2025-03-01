@@ -11,12 +11,14 @@ import frc.robot.Constants;
 public class CanRangeIOReal implements CanRangeIO {
   private final CANrange canRange;
   private final StatusSignal<Distance> distance;
+  private final StatusSignal<Boolean> isDetected;
 
   public CanRangeIOReal(int canId, boolean longRange) {
     canRange = new CANrange(canId, Constants.alternateCanBus);
     distance = canRange.getDistance();
+    isDetected = canRange.getIsDetected();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(100, distance);
+    BaseStatusSignal.setUpdateFrequencyForAll(100, distance, isDetected);
     canRange.optimizeBusUtilization(0.0, 1.0);
 
     CANrangeConfiguration cfg = new CANrangeConfiguration();
@@ -27,7 +29,8 @@ public class CanRangeIOReal implements CanRangeIO {
 
   @Override
   public void updateInputs(CanRangeIOInputs inputs) {
-    inputs.connected = StatusSignal.refreshAll(distance).isOK();
+    inputs.connected = StatusSignal.refreshAll(distance, isDetected).isOK();
+    inputs.isDetected = isDetected.getValue();
     inputs.distanceMeters = distance.getValueAsDouble();
   }
 }

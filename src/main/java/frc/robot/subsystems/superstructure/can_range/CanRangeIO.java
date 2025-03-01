@@ -6,6 +6,7 @@ public interface CanRangeIO {
   @AutoLog
   public static class CanRangeIOInputs {
     public boolean connected = false;
+    public boolean isDetected = false;
     public double distanceMeters = 0.0;
   }
 
