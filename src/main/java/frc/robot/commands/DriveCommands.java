@@ -82,8 +82,8 @@ public class DriveCommands {
               ChassisSpeeds.fromFieldRelativeSpeeds(
                   speeds,
                   isFlipped
-                      ? drive.getGlobalRotation().plus(new Rotation2d(Math.PI))
-                      : drive.getGlobalRotation()));
+                      ? drive.getGlobalPose().getRotation().plus(new Rotation2d(Math.PI))
+                      : drive.getGlobalPose().getRotation()));
         },
         drive);
   }
@@ -112,7 +112,8 @@ public class DriveCommands {
               // Calculate angular speed
               double omega =
                   angleController.calculate(
-                      drive.getGlobalRotation().getRadians(), rotationSupplier.get().getRadians());
+                      drive.getGlobalPose().getRotation().getRadians(),
+                      rotationSupplier.get().getRadians());
               omega = !angleController.atSetpoint() ? omega : 0;
 
               // Convert to field relative speeds & send command
@@ -128,13 +129,14 @@ public class DriveCommands {
                   ChassisSpeeds.fromFieldRelativeSpeeds(
                       speeds,
                       isFlipped
-                          ? drive.getGlobalRotation().plus(new Rotation2d(Math.PI))
-                          : drive.getGlobalRotation()));
+                          ? drive.getGlobalPose().getRotation().plus(new Rotation2d(Math.PI))
+                          : drive.getGlobalPose().getRotation()));
             },
             drive)
 
         // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(drive.getGlobalRotation().getRadians()));
+        .beforeStarting(
+            () -> angleController.reset(drive.getGlobalPose().getRotation().getRadians()));
   }
 
   /**
@@ -231,14 +233,14 @@ public class DriveCommands {
             Commands.runOnce(
                 () -> {
                   state.positions = drive.getWheelRadiusCharacterizationPositions();
-                  state.lastAngle = drive.getGlobalRotation();
+                  state.lastAngle = drive.getGlobalPose().getRotation();
                   state.gyroDelta = 0.0;
                 }),
 
             // Update gyro delta
             Commands.run(
                     () -> {
-                      var rotation = drive.getGlobalRotation();
+                      var rotation = drive.getGlobalPose().getRotation();
                       state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
                       state.lastAngle = rotation;
                     })

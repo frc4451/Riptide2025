@@ -257,7 +257,7 @@ public class Drive extends SubsystemBase {
             sample.vy + yController.calculate(pose.getY(), sample.y),
             sample.omega
                 + angleController.calculate(pose.getRotation().getRadians(), sample.heading),
-            getGlobalRotation());
+            getGlobalPose().getRotation());
 
     // Apply the generated speeds
     runVelocity(speeds);
@@ -345,11 +345,6 @@ public class Drive extends SubsystemBase {
   @AutoLogOutput(key = "Odometry/LocalRobot")
   public Pose2d getLocalPose() {
     return localEstimator.getEstimatedPosition();
-  }
-
-  /** Returns the current odometry rotation. */
-  public Rotation2d getGlobalRotation() {
-    return getGlobalPose().getRotation();
   }
 
   /** Resets the current odometry pose. */

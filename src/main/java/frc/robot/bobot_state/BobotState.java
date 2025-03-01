@@ -1,7 +1,6 @@
 package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
@@ -35,9 +34,9 @@ public class BobotState extends VirtualSubsystem {
 
   private static Pose2d localPose = new Pose2d();
 
-  private static ReefTagTracker reefTracker = new ReefTagTracker();
-  private static HPSTagTracker hpsTracker = new HPSTagTracker();
-  private static BargeTagTracker bargeTracker = new BargeTagTracker();
+  public static final ReefTagTracker reefTracker = new ReefTagTracker();
+  public static final HPSTagTracker hpsTracker = new HPSTagTracker();
+  public static final BargeTagTracker bargeTracker = new BargeTagTracker();
 
   private static List<TargetAngleTracker> autoAlignmentTrackers =
       List.of(BobotState.hpsTracker, BobotState.reefTracker);
@@ -88,22 +87,6 @@ public class BobotState extends VirtualSubsystem {
             FieldUtils.getAlliance() == Alliance.Blue
                 ? getGlobalPose().getX() < FieldConstants.fieldLength / 2.0
                 : getGlobalPose().getX() > FieldConstants.fieldLength / 2.0);
-  }
-
-  public static Rotation2d getRotationToClosestReef() {
-    return BobotState.reefTracker.getRotationTarget();
-  }
-
-  public static Rotation2d getRotationToClosestHPS() {
-    return BobotState.hpsTracker.getRotationTarget();
-  }
-
-  public static Rotation2d getRotationToClosestBarge() {
-    return BobotState.bargeTracker.getRotationTarget();
-  }
-
-  public static double getDistanceMetersFromClosestHPS() {
-    return BobotState.hpsTracker.getDistanceMeters();
   }
 
   public static Trigger humanPlayerShouldThrow() {
