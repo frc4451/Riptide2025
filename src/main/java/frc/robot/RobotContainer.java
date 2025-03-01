@@ -43,7 +43,6 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.quest.QuestIO;
-import frc.robot.subsystems.quest.QuestIOReal;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
@@ -89,7 +88,7 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
-        quest = new Quest(new QuestIOReal());
+        quest = new Quest(new QuestIO() {});
 
         // not attached to the robot yet
         blinkin = new Blinkin(new BlinkinIO() {});
@@ -158,6 +157,7 @@ public class RobotContainer {
     autoChooser.addRoutine("Curvy", autos::curvy);
     autoChooser.addRoutine("Magikarp", autos::magikarp);
     autoChooser.addRoutine("Binacle", autos::binacle);
+    autoChooser.addRoutine("Triple Threat", autos::tripleThreat);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -179,24 +179,30 @@ public class RobotContainer {
   }
 
   private void configureRotationModes() {
-    // Default, auto-align to closest tracker
+    // // Default, auto-align to closest tracker
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDriveAtAngle(
+    //         drive,
+    //         () -> -driverController.getLeftYSquared(),
+    //         () -> -driverController.getLeftXSquared(),
+    //         () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
+
+    // // Normal field-relative drive when overridden via a button
+    // driverController
+    //     .leftTrigger()
+    //     .or(BobotState.onTeamSide().negate())
+    //     .whileTrue(
+    //         DriveCommands.joystickDrive(
+    //             drive,
+    //             () -> -driverController.getLeftYSquared(),
+    //             () -> -driverController.getLeftXSquared(),
+    //             () -> -driverController.getRightXSquared()));
     drive.setDefaultCommand(
-        DriveCommands.joystickDriveAtAngle(
+        DriveCommands.joystickDrive(
             drive,
             () -> -driverController.getLeftYSquared(),
             () -> -driverController.getLeftXSquared(),
-            () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
-
-    // Normal field-relative drive when overridden via a button
-    driverController
-        .leftTrigger()
-        .or(BobotState.onTeamSide().negate())
-        .whileTrue(
-            DriveCommands.joystickDrive(
-                drive,
-                () -> -driverController.getLeftYSquared(),
-                () -> -driverController.getLeftXSquared(),
-                () -> -driverController.getRightXSquared()));
+            () -> -driverController.getRightXSquared()));
 
     // // Barge
     // driverController

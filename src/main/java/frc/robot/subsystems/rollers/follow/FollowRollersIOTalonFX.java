@@ -57,8 +57,8 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
       boolean isBrakeMode) {
     this.reduction = reduction;
 
-    leader = new TalonFX(leaderCanId);
-    follower = new TalonFX(followerCanId);
+    leader = new TalonFX(leaderCanId, Constants.alternateCanBus);
+    follower = new TalonFX(followerCanId, Constants.alternateCanBus);
 
     followOut = new Follower(leaderCanId, invert);
     follower.setControl(followOut);

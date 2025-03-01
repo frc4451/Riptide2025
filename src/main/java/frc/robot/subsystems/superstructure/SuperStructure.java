@@ -68,7 +68,7 @@ public class SuperStructure extends SubsystemBase {
                 ElevatorConstants.invertFollower,
                 false);
 
-        heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
+          // heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
 
         coralPivotIO =
             new SingleRollerIOTalonFX(
@@ -86,32 +86,32 @@ public class SuperStructure extends SubsystemBase {
                 ShooterConstants.invert,
                 false);
 
-        coralSensorIO = new CanRangeIOReal(ShooterConstants.coralSensorId, false);
+          coralSensorIO = new CanRangeIOReal(ShooterConstants.coralSensorId, false);
         break;
 
-      case SIM:
-        elevatorIO =
-            new FollowRollersIOSim(
-                ElevatorConstants.leaderGearbox,
-                ElevatorConstants.followerGearbox,
-                ElevatorConstants.reduction,
-                ElevatorConstants.moi,
-                ElevatorConstants.invertFollower);
+        case SIM:
+          elevatorIO =
+              new FollowRollersIOSim(
+                  ElevatorConstants.leaderGearbox,
+                  ElevatorConstants.followerGearbox,
+                  ElevatorConstants.reduction,
+                  ElevatorConstants.moi,
+                  ElevatorConstants.invertFollower);
 
-        heightSensorIO = new CanRangeIOSim();
+          heightSensorIO = new CanRangeIOSim();
 
-        coralPivotIO =
-            new SingleRollerIOSim(
-                CoralPivotConstants.gearbox,
-                CoralPivotConstants.reduction,
-                CoralPivotConstants.moi);
+          coralPivotIO =
+              new SingleRollerIOSim(
+                  CoralPivotConstants.gearbox,
+                  CoralPivotConstants.reduction,
+                  CoralPivotConstants.moi);
 
-        shooterIO =
-            new SingleRollerIOSim(
-                ShooterConstants.gearbox, ShooterConstants.reduction, ShooterConstants.moi);
+          shooterIO =
+              new SingleRollerIOSim(
+                  ShooterConstants.gearbox, ShooterConstants.reduction, ShooterConstants.moi);
 
-        coralSensorIO = new CanRangeIOSim();
-        break;
+          coralSensorIO = new CanRangeIOSim();
+          break;
 
       case REPLAY:
       default:
