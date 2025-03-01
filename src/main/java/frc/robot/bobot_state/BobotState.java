@@ -26,13 +26,14 @@ import org.littletonrobotics.junction.Logger;
 public class BobotState extends VirtualSubsystem {
   private static final String logRoot = "BobotState/";
 
-  private static final Queue<PoseObservation> poseObservations = new LinkedBlockingQueue<>(20);
-  private static final Queue<PoseObservation> trigObservations = new LinkedBlockingQueue<>(20);
+  private static final Queue<PoseObservation> globalPoseObservations =
+      new LinkedBlockingQueue<>(20);
+  private static final Queue<PoseObservation> localPoseObservations = new LinkedBlockingQueue<>(20);
   private static final Queue<TimestampedPose> questMeasurements = new LinkedBlockingQueue<>(20);
 
   private static Pose2d globalPose = new Pose2d();
 
-  private static Pose2d localTrigPose = new Pose2d();
+  private static Pose2d localPose = new Pose2d();
 
   private static ReefTagTracker reefTracker = new ReefTagTracker();
   private static HPSTagTracker hpsTracker = new HPSTagTracker();
@@ -41,20 +42,20 @@ public class BobotState extends VirtualSubsystem {
   private static List<TargetAngleTracker> autoAlignmentTrackers =
       List.of(BobotState.hpsTracker, BobotState.reefTracker);
 
-  public static void offerVisionObservation(PoseObservation observation) {
-    BobotState.poseObservations.offer(observation);
+  public static void offerGlobalPoseObservation(PoseObservation observation) {
+    BobotState.globalPoseObservations.offer(observation);
   }
 
-  public static Queue<PoseObservation> getVisionObservations() {
-    return BobotState.poseObservations;
+  public static Queue<PoseObservation> getGlobalPoseObservations() {
+    return BobotState.globalPoseObservations;
   }
 
-  public static void offerTrigObservation(PoseObservation observation) {
-    BobotState.trigObservations.offer(observation);
+  public static void offerLocalPoseObservation(PoseObservation observation) {
+    BobotState.localPoseObservations.offer(observation);
   }
 
-  public static Queue<PoseObservation> getTrigObservations() {
-    return BobotState.trigObservations;
+  public static Queue<PoseObservation> getLocalPoseObservations() {
+    return BobotState.localPoseObservations;
   }
 
   public static void offerQuestMeasurement(TimestampedPose observation) {
@@ -69,16 +70,16 @@ public class BobotState extends VirtualSubsystem {
     BobotState.globalPose = pose;
   }
 
-  public static void updateTrigPose(Pose2d pose) {
-    BobotState.localTrigPose = pose;
+  public static void updateLocalPose(Pose2d pose) {
+    BobotState.localPose = pose;
   }
 
   public static Pose2d getGlobalPose() {
     return BobotState.globalPose;
   }
 
-  public static Pose2d getTrigPose() {
-    return BobotState.localTrigPose;
+  public static Pose2d getLocalPose() {
+    return BobotState.localPose;
   }
 
   public static Trigger onTeamSide() {

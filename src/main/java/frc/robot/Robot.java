@@ -120,7 +120,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void disabledPeriodic() {
     if (robotContainer.driverController.b().getAsBoolean()) {
-      robotContainer.drive.setPose(Pose2d.kZero);
+      robotContainer.drive.setGlobalPose(Pose2d.kZero);
       robotContainer.quest.resetPose(Pose2d.kZero);
     }
   }

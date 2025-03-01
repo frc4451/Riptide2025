@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.bobot_state.BobotState;
-import frc.robot.field.FieldConstants.AprilTagStruct;
 import frc.robot.subsystems.vision.VisionConstants.AprilTagCameraConfig;
 import frc.robot.util.VirtualSubsystem;
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public class Vision extends VirtualSubsystem {
   @Override
   public void periodic() {
     for (AprilTagCamera cam : aprilTagCameras) {
-      cam.io.addHeadingDataForTrig(
+      cam.io.addHeadingDataForLocal(
           Timer.getFPGATimestamp(), BobotState.getGlobalPose().getRotation());
       cam.io.updateInputs(cam.inputs);
       Logger.processInputs(aprilTagLogRoot + "/" + cam.source.name(), cam.inputs);
@@ -62,17 +61,12 @@ public class Vision extends VirtualSubsystem {
       cam.disconnectedAlert.set(!cam.inputs.connected);
 
       for (PoseObservation observation : cam.inputs.validPoseObservations) {
-        BobotState.offerVisionObservation(observation);
+        BobotState.offerGlobalPoseObservation(observation);
       }
 
-      cam.source
-          .trigTargets()
-          .ifPresent(
-              (List<AprilTagStruct> aprilTagTargets) -> {
-                for (PoseObservation observation : cam.inputs.validLocalPoseObservations) {
-                  BobotState.offerTrigObservation(observation);
-                }
-              });
+      for (PoseObservation observation : cam.inputs.validLocalPoseObservations) {
+        BobotState.offerLocalPoseObservation(observation);
+      }
     }
   }
 

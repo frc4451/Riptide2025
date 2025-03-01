@@ -98,7 +98,7 @@ public class Autos {
   }
 
   private Command resetQuest() {
-    return Commands.runOnce(() -> quest.resetPose(drive.getPose()));
+    return Commands.runOnce(() -> quest.resetPose(drive.getGlobalPose()));
   }
 
   private Command resetOdometry(AutoTrajectory trajectory) {

@@ -63,10 +63,10 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition(),
         new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator =
+  private SwerveDrivePoseEstimator globalEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
-  private SwerveDrivePoseEstimator trigEstimator =
+  private SwerveDrivePoseEstimator localEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   public AutoFactory autoFactory;
@@ -93,7 +93,9 @@ public class Drive extends SubsystemBase {
     SparkOdometryThread.getInstance().start();
 
     // Configure AutoFactory for Choreo
-    autoFactory = new AutoFactory(this::getPose, this::setPose, this::followTrajectory, true, this);
+    autoFactory =
+        new AutoFactory(
+            this::getGlobalPose, this::setGlobalPose, this::followTrajectory, true, this);
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Configure SysId
@@ -166,27 +168,28 @@ public class Drive extends SubsystemBase {
       }
 
       // Apply update
-      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      globalEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      localEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
 
     // TODO: Confidence for AprilTags & Quest
 
     {
       // AprilTag Cameras
-      PoseObservation observation;
-      while ((observation = BobotState.getVisionObservations().poll()) != null) {
-        poseEstimator.addVisionMeasurement(
-            observation.robotPose().toPose2d(), observation.timestampSeconds()
+      PoseObservation globalObservation;
+      while ((globalObservation = BobotState.getGlobalPoseObservations().poll()) != null) {
+        globalEstimator.addVisionMeasurement(
+            globalObservation.robotPose().toPose2d(), globalObservation.timestampSeconds()
             // ,observation.stdDevs()
             );
       }
 
-      // Trig estimation
-      PoseObservation trigObservation;
-      while ((trigObservation = BobotState.getTrigObservations().poll()) != null) {
-        trigEstimator.addVisionMeasurement(
-            trigObservation.robotPose().toPose2d(), trigObservation.timestampSeconds()
-            // ,trigObservation.stdDevs()
+      // Local estimation
+      PoseObservation localObservation;
+      while ((localObservation = BobotState.getLocalPoseObservations().poll()) != null) {
+        localEstimator.addVisionMeasurement(
+            localObservation.robotPose().toPose2d(), localObservation.timestampSeconds()
+            // ,localObservation.stdDevs()
             );
       }
 
@@ -194,7 +197,7 @@ public class Drive extends SubsystemBase {
       if (DriverStation.isEnabled()) {
         TimestampedPose timestampedPose;
         while ((timestampedPose = BobotState.getQuestMeasurments().poll()) != null) {
-          poseEstimator.addVisionMeasurement(
+          globalEstimator.addVisionMeasurement(
               timestampedPose.pose(), timestampedPose.timestamp()
               // , QuestConstants.stdDevs
               );
@@ -202,8 +205,8 @@ public class Drive extends SubsystemBase {
       }
     }
 
-    BobotState.updateGlobalPose(getPose());
-    BobotState.updateTrigPose(getTrigPose());
+    BobotState.updateGlobalPose(getGlobalPose());
+    BobotState.updateLocalPose(getLocalPose());
   }
 
   /**
@@ -245,7 +248,7 @@ public class Drive extends SubsystemBase {
 
   public void followTrajectory(SwerveSample sample) {
     // Get the current pose of the robot
-    Pose2d pose = getPose();
+    Pose2d pose = getGlobalPose();
 
     // Generate the next speeds for the robot
     ChassisSpeeds speeds =
@@ -254,7 +257,7 @@ public class Drive extends SubsystemBase {
             sample.vy + yController.calculate(pose.getY(), sample.y),
             sample.omega
                 + angleController.calculate(pose.getRotation().getRadians(), sample.heading),
-            getRotation());
+            getGlobalRotation());
 
     // Apply the generated speeds
     runVelocity(speeds);
@@ -333,25 +336,25 @@ public class Drive extends SubsystemBase {
   }
 
   /** Returns the current _global_ odometry pose. */
-  @AutoLogOutput(key = "Odometry/Robot")
-  public Pose2d getPose() {
-    return poseEstimator.getEstimatedPosition();
+  @AutoLogOutput(key = "Odometry/GlobalRobot")
+  public Pose2d getGlobalPose() {
+    return globalEstimator.getEstimatedPosition();
   }
 
   /** Returns the current odometry in relation to specific targets */
-  @AutoLogOutput(key = "Odometry/TrigSolution")
-  public Pose2d getTrigPose() {
-    return trigEstimator.getEstimatedPosition();
+  @AutoLogOutput(key = "Odometry/LocalRobot")
+  public Pose2d getLocalPose() {
+    return localEstimator.getEstimatedPosition();
   }
 
   /** Returns the current odometry rotation. */
-  public Rotation2d getRotation() {
-    return getPose().getRotation();
+  public Rotation2d getGlobalRotation() {
+    return getGlobalPose().getRotation();
   }
 
   /** Resets the current odometry pose. */
-  public void setPose(Pose2d pose) {
-    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+  public void setGlobalPose(Pose2d pose) {
+    globalEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
   /** Returns the maximum linear speed in meters per sec. */
