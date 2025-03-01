@@ -30,7 +30,6 @@ import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.pivot.Pivot;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure extends SubsystemBase {
@@ -66,7 +65,8 @@ public class SuperStructure extends SubsystemBase {
                 ElevatorConstants.followerCanId,
                 ElevatorConstants.reduction,
                 ElevatorConstants.currentLimitAmps,
-                ElevatorConstants.invertFollower);
+                ElevatorConstants.invertFollower,
+                false);
 
         heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
 
@@ -75,14 +75,16 @@ public class SuperStructure extends SubsystemBase {
                 CoralPivotConstants.canId,
                 CoralPivotConstants.reduction,
                 CoralPivotConstants.currentLimitAmps,
-                CoralPivotConstants.invert);
+                CoralPivotConstants.invert,
+                false);
 
         shooterIO =
             new SingleRollerIOTalonFX(
                 ShooterConstants.canId,
                 ShooterConstants.reduction,
                 ShooterConstants.currentLimitAmps,
-                ShooterConstants.invert);
+                ShooterConstants.invert,
+                false);
 
         coralSensorIO = new CanRangeIOReal(ShooterConstants.coralSensorId, false);
         break;
@@ -125,7 +127,7 @@ public class SuperStructure extends SubsystemBase {
         new Elevator(
             name + "/Elevator",
             elevatorIO,
-            heightSensorIO,
+            new CanRangeIO() {},
             ElevatorConstants.trapezoidConstraints,
             ElevatorConstants.inchesPerRad,
             ElevatorConstants.elevatorConstraints,
@@ -139,7 +141,7 @@ public class SuperStructure extends SubsystemBase {
             CoralPivotConstants.trapezoidConstraints,
             CoralPivotConstants.pivotConstraints);
 
-    shooter = new SingleRoller(name + "/Shooter", shooterIO);
+    shooter = new SingleRoller(name + "/Shooter", new SingleRollerIO() {});
 
     coralSensor = new CanRange(name + "/CoralSensor", coralSensorIO);
   }
@@ -201,20 +203,13 @@ public class SuperStructure extends SubsystemBase {
     goalMechanism.update(elevator.getGoalHeightInches(), coralPivot.getGoalPosition());
   }
 
-  private void nudgeElevatorGoal(DoubleSupplier nudge) {
-    elevator.setGoalHeightInches(elevator.getGoalHeightInches() + nudge.getAsDouble());
+  public Command elevatorManualCommand(DoubleSupplier supplier) {
+    return run(() -> elevator.runVolts(supplier.getAsDouble())).finallyDo(() -> elevator.stop());
   }
 
-  public Command nudgeElevatorGoalCommand(DoubleSupplier nudge) {
-    return Commands.run(() -> nudgeElevatorGoal(nudge));
-  }
-
-  private void nudgePivotGoal(Supplier<Rotation2d> nudge) {
-    coralPivot.setGoal(coralPivot.getGoalPosition().plus(nudge.get()));
-  }
-
-  public Command nudgePivotGoalCommand(Supplier<Rotation2d> nudge) {
-    return Commands.run(() -> nudgePivotGoal(nudge));
+  public Command pivotManualCommand(DoubleSupplier supplier) {
+    return run(() -> coralPivot.runVolts(supplier.getAsDouble()))
+        .finallyDo(() -> coralPivot.stop());
   }
 
   private void setCurrentMode(SuperStructureModes nextMode) {

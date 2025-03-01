@@ -53,7 +53,8 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
       int followerCanId,
       double reduction,
       double currentLimitAmps,
-      boolean invert) {
+      boolean invert,
+      boolean isBrakeMode) {
     this.reduction = reduction;
 
     leader = new TalonFX(leaderCanId);
@@ -78,9 +79,9 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
 
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     // spotless:off
-    cfg.MotorOutput
-        .withInverted(invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Brake);
+          cfg.MotorOutput
+              .withInverted(invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
+              .withNeutralMode(isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(currentLimitAmps);

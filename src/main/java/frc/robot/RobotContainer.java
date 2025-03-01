@@ -282,12 +282,10 @@ public class RobotContainer {
 
     operatorController
         .leftY()
-        .whileTrue(superStructure.nudgeElevatorGoalCommand(() -> -operatorController.getLeftY()));
+        .whileTrue(superStructure.elevatorManualCommand(() -> -operatorController.getLeftY()));
     operatorController
         .rightY()
-        .whileTrue(
-            superStructure.nudgePivotGoalCommand(
-                () -> Rotation2d.fromDegrees(-operatorController.getRightY())));
+        .whileTrue(superStructure.pivotManualCommand(() -> -operatorController.getRightY()));
 
     operatorController.a().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L1Coral));
     operatorController.x().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L2Coral));

@@ -96,9 +96,9 @@ public class Elevator extends FollowRollers {
   }
 
   public void runTrapezoidProfile() {
-    setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
-    double ff = feedforward.calculate(setpoint.velocity);
-    io.runPosition(setpoint.position, ff);
+    // setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
+    // double ff = feedforward.calculate(setpoint.velocity);
+    // io.runPosition(setpoint.position, ff);
   }
 
   public void setHeightInches(double positionInches) {

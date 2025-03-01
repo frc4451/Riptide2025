@@ -37,7 +37,7 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   private final NeutralOut neutralOut = new NeutralOut();
 
   public SingleRollerIOTalonFX(
-      int canId, double reduction, double currentLimitAmps, boolean invert) {
+      int canId, double reduction, double currentLimitAmps, boolean invert, boolean isBrakeMode) {
     this.reduction = reduction;
 
     talon = new TalonFX(canId);
@@ -53,7 +53,7 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
     // spotless:off
     cfg.MotorOutput
         .withInverted(invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Brake);
+        .withNeutralMode(isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(currentLimitAmps);

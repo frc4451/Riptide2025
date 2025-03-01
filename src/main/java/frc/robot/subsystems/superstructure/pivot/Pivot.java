@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
@@ -61,8 +60,8 @@ public class Pivot extends SingleRoller {
   }
 
   public void runTrapezoidProfile() {
-    setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
-    io.runPosition(setpoint.position);
+    // setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
+    // io.runPosition(setpoint.position);
   }
 
   public Rotation2d getPosition() {
