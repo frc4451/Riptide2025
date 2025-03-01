@@ -37,8 +37,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
+import frc.robot.subsystems.vision.VisionConstants;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -179,18 +181,19 @@ public class Drive extends SubsystemBase {
       PoseObservation globalObservation;
       while ((globalObservation = BobotState.getGlobalPoseObservations().poll()) != null) {
         globalEstimator.addVisionMeasurement(
-            globalObservation.robotPose().toPose2d(), globalObservation.timestampSeconds()
-            // ,observation.stdDevs()
-            );
+            globalObservation.robotPose().toPose2d(),
+            globalObservation.timestampSeconds(),
+            globalObservation.stdDevs());
       }
 
       // Local estimation
       PoseObservation localObservation;
       while ((localObservation = BobotState.getLocalPoseObservations().poll()) != null) {
-        localEstimator.addVisionMeasurement(
-            localObservation.robotPose().toPose2d(), localObservation.timestampSeconds()
-            // ,localObservation.stdDevs()
-            );
+        // if (FieldUtils.getReefIDs().contains(localObservation.id())) {
+        if (localObservation.id() == FieldUtils.getClosestReef().tag.fiducialId()) {
+          localEstimator.addVisionMeasurement(
+              localObservation.robotPose().toPose2d(), localObservation.timestampSeconds());
+        }
       }
 
       // Quest
@@ -198,9 +201,9 @@ public class Drive extends SubsystemBase {
         TimestampedPose timestampedPose;
         while ((timestampedPose = BobotState.getQuestMeasurments().poll()) != null) {
           globalEstimator.addVisionMeasurement(
-              timestampedPose.pose(), timestampedPose.timestamp()
-              // , QuestConstants.stdDevs
-              );
+              timestampedPose.pose(),
+              timestampedPose.timestamp(),
+              VisionConstants.singleTagStdDevs);
         }
       }
     }

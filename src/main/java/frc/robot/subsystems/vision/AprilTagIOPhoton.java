@@ -22,6 +22,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
   private final PhotonPoseEstimator globalEstimator;
   private final PhotonPoseEstimator localEstimator;
 
+  private double latestTimestamp = 0;
+
   public AprilTagIOPhoton(VisionSource source) {
     camera = new PhotonCamera(source.name());
 
@@ -92,6 +94,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
         calcGlobalPoseObservations(result, validPoseObservations, rejectedPoseObservations);
         calcLocalTrigPoseObservations(
             result, validLocalPoseObservations, rejectedLocalPoseObservations);
+
+        latestTimestamp = result.getTimestampSeconds();
       }
     }
 
@@ -118,11 +122,11 @@ public class AprilTagIOPhoton implements AprilTagIO {
   }
 
   @Override
-  public void addHeadingDataForLocal(double timestampSeconds, Rotation2d heading) {
+  public void addHeadingDataForLocal(Rotation2d heading) {
     // Add heading data before updating the trig estimator
     // This is only necessary for the trig solution
     // https://github.com/PhotonVision/photonvision/pull/1767/files#diff-57934f2b05d27fb4c9e9977f789b03174884d323f86821e937b8976088a63f01R527
-    localEstimator.addHeadingData(timestampSeconds, heading);
+    localEstimator.addHeadingData(latestTimestamp, heading);
   }
 
   private void calcGlobalPoseObservations(

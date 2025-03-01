@@ -25,23 +25,17 @@ public class FieldUtils {
   }
 
   public static ReefFace getClosestReef() {
-    List<ReefFace> reefTags =
-        FieldUtils.isBlueAlliance() ? FieldConstants.blueReefTags : FieldConstants.redReefTags;
     Translation2d robotTranslation = BobotState.getGlobalPose().getTranslation();
 
-    ReefFace closestReef =
-        reefTags.stream()
-            .reduce(
-                (ReefFace reef1, ReefFace reef2) ->
-                    robotTranslation.getDistance(
-                                reef1.tag.pose().getTranslation().toTranslation2d())
-                            < robotTranslation.getDistance(
-                                reef2.tag.pose().getTranslation().toTranslation2d())
-                        ? reef1
-                        : reef2)
-            .get();
-
-    return closestReef;
+    return getReefFaces().stream()
+        .reduce(
+            (ReefFace reef1, ReefFace reef2) ->
+                robotTranslation.getDistance(reef1.tag.pose().getTranslation().toTranslation2d())
+                        < robotTranslation.getDistance(
+                            reef2.tag.pose().getTranslation().toTranslation2d())
+                    ? reef1
+                    : reef2)
+        .get();
   }
 
   public static AprilTagStruct getClosestHPSTag() {
@@ -68,9 +62,11 @@ public class FieldUtils {
     return FieldUtils.isBlueAlliance() ? FieldConstants.blueBarge : FieldConstants.redBarge;
   }
 
-  public static List<AprilTagStruct> getReefTags() {
-    return FieldUtils.isBlueAlliance()
-        ? FieldConstants.blueReefTags.stream().map(reef -> reef.tag).toList()
-        : FieldConstants.redReefTags.stream().map(reef -> reef.tag).toList();
+  public static List<ReefFace> getReefFaces() {
+    return FieldUtils.isBlueAlliance() ? FieldConstants.blueReefFaces : FieldConstants.redReefFaces;
+  }
+
+  public static List<Integer> getReefIDs() {
+    return getReefFaces().stream().map(reef -> reef.tag.fiducialId()).toList();
   }
 }

@@ -63,7 +63,7 @@ public class RobotContainer {
   public final Drive drive;
 
   @SuppressWarnings("unused")
-  private final Vision vision = new Vision();
+  private final Vision vision;
 
   private final SuperStructure superStructure = new SuperStructure();
 
@@ -126,6 +126,8 @@ public class RobotContainer {
         blinkin = new Blinkin(new BlinkinIO() {});
         break;
     }
+
+    vision = new Vision(drive::getGlobalPose);
 
     autoChooser = new AutoChooser();
     autos = new Autos(drive, superStructure, quest);

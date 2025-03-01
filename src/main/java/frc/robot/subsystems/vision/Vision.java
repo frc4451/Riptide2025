@@ -1,14 +1,16 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.vision.VisionConstants.AprilTagCameraConfig;
 import frc.robot.util.VirtualSubsystem;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends VirtualSubsystem {
@@ -20,9 +22,13 @@ public class Vision extends VirtualSubsystem {
 
   private final List<AprilTagCamera> aprilTagCameras = new ArrayList<>();
 
+  private final Supplier<Pose2d> globalPoseSupplier;
+
   private static final String aprilTagLogRoot = "AprilTagCamera";
 
-  public Vision() {
+  public Vision(Supplier<Pose2d> globalPoseSupplier) {
+    this.globalPoseSupplier = globalPoseSupplier;
+
     for (AprilTagCameraConfig config : VisionConstants.aprilTagCamerasConfigs) {
       AprilTagIO io;
 
@@ -52,9 +58,10 @@ public class Vision extends VirtualSubsystem {
 
   @Override
   public void periodic() {
+    Rotation2d heading = globalPoseSupplier.get().getRotation();
+
     for (AprilTagCamera cam : aprilTagCameras) {
-      cam.io.addHeadingDataForLocal(
-          Timer.getFPGATimestamp(), BobotState.getGlobalPose().getRotation());
+      cam.io.addHeadingDataForLocal(heading);
       cam.io.updateInputs(cam.inputs);
       Logger.processInputs(aprilTagLogRoot + "/" + cam.source.name(), cam.inputs);
 
@@ -73,6 +80,6 @@ public class Vision extends VirtualSubsystem {
   @Override
   public void simulationPeriodic() {
     VisionConstants.aprilTagSim.ifPresent(
-        aprilTagSim -> aprilTagSim.update(BobotState.getGlobalPose()));
+        aprilTagSim -> aprilTagSim.update(globalPoseSupplier.get()));
   }
 }
