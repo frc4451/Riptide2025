@@ -24,6 +24,7 @@ public class ElevatorConstants {
   public static final double l4ThresholdInches = 25; // TODO: find actual number
   public static final double resetFromHeightSensorThresholdInches = 5;
   public static final ElevatorConstraints elevatorConstraints = new ElevatorConstraints(0, 75);
+  public static final double startHeightInches = -0.5;
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
       new TrapezoidProfile.Constraints(10.0 * inchesPerRad, 10.0 * inchesPerRad);

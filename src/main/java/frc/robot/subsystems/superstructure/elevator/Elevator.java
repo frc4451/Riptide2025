@@ -101,6 +101,10 @@ public class Elevator extends FollowRollers {
     io.runPosition(setpoint.position, ff);
   }
 
+  public void setHeightInches(double positionInches) {
+    io.resetPosition(positionInches / inchesPerRad);
+  }
+
   public void setGoalHeightInches(double positionInches) {
     double clampedPositionRad =
         MathUtil.clamp(
