@@ -29,6 +29,7 @@ public class Pivot extends SingleRoller {
     super(name, io);
     trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
     this.pivotConstraints = pivotConstraints;
+    setPosition(0);
   }
 
   public void periodic() {
@@ -66,6 +67,10 @@ public class Pivot extends SingleRoller {
 
   public Rotation2d getPosition() {
     return new Rotation2d(inputs.positionRad);
+  }
+
+  public void setPosition(double positionRad) {
+    io.resetPosition(positionRad);
   }
 
   public Rotation2d getVelocity() {

@@ -286,17 +286,17 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
 
-    operatorController
-        .leftY()
-        .whileTrue(superStructure.elevatorManualCommand(() -> -operatorController.getLeftY()));
+    // operatorController.povDown().whileTrue(superStructure.elevatorManualCommand(() -> 0.55));
+
     operatorController
         .rightY()
         .whileTrue(superStructure.pivotManualCommand(() -> -operatorController.getRightY()));
 
-    operatorController.a().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L1Coral));
-    operatorController.x().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L2Coral));
-    operatorController.b().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L3Coral));
-    operatorController.y().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L4Coral));
+    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.L1Coral));
+    // operatorController.a().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L1Coral));
+    // operatorController.x().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L2Coral));
+    // operatorController.b().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L3Coral));
+    // operatorController.y().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L4Coral));
   }
 
   private Command teleopCoralScoreCommand(SuperStructureModes mode) {

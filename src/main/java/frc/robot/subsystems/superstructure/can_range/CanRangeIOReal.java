@@ -6,13 +6,14 @@ import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.signals.UpdateModeValue;
 import edu.wpi.first.units.measure.Distance;
+import frc.robot.Constants;
 
 public class CanRangeIOReal implements CanRangeIO {
   private final CANrange canRange;
   private final StatusSignal<Distance> distance;
 
-  public CanRangeIOReal(int canID, boolean longRange) {
-    canRange = new CANrange(0);
+  public CanRangeIOReal(int canId, boolean longRange) {
+    canRange = new CANrange(canId, Constants.alternateCanBus);
     distance = canRange.getDistance();
 
     BaseStatusSignal.setUpdateFrequencyForAll(100, distance);

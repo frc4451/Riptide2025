@@ -18,12 +18,14 @@ public class ElevatorConstants {
   public static final double moi = 0.01;
   public static final double inchesPerRad = 0.88; // equal to radius
 
+  public static final boolean invert = false;
   public static final boolean invertFollower = true;
   public static final double currentLimitAmps = 30;
 
   public static final double l4ThresholdInches = 25; // TODO: find actual number
   public static final double resetFromHeightSensorThresholdInches = 5;
-  public static final ElevatorConstraints elevatorConstraints = new ElevatorConstraints(0, 75);
+  public static final ElevatorConstraints elevatorConstraints =
+      new ElevatorConstraints(1, 75 / 2.0);
   public static final double startHeightInches = -0.5;
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =

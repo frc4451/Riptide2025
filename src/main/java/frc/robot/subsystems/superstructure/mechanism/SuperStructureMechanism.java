@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import frc.robot.subsystems.superstructure.constants.CoralPivotConstants;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
@@ -58,7 +57,7 @@ public class SuperStructureMechanism {
         new LoggedMechanismLigament2d(
             "coralPivot",
             MechanismConstants.coralPivotLength,
-            CoralPivotConstants.initialAngle.getDegrees(),
+            MechanismConstants.coralPivotInitialAngle.getDegrees(),
             lineWidth,
             new Color8Bit(coralColor));
     coralPosition.append(coralPivot);
@@ -69,7 +68,7 @@ public class SuperStructureMechanism {
     elevator.setLength(
         MechanismConstants.elevatorInitialHeight + Units.inchesToMeters(elevatorHeightInches));
 
-    coralPivot.setAngle(coralAngle);
+    coralPivot.setAngle(MechanismConstants.coralPivotInitialAngle.plus(coralAngle));
 
     Logger.recordOutput("Superstructure/" + key + "/Mechanism2d", mechanism);
 
