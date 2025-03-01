@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
 import frc.robot.bobot_state.varc.ReefTagTracker;
-import frc.robot.bobot_state.varc.TargetAngleTracker;
+import frc.robot.bobot_state.varc.TagTracker;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.quest.TimestampedPose;
@@ -38,7 +38,7 @@ public class BobotState extends VirtualSubsystem {
   public static final HPSTagTracker hpsTracker = new HPSTagTracker();
   public static final BargeTagTracker bargeTracker = new BargeTagTracker();
 
-  private static List<TargetAngleTracker> autoAlignmentTrackers =
+  private static List<TagTracker> autoAlignmentTrackers =
       List.of(BobotState.hpsTracker, BobotState.reefTracker);
 
   public static void offerGlobalPoseObservation(PoseObservation observation) {
@@ -97,7 +97,7 @@ public class BobotState extends VirtualSubsystem {
     return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 1);
   }
 
-  public static TargetAngleTracker getClosestAlignmentTracker() {
+  public static TagTracker getClosestAlignmentTracker() {
     return autoAlignmentTrackers.stream()
         .reduce((a, b) -> a.getDistanceMeters() < b.getDistanceMeters() ? a : b)
         .get();
@@ -111,7 +111,7 @@ public class BobotState extends VirtualSubsystem {
     }
 
     {
-      reefTracker.update();
+      reefTracker.update(FieldUtils.getClosestReef().tag);
 
       String calcLogRoot = logRoot + "Reef/";
       Logger.recordOutput(calcLogRoot + "ClosestTag", FieldUtils.getClosestReef().tag);
@@ -124,7 +124,7 @@ public class BobotState extends VirtualSubsystem {
     }
 
     {
-      hpsTracker.update();
+      hpsTracker.update(FieldUtils.getClosestHPSTag());
 
       String calcLogRoot = logRoot + "HPS/";
       Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPSTag());
@@ -137,7 +137,7 @@ public class BobotState extends VirtualSubsystem {
     }
 
     {
-      bargeTracker.update();
+      bargeTracker.update(FieldUtils.getBargeTag());
 
       String calcLogRoot = logRoot + "Barge/";
       Logger.recordOutput(
