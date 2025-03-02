@@ -162,7 +162,9 @@ public class SuperStructure extends SubsystemBase {
     if (currentShooterMode.useCanRange && coralSensor.isDetected()) {
       shooter.stop();
     } else {
-      shooter.runVolts(currentShooterMode.voltage);
+      // If at L4 invert direction
+      shooter.runVolts(
+          (currentMode == SuperStructureModes.L4Coral ? -1 : 1) * currentShooterMode.voltage);
     }
 
     boolean isElevatorAtMode =

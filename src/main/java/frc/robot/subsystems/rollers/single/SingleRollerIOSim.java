@@ -11,7 +11,8 @@ public class SingleRollerIOSim implements SingleRollerIO {
   private final DCMotorSim sim;
 
   public SingleRollerIOSim(DCMotor motorModel, double reduction, double moi) {
-    sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
+    sim =
+        new DCMotorSim(LinearSystemId.createDCMotorSystem(motorModel, moi, reduction), motorModel);
   }
 
   @Override

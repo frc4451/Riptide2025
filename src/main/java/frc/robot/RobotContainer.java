@@ -282,21 +282,37 @@ public class RobotContainer {
   }
 
   private void configureSuperBindings() {
-    operatorController
-        .rightBumper()
-        .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    // operatorController
+    //     .rightBumper()
+    //     .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
 
-    // operatorController.povDown().whileTrue(superStructure.elevatorManualCommand(() -> 0.55));
+    operatorController
+        .povDown()
+        .whileTrue(
+            superStructure.elevatorManualCommand(() -> 3.0 * -operatorController.getLeftY()));
 
     operatorController
         .rightY()
         .whileTrue(superStructure.pivotManualCommand(() -> -operatorController.getRightY()));
 
-    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.L1Coral));
-    // operatorController.a().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L1Coral));
-    // operatorController.x().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L2Coral));
-    // operatorController.b().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L3Coral));
-    // operatorController.y().whileTrue(teleopCoralScoreCommand(SuperStructureModes.L4Coral));
+    operatorController
+        .leftBumper()
+        .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
+        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+
+    operatorController
+        .rightBumper()
+        .onTrue(superStructure.setShooterModeCommand(ShooterModes.SHOOT))
+        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+
+    // operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    // operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_5));
+    // operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_10));
+    // operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_15));
+    operatorController.a().whileTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    operatorController.x().whileTrue(superStructure.setModeCommand(SuperStructureModes.L1_L2Coral));
+    operatorController.b().whileTrue(superStructure.setModeCommand(SuperStructureModes.L3Coral));
+    operatorController.y().whileTrue(superStructure.setModeCommand(SuperStructureModes.L4Coral));
   }
 
   private Command teleopCoralScoreCommand(SuperStructureModes mode) {

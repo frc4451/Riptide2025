@@ -27,7 +27,8 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   private final StatusSignal<Current> torqueCurrentAmps;
   private final StatusSignal<Temperature> tempCelsius;
 
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+  private final VoltageOut voltageOut =
+      new VoltageOut(0.0).withEnableFOC(false).withUpdateFreqHz(0);
   private final NeutralOut neutralOut = new NeutralOut();
 
   public SingleRollerIOTalonFX(

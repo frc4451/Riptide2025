@@ -37,7 +37,8 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
   private final StatusSignal<Current> followerTorqueCurrentAmps;
   private final StatusSignal<Temperature> followerTempCelsius;
 
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+  private final VoltageOut voltageOut =
+      new VoltageOut(0.0).withEnableFOC(false).withUpdateFreqHz(0);
   private final NeutralOut neutralOut = new NeutralOut();
 
   private final Follower followOut;
