@@ -50,10 +50,10 @@ public class VisionConstants {
           // FLO
           new AprilTagCameraConfig(
               new VisionSource(
-                  "FrontLeftOuter",
+                  "RearLeft",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(-4.594), // forward+
+                          Units.inchesToMeters(-6.094), // forward+
                           Units.inchesToMeters(12.728), // left+
                           Units.inchesToMeters(8.010)), // up+
                       new Rotation3d(
@@ -62,7 +62,7 @@ public class VisionConstants {
           // FLI
           new AprilTagCameraConfig(
               new VisionSource(
-                  "FrontLeftInner",
+                  "FrontLeft",
                   new Transform3d(
                       new Translation3d(
                           Units.inchesToMeters(6.915), // forward+
@@ -73,7 +73,7 @@ public class VisionConstants {
           // FRI
           new AprilTagCameraConfig(
               new VisionSource(
-                  "FrontRightInner",
+                  "FrontRight",
                   new Transform3d(
                       new Translation3d(
                           Units.inchesToMeters(6.915), // forward+
@@ -84,10 +84,10 @@ public class VisionConstants {
           // FRO
           new AprilTagCameraConfig(
               new VisionSource(
-                  "FrontRightOuter",
+                  "RearRight",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(-4.594), // forward+
+                          Units.inchesToMeters(-6.094), // forward+
                           Units.inchesToMeters(-12.728), // left+
                           Units.inchesToMeters(8.010)), // up+
                       new Rotation3d(

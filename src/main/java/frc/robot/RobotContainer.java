@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Mode;
 import frc.robot.auto.AutoConstants;
-import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.DrivePerpendicularToPoseCommand;
@@ -43,9 +42,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.quest.QuestIO;
-import frc.robot.subsystems.superstructure.SuperStructure;
-import frc.robot.subsystems.superstructure.modes.ShooterModes;
-import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
 import frc.robot.util.PoseUtils;
 import org.littletonrobotics.junction.Logger;
@@ -59,8 +56,8 @@ import org.littletonrobotics.junction.Logger;
 public class RobotContainer {
   // Subsystems
   public final Drive drive;
-  //   private final Vision vision = new Vision();
-  private final SuperStructure superStructure = new SuperStructure();
+  private final Vision vision = new Vision();
+  //   private final SuperStructure superStructure = new SuperStructure();
 
   public final Blinkin blinkin;
 
@@ -72,7 +69,7 @@ public class RobotContainer {
 
   // Dashboard inputs
   private final AutoChooser autoChooser;
-  private final Autos autos;
+  //   private final Autos autos;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -123,7 +120,7 @@ public class RobotContainer {
     }
 
     autoChooser = new AutoChooser();
-    autos = new Autos(drive, superStructure, quest);
+    // autos = new Autos(drive, superStructure, quest);
 
     configureAutos();
     configureHumanPlayerStation();
@@ -151,13 +148,13 @@ public class RobotContainer {
         "Drive SysId (Dynamic Reverse)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     autoChooser.addCmd("Quest Offset Calibration", () -> quest.calibrateCommand(drive));
 
-    autoChooser.addRoutine("2 Meters", autos::twoMeters);
-    autoChooser.addRoutine("3 Meters", autos::threeMeters);
-    autoChooser.addRoutine("5 Meters", autos::fiveMeters);
-    autoChooser.addRoutine("Curvy", autos::curvy);
-    autoChooser.addRoutine("Magikarp", autos::magikarp);
-    autoChooser.addRoutine("Binacle", autos::binacle);
-    autoChooser.addRoutine("Triple Threat", autos::tripleThreat);
+    // autoChooser.addRoutine("2 Meters", autos::twoMeters);
+    // autoChooser.addRoutine("3 Meters", autos::threeMeters);
+    // autoChooser.addRoutine("5 Meters", autos::fiveMeters);
+    // autoChooser.addRoutine("Curvy", autos::curvy);
+    // autoChooser.addRoutine("Magikarp", autos::magikarp);
+    // autoChooser.addRoutine("Binacle", autos::binacle);
+    // autoChooser.addRoutine("Triple Threat", autos::tripleThreat);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -179,30 +176,30 @@ public class RobotContainer {
   }
 
   private void configureRotationModes() {
-    // // Default, auto-align to closest tracker
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDriveAtAngle(
-    //         drive,
-    //         () -> -driverController.getLeftYSquared(),
-    //         () -> -driverController.getLeftXSquared(),
-    //         () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
-
-    // // Normal field-relative drive when overridden via a button
-    // driverController
-    //     .leftTrigger()
-    //     .or(BobotState.onTeamSide().negate())
-    //     .whileTrue(
-    //         DriveCommands.joystickDrive(
-    //             drive,
-    //             () -> -driverController.getLeftYSquared(),
-    //             () -> -driverController.getLeftXSquared(),
-    //             () -> -driverController.getRightXSquared()));
+    // Default, auto-align to closest tracker
     drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
+        DriveCommands.joystickDriveAtAngle(
             drive,
             () -> -driverController.getLeftYSquared(),
             () -> -driverController.getLeftXSquared(),
-            () -> -driverController.getRightXSquared()));
+            () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
+
+    // Normal field-relative drive when overridden via a button
+    driverController
+        .leftTrigger()
+        .or(BobotState.onTeamSide().negate())
+        .whileTrue(
+            DriveCommands.joystickDrive(
+                drive,
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
+                () -> -driverController.getRightXSquared()));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -driverController.getLeftYSquared(),
+    //         () -> -driverController.getLeftXSquared(),
+    //         () -> -driverController.getRightXSquared()));
 
     // // Barge
     // driverController
@@ -221,10 +218,10 @@ public class RobotContainer {
     {
       // This will automatically run the intake when the robot is close
       // to the human player station, taking some mental load off the drive team.
-      BobotState.humanPlayerShouldThrow()
-          .and(superStructure.isCoralIntaked().negate())
-          .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
-          .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+      //   BobotState.humanPlayerShouldThrow()
+      //       .and(superStructure.isCoralIntaked().negate())
+      //       .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
+      //       .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
       // Automatically stop intake & signal to drive team once the coral is in the robot.
       // This will mean the drive team's coral pick up loop will look like:
@@ -234,13 +231,13 @@ public class RobotContainer {
       // 3) The drive team will be signaled by rumble & lights that they have a coral
       //    - The intake will automatically turn off
       // 4) Drive away
-      superStructure
-          .isCoralIntaked()
-          .onTrue(
-              Commands.parallel(
-                  superStructure.setShooterModeCommand(ShooterModes.NONE),
-                  driverController.rumbleSeconds(1.0, 0.5),
-                  operatorController.rumbleSeconds(1.0, 0.5)));
+      //   superStructure
+      //       .isCoralIntaked()
+      //       .onTrue(
+      //           Commands.parallel(
+      //               superStructure.setShooterModeCommand(ShooterModes.NONE),
+      //               driverController.rumbleSeconds(1.0, 0.5),
+      //               operatorController.rumbleSeconds(1.0, 0.5)));
     }
 
     /*
@@ -253,7 +250,7 @@ public class RobotContainer {
 
       blinkin.addConditionalState(BobotState.nearHumanPlayer(), BlinkinState.NEAR_HUMAN_PLAYER);
 
-      blinkin.addConditionalState(superStructure.isCoralIntaked(), BlinkinState.CORAL_IN);
+      //   blinkin.addConditionalState(superStructure.isCoralIntaked(), BlinkinState.CORAL_IN);
     }
   }
 
@@ -286,45 +283,45 @@ public class RobotContainer {
     //     .rightBumper()
     //     .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
 
-    operatorController
-        .povDown()
-        .whileTrue(
-            superStructure.elevatorManualCommand(() -> 3.0 * -operatorController.getLeftY()));
+    // operatorController
+    //     .povDown()
+    //     .whileTrue(
+    //         superStructure.elevatorManualCommand(() -> 3.0 * -operatorController.getLeftY()));
 
-    operatorController
-        .rightY()
-        .whileTrue(superStructure.pivotManualCommand(() -> -operatorController.getRightY()));
+    // operatorController
+    //     .rightY()
+    //     .whileTrue(superStructure.pivotManualCommand(() -> -operatorController.getRightY()));
 
-    operatorController
-        .leftBumper()
-        .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
-        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+    // operatorController
+    //     .leftBumper()
+    //     .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
+    //     .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
-    operatorController
-        .rightBumper()
-        .onTrue(superStructure.setShooterModeCommand(ShooterModes.SHOOT))
-        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+    // operatorController
+    //     .rightBumper()
+    //     .onTrue(superStructure.setShooterModeCommand(ShooterModes.SHOOT))
+    //     .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
     // operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
     // operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_5));
     // operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_10));
     // operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_15));
-    operatorController.a().whileTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-    operatorController.x().whileTrue(superStructure.setModeCommand(SuperStructureModes.L1_L2Coral));
-    operatorController.b().whileTrue(superStructure.setModeCommand(SuperStructureModes.L3Coral));
-    operatorController.y().whileTrue(superStructure.setModeCommand(SuperStructureModes.L4Coral));
+    // operatorController.a().whileTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    // operatorController.x().whileTrue(superStructure.setModeCommand(SuperStructureModes.L1_L2Coral));
+    // operatorController.b().whileTrue(superStructure.setModeCommand(SuperStructureModes.L3Coral));
+    // operatorController.y().whileTrue(superStructure.setModeCommand(SuperStructureModes.L4Coral));
   }
 
-  private Command teleopCoralScoreCommand(SuperStructureModes mode) {
-    return Commands.sequence(
-            superStructure.setModeAndWaitCommand(mode),
-            Commands.deadline(
-                Commands.sequence(
-                    Commands.waitUntil(operatorController.rightTrigger()),
-                    superStructure.setShooterModeAndWaitCommand(ShooterModes.SHOOT)),
-                operatorController.rumble(1.0)))
-        .finallyDo(superStructure::resetModes);
-  }
+  //   private Command teleopCoralScoreCommand(SuperStructureModes mode) {
+  // return Commands.sequence(
+  //     superStructure.setModeAndWaitCommand(mode),
+  //     Commands.deadline(
+  //         Commands.sequence(
+  //             Commands.waitUntil(operatorController.rightTrigger()),
+  //             superStructure.setShooterModeAndWaitCommand(ShooterModes.SHOOT)),
+  //         operatorController.rumble(1.0)))
+  // .finallyDo(superStructure::resetModes);
+  //   }
 
   private void debugSetup() {
     String logRoot = "ChoreoWaypoints";
