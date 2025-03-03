@@ -55,10 +55,17 @@ public class ElevatorIOSim implements ElevatorIO {
 
     this.controller =
         new ProfiledPIDController(
-            ElevatorConstants.kP, 0, ElevatorConstants.kD, ElevatorConstants.trapezoidConstraints);
+            ElevatorConstants.simGains.kP(),
+            0,
+            ElevatorConstants.simGains.kD(),
+            ElevatorConstants.trapezoidConstraints);
 
     this.feedforward =
-        new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
+        new ElevatorFeedforward(
+            ElevatorConstants.simGains.kS(),
+            ElevatorConstants.simGains.kG(),
+            ElevatorConstants.simGains.kV(),
+            ElevatorConstants.simGains.kA());
 
     this.isClosedLoop = true;
   }

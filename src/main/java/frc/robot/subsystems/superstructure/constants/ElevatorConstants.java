@@ -5,6 +5,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.superstructure.elevator.CustomElevatorFF;
 import frc.robot.subsystems.superstructure.elevator.ElevatorConstraints;
+import frc.robot.util.Gains;
 
 public class ElevatorConstants {
   public static final int heightSensorId = 0;
@@ -30,18 +31,14 @@ public class ElevatorConstants {
   public static final double startHeightInches = -0.5 / 2.0;
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
-      new TrapezoidProfile.Constraints(40.0, 30.0);
+      new TrapezoidProfile.Constraints(35.0, 20.0);
 
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html#motion-profiled-feedforward-and-feedback-control
   public static final CustomElevatorFF feedforward =
       new CustomElevatorFF(0.350, 0.41, 0, 0.14, 0.06, 0.0, 0.0);
-  public static final double kP = 0.4;
-  public static final double kD = 0.0;
 
-  public static final double kG = 0.35;
-  public static final double kS = 0.41;
-  public static final double kV = 0.14;
-  public static final double kA = 0.01;
+  public static final Gains simGains = new Gains(2, 0.1, 0.35, 0.41, 0.14, 0.01);
+  public static final Gains realGains = new Gains(2, 0.1, 0.35, 0.41, 0.14, 0.01);
 
   public static final double massKg = Units.lbsToKilograms(50);
   public static final double pullyCircumference = (2 * Math.PI * ElevatorConstants.inchesPerRad);

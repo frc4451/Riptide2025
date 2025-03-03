@@ -38,9 +38,7 @@ public class ElevatorV2 {
       TrapezoidProfile.Constraints trapezoidConstraints,
       double inchesPerRad,
       ElevatorConstraints elevatorConstraints,
-      CustomElevatorFF feedforward,
-      double kP,
-      double kD) {
+      CustomElevatorFF feedforward) {
     this.io = io;
 
     this.elevatorConstraints = elevatorConstraints;
