@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants;
 
 public class FollowRollersIOSim implements FollowRollersIO {
-  private final DCMotorSim leader;
-  private final DCMotorSim follower;
+  protected final DCMotorSim leader;
+  protected final DCMotorSim follower;
 
-  private final boolean invertFollower;
+  protected final boolean invertFollower;
 
   public FollowRollersIOSim(
       DCMotor leaderModel,

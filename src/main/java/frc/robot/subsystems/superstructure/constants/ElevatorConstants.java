@@ -2,6 +2,7 @@ package frc.robot.subsystems.superstructure.constants;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.superstructure.elevator.CustomElevatorFF;
 import frc.robot.subsystems.superstructure.elevator.ElevatorConstraints;
 
@@ -36,4 +37,12 @@ public class ElevatorConstants {
       new CustomElevatorFF(0.350, 0.41, 0, 0.14, 0.06, 0.0, 0.0);
   public static final double kP = 0.4;
   public static final double kD = 0.0;
+
+  public static final double kG = 0.35;
+  public static final double kS = 0.41;
+  public static final double kV = 0.14;
+
+  public static final double massKg = Units.lbsToKilograms(50);
+  public static final double pullyCircumference = (2 * Math.PI * ElevatorConstants.inchesPerRad);
+  public static final DCMotor elevatorSimMotorConfig = DCMotor.getFalcon500(2);
 }

@@ -1,12 +1,14 @@
-package frc.robot.subsystems.rollers.follow;
+package frc.robot.subsystems.superstructure.elevator;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
@@ -16,34 +18,39 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
+import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 
-public class FollowRollersIOTalonFX implements FollowRollersIO {
-  protected final TalonFX leader;
-  protected final TalonFX follower;
+public class ElevatorIOTalonFX implements ElevatorIO {
+  private final TalonFX leader;
+  private final TalonFX follower;
 
-  protected final double reduction;
+  private final double reduction;
 
-  protected final StatusSignal<Angle> leaderPosition;
-  protected final StatusSignal<AngularVelocity> leaderVelocity;
-  protected final StatusSignal<Voltage> leaderVoltage;
-  protected final StatusSignal<Current> leaderSupplyCurrentAmps;
-  protected final StatusSignal<Current> leaderTorqueCurrentAmps;
-  protected final StatusSignal<Temperature> leaderTempCelsius;
+  private final StatusSignal<Angle> leaderPosition;
+  private final StatusSignal<AngularVelocity> leaderVelocity;
+  private final StatusSignal<Voltage> leaderVoltage;
+  private final StatusSignal<Current> leaderSupplyCurrentAmps;
+  private final StatusSignal<Current> leaderTorqueCurrentAmps;
+  private final StatusSignal<Temperature> leaderTempCelsius;
 
-  protected final StatusSignal<Angle> followerPosition;
-  protected final StatusSignal<AngularVelocity> followerVelocity;
-  protected final StatusSignal<Voltage> followerVoltage;
-  protected final StatusSignal<Current> followerSupplyCurrentAmps;
-  protected final StatusSignal<Current> followerTorqueCurrentAmps;
-  protected final StatusSignal<Temperature> followerTempCelsius;
+  private final StatusSignal<Angle> followerPosition;
+  private final StatusSignal<AngularVelocity> followerVelocity;
+  private final StatusSignal<Voltage> followerVoltage;
+  private final StatusSignal<Current> followerSupplyCurrentAmps;
+  private final StatusSignal<Current> followerTorqueCurrentAmps;
+  private final StatusSignal<Temperature> followerTempCelsius;
 
-  protected final VoltageOut voltageOut =
+  private final MotionMagicVoltage positionVoltageRequest = new MotionMagicVoltage(0.0);
+  private final VoltageOut voltageOut =
       new VoltageOut(0.0).withEnableFOC(false).withUpdateFreqHz(0);
-  protected final NeutralOut neutralOut = new NeutralOut();
+  private final NeutralOut neutralOut = new NeutralOut();
+  private final Follower followOut;
 
-  protected final Follower followOut;
+  private double positionGoalInches;
+  private StatusSignal<Double> positionSetpointRotations;
+  private StatusSignal<Double> positionErrorRotations;
 
-  public FollowRollersIOTalonFX(
+  public ElevatorIOTalonFX(
       int leaderCanId,
       int followerCanId,
       double reduction,
@@ -51,6 +58,7 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
       boolean invert,
       boolean invertFollower,
       boolean isBrakeMode) {
+
     this.reduction = reduction;
 
     leader = new TalonFX(leaderCanId, Constants.alternateCanBus);
@@ -73,6 +81,10 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     followerTorqueCurrentAmps = follower.getTorqueCurrent();
     followerTempCelsius = follower.getDeviceTemp();
 
+    positionGoalInches = 0.0;
+    positionSetpointRotations = this.leader.getClosedLoopReference();
+    positionErrorRotations = this.leader.getClosedLoopError();
+
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     // spotless:off
     cfg.MotorOutput
@@ -81,6 +93,21 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(currentLimitAmps);
+    // This might help us, idk
+    cfg.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+
+    // (Motion) Magic, the Gathering
+    cfg.MotionMagic
+        .withMotionMagicCruiseVelocity(
+            Units.inchesToMeters(ElevatorConstants.trapezoidConstraints.maxVelocity)
+                / ElevatorConstants.pullyCircumference
+                * ElevatorConstants.reduction
+            )
+        .withMotionMagicAcceleration(
+            Units.inchesToMeters(ElevatorConstants.trapezoidConstraints.maxAcceleration)
+                / ElevatorConstants.pullyCircumference
+                * ElevatorConstants.reduction)
+        ;
     // spotless:on
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -105,7 +132,7 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
   }
 
   @Override
-  public void updateInputs(FollowRollersIOInputs inputs) {
+  public void updateInputs(ElevatorIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
                 leaderPosition,
@@ -141,21 +168,47 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     inputs.followerSupplyCurrentAmps = followerSupplyCurrentAmps.getValueAsDouble();
     inputs.followerTorqueCurrentAmps = followerTorqueCurrentAmps.getValueAsDouble();
     inputs.followerTemperatureCelsius = followerTempCelsius.getValueAsDouble();
+
+    inputs.positionInches =
+        Units.metersToInches(
+            (this.leaderPosition.getValueAsDouble() / ElevatorConstants.reduction)
+                * ElevatorConstants.pullyCircumference);
+    inputs.velocityInchesPerSec =
+        Units.metersToInches(
+            (this.leaderVelocity.getValueAsDouble() / ElevatorConstants.reduction)
+                * ElevatorConstants.pullyCircumference);
+    inputs.positionGoalInches = positionGoalInches;
+    inputs.positionSetpointInches =
+        Units.metersToInches(
+            (this.positionSetpointRotations.getValueAsDouble() / ElevatorConstants.reduction)
+                * ElevatorConstants.pullyCircumference);
+    inputs.positionErrorInches =
+        Units.metersToInches(
+            (positionErrorRotations.getValueAsDouble() / ElevatorConstants.reduction)
+                * ElevatorConstants.pullyCircumference);
   }
 
   @Override
   public void runVolts(double volts) {
-    leader.setControl(voltageOut.withOutput(volts));
+    this.leader.setControl(voltageOut.withOutput(volts));
   }
 
   @Override
-  public void resetPosition(double positionRad) {
-    leader.setPosition(Units.radiansToRotations(positionRad) * reduction);
-    follower.setPosition(Units.radiansToRotations(positionRad) * reduction);
+  public void setPosition(double positionInches) {
+    this.leader.setPosition(
+        Units.inchesToMeters(positionInches)
+            / ElevatorConstants.pullyCircumference
+            * ElevatorConstants.reduction);
   }
 
   @Override
-  public void stop() {
-    leader.setControl(neutralOut);
+  public void setPositionGoal(double positionInches) {
+    positionGoalInches = positionInches;
+
+    this.leader.setControl(
+        positionVoltageRequest.withPosition(
+            Units.inchesToMeters(positionInches)
+                / ElevatorConstants.pullyCircumference
+                * ElevatorConstants.reduction));
   }
 }

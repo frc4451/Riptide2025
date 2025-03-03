@@ -98,6 +98,10 @@ public class Elevator extends FollowRollers {
     return inputs.leaderVelocityRadPerSec;
   }
 
+  public double getPositionInches() {
+    return 0.0;
+  }
+
   public void runTrapezoidProfile() {
     setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
     // setpoint = new TrapezoidProfile.State(0, 6);

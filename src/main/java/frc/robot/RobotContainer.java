@@ -42,6 +42,9 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.quest.QuestIO;
+import frc.robot.subsystems.superstructure.SuperStructure;
+import frc.robot.subsystems.superstructure.modes.ShooterModes;
+import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
 import frc.robot.util.PoseUtils;
@@ -57,7 +60,7 @@ public class RobotContainer {
   // Subsystems
   public final Drive drive;
   private final Vision vision = new Vision();
-  //   private final SuperStructure superStructure = new SuperStructure();
+  private final SuperStructure superStructure = new SuperStructure();
 
   public final Blinkin blinkin;
 
@@ -279,33 +282,33 @@ public class RobotContainer {
   }
 
   private void configureSuperBindings() {
-    // operatorController
-    //     .rightBumper()
-    //     .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    operatorController
+        .rightBumper()
+        .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
 
-    // operatorController
-    //     .povDown()
-    //     .whileTrue(
-    //         superStructure.elevatorManualCommand(() -> 3.0 * -operatorController.getLeftY()));
+    operatorController
+        .povDown()
+        .whileTrue(
+            superStructure.elevatorManualCommand(() -> 3.0 * -operatorController.getLeftY()));
 
-    // operatorController
-    //     .rightY()
-    //     .whileTrue(superStructure.pivotManualCommand(() -> -operatorController.getRightY()));
+    operatorController
+        .rightY()
+        .whileTrue(superStructure.pivotManualCommand(() -> -operatorController.getRightY()));
 
-    // operatorController
-    //     .leftBumper()
-    //     .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
-    //     .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+    operatorController
+        .leftBumper()
+        .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
+        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
-    // operatorController
-    //     .rightBumper()
-    //     .onTrue(superStructure.setShooterModeCommand(ShooterModes.SHOOT))
-    //     .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+    operatorController
+        .rightBumper()
+        .onTrue(superStructure.setShooterModeCommand(ShooterModes.SHOOT))
+        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
-    // operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-    // operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_5));
-    // operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_10));
-    // operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_15));
+    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_5));
+    operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_10));
+    operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_15));
     // operatorController.a().whileTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
     // operatorController.x().whileTrue(superStructure.setModeCommand(SuperStructureModes.L1_L2Coral));
     // operatorController.b().whileTrue(superStructure.setModeCommand(SuperStructureModes.L3Coral));

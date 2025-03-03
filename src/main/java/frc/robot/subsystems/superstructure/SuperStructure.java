@@ -9,9 +9,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.subsystems.rollers.follow.FollowRollersIO;
-import frc.robot.subsystems.rollers.follow.FollowRollersIOSim;
-import frc.robot.subsystems.rollers.follow.FollowRollersIOTalonFX;
 import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
@@ -25,6 +22,10 @@ import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import frc.robot.subsystems.superstructure.constants.ShooterConstants;
 import frc.robot.subsystems.superstructure.constants.SuperStructureConstants;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIO;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOSim;
+import frc.robot.subsystems.superstructure.elevator.ElevatorIOTalonFX;
+import frc.robot.subsystems.superstructure.elevator.ElevatorV2;
 import frc.robot.subsystems.superstructure.mechanism.SuperStructureMechanism;
 import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
@@ -35,7 +36,7 @@ import org.littletonrobotics.junction.Logger;
 public class SuperStructure extends SubsystemBase {
   private final String name = "Superstructure";
 
-  private final Elevator elevator;
+  private final ElevatorV2 elevator;
   private final Pivot coralPivot;
   private final SingleRoller shooter;
   private final CanRange coralSensor;
@@ -51,7 +52,7 @@ public class SuperStructure extends SubsystemBase {
   private boolean isAtMode = false;
 
   public SuperStructure() {
-    FollowRollersIO elevatorIO;
+    ElevatorIO elevatorIO;
     CanRangeIO heightSensorIO;
     SingleRollerIO coralPivotIO;
     SingleRollerIO shooterIO;
@@ -60,7 +61,7 @@ public class SuperStructure extends SubsystemBase {
     switch (Constants.currentMode) {
       case REAL:
         elevatorIO =
-            new FollowRollersIOTalonFX(
+            new ElevatorIOTalonFX(
                 ElevatorConstants.leaderCanId,
                 ElevatorConstants.followerCanId,
                 ElevatorConstants.reduction,
@@ -92,7 +93,7 @@ public class SuperStructure extends SubsystemBase {
 
       case SIM:
         elevatorIO =
-            new FollowRollersIOSim(
+            new ElevatorIOSim(
                 ElevatorConstants.leaderGearbox,
                 ElevatorConstants.followerGearbox,
                 ElevatorConstants.reduction,
@@ -116,7 +117,7 @@ public class SuperStructure extends SubsystemBase {
 
       case REPLAY:
       default:
-        elevatorIO = new FollowRollersIO() {};
+        elevatorIO = new ElevatorIO() {};
         heightSensorIO = new CanRangeIO() {};
         coralPivotIO = new SingleRollerIO() {};
         shooterIO = new SingleRollerIO() {};
@@ -125,7 +126,7 @@ public class SuperStructure extends SubsystemBase {
     }
 
     elevator =
-        new Elevator(
+        new ElevatorV2(
             name + "/Elevator",
             elevatorIO,
             new CanRangeIO() {},
