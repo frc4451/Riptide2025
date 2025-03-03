@@ -41,6 +41,7 @@ public class ElevatorConstants {
   public static final double kG = 0.35;
   public static final double kS = 0.41;
   public static final double kV = 0.14;
+  public static final double kA = 0.01;
 
   public static final double massKg = Units.lbsToKilograms(50);
   public static final double pullyCircumference = (2 * Math.PI * ElevatorConstants.inchesPerRad);

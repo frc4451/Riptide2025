@@ -96,6 +96,14 @@ public class ElevatorIOTalonFX implements ElevatorIO {
     // This might help us, idk
     cfg.Slot0.GravityType = GravityTypeValue.Elevator_Static;
 
+    cfg.Slot0
+        .withKG(ElevatorConstants.kG)
+        .withKS(ElevatorConstants.kS)
+        .withKV(ElevatorConstants.kV)
+        .withKA(ElevatorConstants.kA)
+        .withKP(ElevatorConstants.kP)
+        .withKD(ElevatorConstants.kD);
+
     // (Motion) Magic, the Gathering
     cfg.MotionMagic
         .withMotionMagicCruiseVelocity(
