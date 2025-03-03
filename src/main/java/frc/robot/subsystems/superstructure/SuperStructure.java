@@ -133,9 +133,7 @@ public class SuperStructure extends SubsystemBase {
             ElevatorConstants.trapezoidConstraints,
             ElevatorConstants.inchesPerRad,
             ElevatorConstants.elevatorConstraints,
-            ElevatorConstants.feedforward,
-            ElevatorConstants.kP,
-            ElevatorConstants.kD);
+            ElevatorConstants.feedforward);
     elevator.setHeightInches(ElevatorConstants.startHeightInches);
 
     coralPivot =
