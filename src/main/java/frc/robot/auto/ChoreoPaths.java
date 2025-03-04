@@ -23,9 +23,6 @@ public enum ChoreoPaths {
   START_MID_TO_K("StartMid-K"),
   START_MID_TO_L("StartMid-L"),
 
-  // Start Bottom Mid to  ___ (might rename)
-  START_BOTTOM_MID_TO_E("StartBottomMid-E"),
-
   // Start Bottom to ___
   START_BOTTOM_TO_E("StartBottom-E"),
 

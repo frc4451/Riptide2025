@@ -160,6 +160,7 @@ public class RobotContainer {
     autoChooser.addRoutine("Binacle", autos::binacle);
     autoChooser.addRoutine("Triple Threat", autos::tripleThreat);
     autoChooser.addRoutine("Barbaracle", autos::barbaracle);
+    autoChooser.addRoutine("Allred", autos::allred);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }

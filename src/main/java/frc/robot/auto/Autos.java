@@ -9,11 +9,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldConstants.AprilTagStruct;
+import frc.robot.field.HumanPlayerStations;
 import frc.robot.field.ReefFaces;
 import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.superstructure.SuperStructure;
+import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.util.PoseUtils;
 import java.util.function.Supplier;
@@ -93,16 +95,60 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                resetAndFollowTrajectory(
-                    routine.trajectory(ChoreoPaths.START_BOTTOM_MID_TO_E.name)),
-                // Commands.deadline(
-                //     superStructure.score(SuperStructureModes.L4Coral),
-                //     positionToPole(() -> ReefFaces.EF.get().leftPole)),
+                resetAndFollowTrajectory(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_E.name)),
+                Commands.deadline(
+                    superStructure.score(SuperStructureModes.L4Coral),
+                    positionToPole(() -> ReefFaces.EF.get().leftPole)),
                 followTrajectory(routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name)),
-                //  Commands.deadline(
-                //  superStructure.intake().andThen(Commands.waitSeconds(1.0))),
-                // positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
-                followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CS.name))));
+                Commands.deadline(
+                    superStructure.intake().andThen(Commands.waitSeconds(1.0)),
+                    positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
+                followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_C.name)),
+                Commands.deadline(
+                    superStructure.score(SuperStructureModes.L4Coral),
+                    positionToPole(() -> ReefFaces.CD.get().leftPole))));
+
+    return routine;
+  }
+
+  public AutoRoutine allred() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Allred");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                // Planned abstractions for future use
+                // pathAndMode(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_E.name),
+                // SuperStructureModes.L4Coral)),
+                // alignAndScore(() -> ReefFaces.EF.get().leftPole)),
+                // awayFromReef(routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name),
+                // SuperStructureModes.TUCKED)),
+                // hps(() -> HumanPlayerStations.RIGHT.get()),
+                // pathAndMode(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_D.name),
+                // SuperStructureModes.L4Coral)),
+                // alignAndScore(() -> ReefFaces.CD.get().rightPole)
+
+                Commands.deadline(
+                    resetAndFollowTrajectory(
+                        routine.trajectory(ChoreoPaths.START_BOTTOM_TO_E.name)),
+                    superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral)),
+                Commands.deadline(
+                    superStructure.setShooterModeAndWaitCommand(ShooterModes.SHOOT),
+                    positionToPole(() -> ReefFaces.EF.get().leftPole)),
+                Commands.deadline(
+                    followTrajectory(routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name)),
+                    Commands.sequence(
+                        Commands.waitSeconds(0.3),
+                        superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED))),
+                Commands.deadline(
+                    superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
+                Commands.deadline(
+                    followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_D.name)),
+                    superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral)),
+                Commands.deadline(
+                    superStructure.score(SuperStructureModes.L4Coral),
+                    positionToPole(() -> ReefFaces.CD.get().rightPole))));
 
     return routine;
   }
