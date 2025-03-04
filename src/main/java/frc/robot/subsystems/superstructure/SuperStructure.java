@@ -257,7 +257,7 @@ public class SuperStructure extends SubsystemBase {
             setModeAndWaitCommand(mode),
             setShooterModeAndWaitCommand(ShooterModes.SHOOT),
             setModeAndWaitCommand(SuperStructureModes.TUCKED))
-        .onlyIf(isCoralIntaked())
+        // .onlyIf(isCoralIntaked())
         .finallyDo(this::resetModes);
   }
 

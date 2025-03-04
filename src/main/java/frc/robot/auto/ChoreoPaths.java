@@ -23,6 +23,9 @@ public enum ChoreoPaths {
   START_MID_TO_K("StartMid-K"),
   START_MID_TO_L("StartMid-L"),
 
+  // Start Bottom Mid to  ___ (might rename)
+  START_BOTTOM_MID_TO_E("StartBottomMid-E"),
+
   // Start Bottom to ___
   START_BOTTOM_TO_E("StartBottom-E"),
 
@@ -40,6 +43,9 @@ public enum ChoreoPaths {
   K_TO_HPS_RIGHT("K-HPSRight"),
   L_TO_HPS_RIGHT("L-HPSRight"),
 
+  // __ to HPS but slower and lewis or cole should rename this
+  E_TO_HPS_RIGHTS("E-HPSRightS"),
+
   // HPS to ___
   HPS_RIGHT_TO_A("HPSRight-A"),
   HPS_RIGHT_TO_B("HPSRight-B"),
@@ -52,7 +58,10 @@ public enum ChoreoPaths {
   HPS_RIGHT_TO_I("HPSRight-I"),
   HPS_RIGHT_TO_J("HPSRight-J"),
   HPS_RIGHT_TO_K("HPSRight-K"),
-  HPS_RIGHT_TO_L("HPSRight-L");
+  HPS_RIGHT_TO_L("HPSRight-L"),
+
+  // HPS to ___ but slower I DONT KNOW
+  HPS_RIGHT_TO_CS("HPSRight-CS");
 
   public final String name;
 

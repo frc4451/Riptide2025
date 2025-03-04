@@ -86,6 +86,27 @@ public class Autos {
     return routine;
   }
 
+  public AutoRoutine barbaracle() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Barbaracle");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                resetAndFollowTrajectory(
+                    routine.trajectory(ChoreoPaths.START_BOTTOM_MID_TO_E.name)),
+                // Commands.deadline(
+                //     superStructure.score(SuperStructureModes.L4Coral),
+                //     positionToPole(() -> ReefFaces.EF.get().leftPole)),
+                followTrajectory(routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name)),
+                //  Commands.deadline(
+                //  superStructure.intake().andThen(Commands.waitSeconds(1.0))),
+                // positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
+                followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CS.name))));
+
+    return routine;
+  }
+
   public AutoRoutine tripleThreat() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Triple Threat");
 
