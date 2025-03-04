@@ -2,6 +2,8 @@ package frc.robot.subsystems.superstructure.constants;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.superstructure.elevator.CustomElevatorFF;
 import frc.robot.subsystems.superstructure.elevator.ElevatorConstraints;
 
@@ -32,8 +34,9 @@ public class ElevatorConstants {
       new TrapezoidProfile.Constraints(40.0, 30.0);
 
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html#motion-profiled-feedforward-and-feedback-control
+  // No gravity in Sim, therefore no feedforward
   public static final CustomElevatorFF feedforward =
-      new CustomElevatorFF(0.350, 0.41, 0, 0.14, 0.06, 0.0, 0.0);
+      Constants.currentMode == Mode.REAL ? new CustomElevatorFF(0.350, 0.41, 0, 0.14, 0.06, 0.0, 0.0) : new CustomElevatorFF(0, 0, 0, 0, 0, 0, 0);
   public static final double kP = 0.4;
   public static final double kD = 0.0;
 }

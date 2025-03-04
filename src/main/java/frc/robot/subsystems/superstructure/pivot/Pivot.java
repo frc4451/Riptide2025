@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Constants;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
@@ -72,13 +73,14 @@ public class Pivot extends SingleRoller {
   }
 
   public void runTrapezoidProfile() {
-    // setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
-    // runPosition(setpoint.position);
+    setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
+    runPosition(setpoint);
   }
 
-  public void runPosition() {
-    // add 90 deg because our 0 is perpendicular with the floor but ArmFeedforward wants it parallel
-    double ff = feedforward.calculate(setpoint.position + Math.PI / 2.0, setpoint.velocity);
+  public void runPosition(TrapezoidProfile.State setpoint) {
+    // subtract 90 deg because our 0 is perpendicular with the floor but ArmFeedforward wants it
+    // parallel
+    double ff = feedforward.calculate(setpoint.position - Math.PI / 2.0, setpoint.velocity);
     double output = positionController.calculate(inputs.positionRad, setpoint.position);
     io.runVolts(output + ff);
   }
