@@ -3,7 +3,22 @@
  "version":1,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
+  "expressions":{
+   "MaxAccel":{
+    "dimension":"LinAcc",
+    "var":{
+     "exp":"2.75 m / s ^ 2",
+     "val":2.75
+    }
+   },
+   "MaxVel":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"2.75 m / s",
+     "val":2.75
+    }
+   }
+  },
   "poses":{
    "A":{
     "x":{
@@ -267,8 +282,8 @@
    }
   },
   "mass":{
-   "exp":"70 lbs",
-   "val":31.751465900000003
+   "exp":"111 lbs",
+   "val":50.34875307
   },
   "inertia":{
    "exp":"6 kg m ^ 2",
