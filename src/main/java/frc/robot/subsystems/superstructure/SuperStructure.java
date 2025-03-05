@@ -12,11 +12,9 @@ import frc.robot.Constants;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOSim;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOTalonFX;
-import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
-import frc.robot.subsystems.superstructure.can_range.CanRange;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIOReal;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIOSim;
@@ -26,9 +24,10 @@ import frc.robot.subsystems.superstructure.constants.ShooterConstants;
 import frc.robot.subsystems.superstructure.constants.SuperStructureConstants;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.mechanism.SuperStructureMechanism;
-import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.pivot.Pivot;
+import frc.robot.subsystems.superstructure.shooter.Shooter;
+import frc.robot.subsystems.superstructure.shooter.ShooterModes;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -37,8 +36,7 @@ public class SuperStructure extends SubsystemBase {
 
   private final Elevator elevator;
   private final Pivot coralPivot;
-  private final SingleRoller shooter;
-  private final CanRange coralSensor;
+  private final Shooter shooter;
 
   private final SuperStructureMechanism goalMechanism =
       new SuperStructureMechanism("Goal", Color.kLightBlue, Color.kLightGreen, 10.0);
@@ -46,7 +44,6 @@ public class SuperStructure extends SubsystemBase {
       new SuperStructureMechanism("Measured", Color.kDarkBlue, Color.kDarkGreen, 3.0);
 
   private SuperStructureModes currentMode = SuperStructureModes.TUCKED;
-  private ShooterModes currentShooterMode = ShooterModes.NONE;
 
   private boolean isAtMode = false;
 
@@ -147,24 +144,14 @@ public class SuperStructure extends SubsystemBase {
             CoralPivotConstants.kP,
             CoralPivotConstants.kD);
 
-    shooter = new SingleRoller(name + "/Shooter", shooterIO);
-
-    coralSensor = new CanRange(name + "/CoralSensor", coralSensorIO);
+    shooter = new Shooter(name + "/Shooter", shooterIO, coralSensorIO);
   }
 
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
       setCurrentMode(SuperStructureModes.TUCKED);
-      setCurrentShooterMode(ShooterModes.NONE);
-    }
-
-    if (currentShooterMode.useCanRange && coralSensor.isDetected()) {
-      shooter.stop();
-    } else {
-      // If at L4 invert direction
-      shooter.runVolts(
-          (currentMode == SuperStructureModes.L4Coral ? -1 : 1) * currentShooterMode.voltage);
+      shooter.setShooterMode(ShooterModes.NONE);
     }
 
     boolean isElevatorAtMode =
@@ -200,12 +187,10 @@ public class SuperStructure extends SubsystemBase {
     Logger.recordOutput(name + "/IsElevatorAtMode", isElevatorAtMode);
     Logger.recordOutput(name + "/IsPivotAtMode", isPivotAtMode);
     Logger.recordOutput(name + "/Mode", currentMode);
-    Logger.recordOutput(name + "/ShooterMode", currentShooterMode);
 
     elevator.periodic();
     coralPivot.periodic();
-    coralSensor.periodic();
-    shooter.periodic();
+    shooter.periodic(currentMode);
 
     measuredMechanism.update(elevator.getHeightInches(), coralPivot.getPosition());
     goalMechanism.update(elevator.getGoalHeightInches(), coralPivot.getGoalPosition());
@@ -230,22 +215,12 @@ public class SuperStructure extends SubsystemBase {
     return runOnce(() -> setCurrentMode(nextMode));
   }
 
-  private void setCurrentShooterMode(ShooterModes nextShooterMode) {
-    if (currentShooterMode != nextShooterMode) {
-      currentShooterMode = nextShooterMode;
-    }
-  }
-
   public Command setShooterModeCommand(ShooterModes nextShooterMode) {
-    return runOnce(() -> setCurrentShooterMode(nextShooterMode));
+    return runOnce(() -> shooter.setShooterMode(nextShooterMode));
   }
 
   public Trigger isAtMode() {
     return new Trigger(() -> isAtMode);
-  }
-
-  public Trigger isCoralIntaked() {
-    return new Trigger(coralSensor::isDetected);
   }
 
   public Command intake() {
@@ -255,7 +230,7 @@ public class SuperStructure extends SubsystemBase {
   public Command score(SuperStructureModes mode) {
     return Commands.sequence(
             setModeAndWaitCommand(mode),
-            setShooterModeAndWaitCommand(ShooterModes.SHOOT),
+            shoot(ShooterModes.SHOOT),
             setModeAndWaitCommand(SuperStructureModes.TUCKED))
         // .onlyIf(isCoralIntaked())
         .finallyDo(this::resetModes);
@@ -265,7 +240,7 @@ public class SuperStructure extends SubsystemBase {
     return Commands.sequence(setModeCommand(mode), Commands.waitUntil(isAtMode()));
   }
 
-  public Command setShooterModeAndWaitCommand(ShooterModes mode) {
+  public Command shoot(ShooterModes mode) {
     return Commands.sequence(
         setShooterModeCommand(mode),
         Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.1)),
@@ -273,7 +248,11 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public void resetModes() {
-    setCurrentShooterMode(ShooterModes.NONE);
+    shooter.setShooterMode(ShooterModes.NONE);
     setCurrentMode(SuperStructureModes.TUCKED);
+  }
+
+  public Trigger isCoralIntaked() {
+    return new Trigger(() -> shooter.isCoralDetected());
   }
 }

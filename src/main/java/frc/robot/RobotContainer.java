@@ -44,8 +44,8 @@ import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.quest.QuestIO;
 import frc.robot.subsystems.superstructure.SuperStructure;
-import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
+import frc.robot.subsystems.superstructure.shooter.ShooterModes;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.CommandCustomXboxController;
 import frc.robot.util.PoseUtils;
@@ -308,6 +308,14 @@ public class RobotContainer {
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.SHOOT))
         .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
+    operatorController
+        .leftBumper()
+        .onTrue(superStructure.setShooterModeCommand(ShooterModes.ALGAE_INTAKING));
+
+    operatorController
+        .rightBumper()
+        .onTrue(superStructure.setShooterModeCommand(ShooterModes.ALGAE_SHOOT))
+        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
     // operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
     // operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_45));
     // operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_90));
@@ -316,6 +324,10 @@ public class RobotContainer {
     operatorController.a().whileTrue(superStructure.setModeCommand(SuperStructureModes.L1_L2Coral));
     operatorController.x().whileTrue(superStructure.setModeCommand(SuperStructureModes.L3Coral));
     operatorController.y().whileTrue(superStructure.setModeCommand(SuperStructureModes.L4Coral));
+
+    operatorController
+        .povDown()
+        .whileTrue(superStructure.setModeCommand(SuperStructureModes.FLOOR_ALGAE));
   }
 
   private Command teleopCoralScoreCommand(SuperStructureModes mode) {
@@ -324,7 +336,7 @@ public class RobotContainer {
             Commands.deadline(
                 Commands.sequence(
                     Commands.waitUntil(operatorController.rightTrigger()),
-                    superStructure.setShooterModeAndWaitCommand(ShooterModes.SHOOT)),
+                    superStructure.shoot(ShooterModes.SHOOT)),
                 operatorController.rumble(1.0)))
         .finallyDo(superStructure::resetModes);
   }

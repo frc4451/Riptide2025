@@ -21,7 +21,7 @@ import frc.robot.Constants;
 
 public class DriveConstants {
   // TODO: max speed, wheel radius, gyro trimming
-  public static final double maxSpeedMetersPerSec = 5.5 / 2.0; // Test, remove "/ 2.0" after fr fr
+  public static final double maxSpeedMetersPerSec = 5.5;
   public static final double odometryFrequency = 100.0; // Hz
   public static final double trackWidth = Units.inchesToMeters(Constants.isGuido ? 20.5 : 22.5);
   public static final double wheelBase = trackWidth;
