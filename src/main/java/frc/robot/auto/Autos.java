@@ -15,7 +15,6 @@ import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.superstructure.SuperStructure;
-import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.util.PoseUtils;
 import java.util.function.Supplier;
@@ -201,9 +200,7 @@ public class Autos {
   }
 
   private Command alignAndScore(Supplier<ReefPole> poleSupplier) {
-    return Commands.deadline(
-        superStructure.setShooterModeAndWaitCommand(ShooterModes.SHOOT),
-        positionToPole(poleSupplier));
+    return Commands.deadline(superStructure.shootCoral(), positionToPole(poleSupplier));
   }
 
   private Command awayFromReef(AutoTrajectory trajectory, SuperStructureModes mode) {

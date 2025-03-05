@@ -336,7 +336,7 @@ public class RobotContainer {
             Commands.deadline(
                 Commands.sequence(
                     Commands.waitUntil(operatorController.rightTrigger()),
-                    superStructure.shoot(ShooterModes.SHOOT)),
+                    superStructure.shootCoral()),
                 operatorController.rumble(1.0)))
         .finallyDo(superStructure::resetModes);
   }

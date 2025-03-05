@@ -24,7 +24,6 @@ public class ElevatorConstants {
   public static final boolean invertFollower = true;
   public static final double currentLimitAmps = 60;
 
-  public static final double l4ThresholdInches = 25; // TODO: find actual number
   public static final double resetFromHeightSensorThresholdInches = 5;
   public static final ElevatorConstraints elevatorConstraints =
       new ElevatorConstraints(1.0 / 2.0, 50 / 2.0);

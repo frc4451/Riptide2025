@@ -11,7 +11,6 @@ import frc.robot.subsystems.rollers.follow.FollowRollers;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
 import frc.robot.subsystems.superstructure.can_range.CanRange;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
-import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends FollowRollers {
@@ -125,10 +124,6 @@ public class Elevator extends FollowRollers {
 
   public double getGoalHeightInches() {
     return goal.position;
-  }
-
-  public boolean underL4Threshold() {
-    return getHeightInches() < ElevatorConstants.l4ThresholdInches;
   }
 
   private void resetController() {

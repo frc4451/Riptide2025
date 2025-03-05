@@ -230,7 +230,7 @@ public class SuperStructure extends SubsystemBase {
   public Command score(SuperStructureModes mode) {
     return Commands.sequence(
             setModeAndWaitCommand(mode),
-            shoot(ShooterModes.SHOOT),
+            shootCoral(),
             setModeAndWaitCommand(SuperStructureModes.TUCKED))
         // .onlyIf(isCoralIntaked())
         .finallyDo(this::resetModes);
@@ -240,9 +240,9 @@ public class SuperStructure extends SubsystemBase {
     return Commands.sequence(setModeCommand(mode), Commands.waitUntil(isAtMode()));
   }
 
-  public Command shoot(ShooterModes mode) {
+  public Command shootCoral() {
     return Commands.sequence(
-        setShooterModeCommand(mode),
+        setShooterModeCommand(ShooterModes.SHOOT),
         Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.1)),
         setShooterModeCommand(ShooterModes.NONE));
   }
