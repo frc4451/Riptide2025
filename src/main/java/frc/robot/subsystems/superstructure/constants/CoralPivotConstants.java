@@ -23,7 +23,10 @@ public class CoralPivotConstants {
 
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html#combined-feedforward-and-feedback-control
   // No gravity in Sim, therefore no feedforward
-  public static final ArmFeedforward feedforward = Constants.currentMode == Constants.Mode.REAL ? new ArmFeedforward(0, 0.3, 1.1) : new ArmFeedforward(0, 0, 0);
+  public static final ArmFeedforward feedforward =
+      Constants.currentMode == Constants.Mode.REAL
+          ? new ArmFeedforward(0, 0.3, 1.1)
+          : new ArmFeedforward(0, 0, 0);
   public static final double kP = 1.8;
   public static final double kD = 0.0;
 }
