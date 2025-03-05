@@ -118,37 +118,18 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                // Planned abstractions for future use
-                // pathAndMode(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_E.name),
-                // SuperStructureModes.L4Coral)),
-                // alignAndScore(() -> ReefFaces.EF.get().leftPole)),
-                // awayFromReef(routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name),
-                // SuperStructureModes.TUCKED)),
-                // hps(() -> HumanPlayerStations.RIGHT.get()),
-                // pathAndMode(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_D.name),
-                // SuperStructureModes.L4Coral)),
-                // alignAndScore(() -> ReefFaces.CD.get().rightPole)
-
-                Commands.deadline(
-                    resetAndFollowTrajectory(
-                        routine.trajectory(ChoreoPaths.START_BOTTOM_TO_E.name)),
-                    superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral)),
-                Commands.deadline(
-                    superStructure.setShooterModeAndWaitCommand(ShooterModes.SHOOT),
-                    positionToPole(() -> ReefFaces.EF.get().leftPole)),
-                Commands.deadline(
-                    followTrajectory(routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name)),
-                    Commands.sequence(
-                        Commands.waitSeconds(0.3),
-                        superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED))),
-                Commands.deadline(
-                    superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
-                Commands.deadline(
-                    followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_D.name)),
-                    superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral)),
-                Commands.deadline(
-                    superStructure.score(SuperStructureModes.L4Coral),
-                    positionToPole(() -> ReefFaces.CD.get().rightPole))));
+                pathAndMode(
+                    routine.trajectory(ChoreoPaths.START_BOTTOM_TO_E.name),
+                    SuperStructureModes.L4Coral),
+                alignAndScore(() -> ReefFaces.EF.get().leftPole),
+                awayFromReef(
+                    routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name),
+                    SuperStructureModes.TUCKED),
+                hpsAndIntake(() -> HumanPlayerStations.RIGHT.get()),
+                pathAndMode(
+                    routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_D.name),
+                    SuperStructureModes.L4Coral),
+                alignAndScore(() -> ReefFaces.CD.get().rightPole)));
 
     return routine;
   }
@@ -211,6 +192,31 @@ public class Autos {
         () ->
             PoseUtils.getPerpendicularOffsetPose(
                 hps.get().pose().toPose2d(), AutoConstants.reefScoreOffsetMeters));
+  }
+
+  private Command pathAndMode(AutoTrajectory trajectory, SuperStructureModes mode) {
+    return Commands.deadline(
+        resetAndFollowTrajectory(trajectory),
+        superStructure.setModeCommand(SuperStructureModes.L4Coral));
+  }
+
+  private Command alignAndScore(Supplier<ReefPole> poleSupplier) {
+    return Commands.deadline(
+        superStructure.setShooterModeAndWaitCommand(ShooterModes.SHOOT),
+        positionToPole(poleSupplier));
+  }
+
+  private Command awayFromReef(AutoTrajectory trajectory, SuperStructureModes mode) {
+    return Commands.deadline(
+        followTrajectory(trajectory),
+        Commands.sequence(
+            Commands.waitSeconds(0.3),
+            superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED)));
+  }
+
+  private Command hpsAndIntake(Supplier<AprilTagStruct> hpsSupplier) {
+    return Commands.deadline(
+        superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get()));
   }
 
   // Routine Logic
