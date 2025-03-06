@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldConstants.AprilTagStruct;
-import frc.robot.field.HumanPlayerStations;
 import frc.robot.field.ReefFaces;
 import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
@@ -121,14 +120,16 @@ public class Autos {
                     routine.trajectory(ChoreoPaths.START_BOTTOM_TO_E.name),
                     SuperStructureModes.L4Coral),
                 alignAndScore(() -> ReefFaces.EF.get().leftPole),
+                // Commands.race(
+                //     Commands.waitSeconds(1), positionToPole(() -> ReefFaces.EF.get().leftPole)),
                 awayFromReef(
                     routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name),
                     SuperStructureModes.TUCKED),
-                hpsAndIntake(() -> HumanPlayerStations.RIGHT.get()),
+                superStructure.intake(),
                 pathAndMode(
-                    routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_D.name),
-                    SuperStructureModes.L4Coral),
-                alignAndScore(() -> ReefFaces.CD.get().rightPole)));
+                    routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_F.name),
+                    SuperStructureModes.L1_L2Coral),
+                alignAndScore(() -> ReefFaces.EF.get().rightPole)));
 
     return routine;
   }
@@ -194,26 +195,18 @@ public class Autos {
   }
 
   private Command pathAndMode(AutoTrajectory trajectory, SuperStructureModes mode) {
-    return Commands.deadline(
-        resetAndFollowTrajectory(trajectory),
-        superStructure.setModeCommand(SuperStructureModes.L4Coral));
+    return Commands.deadline(followTrajectory(trajectory), superStructure.setModeCommand(mode));
   }
 
   private Command alignAndScore(Supplier<ReefPole> poleSupplier) {
-    return Commands.deadline(superStructure.shootCoral(), positionToPole(poleSupplier));
+    return Commands.deadline(
+        Commands.waitSeconds(1), superStructure.shootCoral(), positionToPole(poleSupplier));
   }
 
   private Command awayFromReef(AutoTrajectory trajectory, SuperStructureModes mode) {
     return Commands.deadline(
         followTrajectory(trajectory),
-        Commands.sequence(
-            Commands.waitSeconds(0.3),
-            superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED)));
-  }
-
-  private Command hpsAndIntake(Supplier<AprilTagStruct> hpsSupplier) {
-    return Commands.deadline(
-        superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get()));
+        Commands.sequence(Commands.waitSeconds(0.3), superStructure.setModeCommand(mode)));
   }
 
   // Routine Logic

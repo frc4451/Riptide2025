@@ -25,6 +25,7 @@ public enum ChoreoPaths {
 
   // Start Bottom to ___
   START_BOTTOM_TO_E("StartBottom-E"),
+  START_BOTTOM_TO_F("StartBottom-F"),
 
   // ___ to HPS
   A_TO_HPS_RIGHT("A-HPSRight"),

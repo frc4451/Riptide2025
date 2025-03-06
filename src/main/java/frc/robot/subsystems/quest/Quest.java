@@ -3,10 +3,7 @@ package frc.robot.subsystems.quest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.VirtualSubsystem;
 import org.littletonrobotics.junction.Logger;
@@ -34,11 +31,9 @@ public class Quest extends VirtualSubsystem {
     disconnectedAlert.set(!inputs.connected);
     lowBatteryAlert.set(inputs.batteryLevel < 25 && inputs.connected);
 
-    if (DriverStation.isEnabled()
-        && inputs.connected
-        && Constants.currentMode == Constants.Mode.REAL) {
-      BobotState.offerQuestMeasurement(new TimestampedPose(inputs.robotPose, inputs.timestamp));
-    }
+    // if (DriverStation.isEnabled() && Constants.currentMode == Constants.Mode.REAL) {
+    //   BobotState.offerQuestMeasurement(new TimestampedPose(inputs.robotPose, inputs.timestamp));
+    // }
   }
 
   public void resetPose(Pose2d pose) {

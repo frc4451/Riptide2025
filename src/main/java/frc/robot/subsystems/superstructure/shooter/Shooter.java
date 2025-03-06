@@ -40,7 +40,7 @@ public class Shooter extends SingleRoller {
         break;
       case ALGAE_INTAKING:
         io.runVolts(currentShooterMode.voltage);
-        if (inputs.supplyCurrentAmps >= 10) {
+        if (inputs.supplyCurrentAmps >= 22) {
           currentShooterMode = ShooterModes.ALGAE_INTAKED;
         }
         break;

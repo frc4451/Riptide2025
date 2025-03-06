@@ -173,7 +173,7 @@ public class SuperStructure extends SubsystemBase {
         || elevator.getHeightInches() > SuperStructureConstants.pivotTuckThresholdInches) {
       if (!isElevatorAtMode) {
         coralPivot.setGoal(Rotation2d.kPi);
-        if (coralPivot.atGoal()) {
+        if (MathUtil.isNear(coralPivot.getPosition().getDegrees(), 180, 90)) {
           elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
         }
       } else {
@@ -212,11 +212,11 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command setModeCommand(SuperStructureModes nextMode) {
-    return runOnce(() -> setCurrentMode(nextMode));
+    return Commands.runOnce(() -> setCurrentMode(nextMode));
   }
 
   public Command setShooterModeCommand(ShooterModes nextShooterMode) {
-    return runOnce(() -> shooter.setShooterMode(nextShooterMode));
+    return Commands.runOnce(() -> shooter.setShooterMode(nextShooterMode));
   }
 
   public Trigger isAtMode() {
@@ -224,7 +224,11 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public Command intake() {
-    return Commands.none();
+    return Commands.sequence(
+        setShooterModeCommand(ShooterModes.INTAKE),
+        // Commands.sequence(Commands.waitUntil(isCoralIntaked()), Commands.waitSeconds(0.1)),
+        Commands.waitUntil(isCoralIntaked()),
+        setShooterModeCommand(ShooterModes.NONE));
   }
 
   public Command score(SuperStructureModes mode) {
@@ -243,7 +247,7 @@ public class SuperStructure extends SubsystemBase {
   public Command shootCoral() {
     return Commands.sequence(
         setShooterModeCommand(ShooterModes.SHOOT),
-        Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.1)),
+        Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(1.0)),
         setShooterModeCommand(ShooterModes.NONE));
   }
 
