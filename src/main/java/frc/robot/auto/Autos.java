@@ -230,7 +230,7 @@ public class Autos {
   private Command alignAndScore(Supplier<ReefPole> poleSupplier, double reefOffsetMeters) {
     return Commands.deadline(
         Commands.waitSeconds(1),
-        superStructure.shootCoral(),
+        Commands.sequence(Commands.waitSeconds(0.5), superStructure.shootCoral()),
         positionToPole(poleSupplier, reefOffsetMeters));
   }
 
