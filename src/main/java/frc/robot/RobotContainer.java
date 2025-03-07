@@ -139,8 +139,7 @@ public class RobotContainer {
         "Drive Wheel Radius Characterization",
         () -> DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addCmd(
-        "Drive Simple FF Characterization",
-        () -> DriveCommands.feedforwardCharacterization(drive));
+        "Drive Simple FF Characterization", () -> DriveCommands.feedforwardCharacterization(drive));
     autoChooser.addCmd(
         "Drive SysId (Quasistatic Forward)",
         () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -148,11 +147,9 @@ public class RobotContainer {
         "Drive SysId (Quasistatic Reverse)",
         () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     autoChooser.addCmd(
-        "Drive SysId (Dynamic Forward)",
-        () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        "Drive SysId (Dynamic Forward)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addCmd(
-        "Drive SysId (Dynamic Reverse)",
-        () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        "Drive SysId (Dynamic Reverse)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     autoChooser.addCmd("Quest Offset Calibration", () -> quest.calibrateCommand(drive));
 
     // autoChooser.addRoutine("2 Meters", autos::twoMeters);

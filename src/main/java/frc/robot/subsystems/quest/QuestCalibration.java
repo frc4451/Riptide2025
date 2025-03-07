@@ -34,13 +34,13 @@ public class QuestCalibration {
   public Command determineOffsetToRobotCenter(
       Drive drive, Supplier<Pose2d> robotPose, Supplier<Pose2d> questPoseSupplier) {
     return Commands.repeatingSequence(
-            Commands.run(
-                    () -> {
-                      drive.runVelocity(new ChassisSpeeds(0, 0, Math.PI / 10.0));
-                    },
-                    drive)
-                .withTimeout(0.5),
-            Commands.runOnce(
+        Commands.run(
+                () -> {
+                  drive.runVelocity(new ChassisSpeeds(0, 0, Math.PI / 10.0));
+                },
+                drive)
+            .withTimeout(0.5),
+        Commands.runOnce(
                 () -> {
                   // Update current offset
                   Translation2d offset = calculateOffsetToRobot(robotPose.get());
@@ -51,6 +51,7 @@ public class QuestCalibration {
                           .plus(offset.div(calculateOffsetCount + 1));
                   calculateOffsetCount++;
                   Logger.recordOutput("QuestCalibration/CalculatedOffset", calculatedOffsetToRobot);
-                }).onlyIf(() -> questPoseSupplier.get().getRotation().getDegrees() > 30));
+                })
+            .onlyIf(() -> questPoseSupplier.get().getRotation().getDegrees() > 30));
   }
 }
