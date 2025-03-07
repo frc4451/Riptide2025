@@ -115,26 +115,50 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine allred() {
-    AutoRoutine routine = drive.autoFactory.newRoutine("Allred");
+  public AutoRoutine allredL2() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Allred L2");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
                 pathAndMode(
-                    routine.trajectory(ChoreoPaths.START_BOTTOM_TO_EL4.name),
-                    SuperStructureModes.L4Coral),
-                alignAndScore(() -> ReefFaces.EF.get().leftPole, AutoConstants.l4ReefOffsetMeters),
+                    routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL2.name),
+                    SuperStructureModes.L2Coral),
+                alignAndScore(() -> ReefFaces.EF.get().rightPole, AutoConstants.l2ReefOffsetMeters),
                 awayFromReef(
-                    routine.trajectory(ChoreoPaths.EL4_TO_HPS_RIGHT.name),
+                    routine.trajectory(ChoreoPaths.FL2_TO_HPS_RIGHT.name),
                     SuperStructureModes.TUCKED),
                 superStructure.intake(),
                 pathAndMode(
-                    routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_FL4.name),
+                    routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_EL2.name),
+                    SuperStructureModes.L2Coral),
+                alignAndScore(
+                    () -> ReefFaces.EF.get().leftPole, AutoConstants.l2ReefOffsetMeters)));
+
+    return routine;
+  }
+
+  public AutoRoutine allredL4() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Allred L4");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                pathAndMode(
+                    routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name),
+                    SuperStructureModes.L4Coral),
+                alignAndScore(() -> ReefFaces.EF.get().rightPole, AutoConstants.l4ReefOffsetMeters),
+                awayFromReef(
+                    routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name),
+                    SuperStructureModes.TUCKED),
+                superStructure.intake(),
+                pathAndMode(
+                    routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_EL4.name),
                     SuperStructureModes.L4Coral),
                 alignAndScore(
-                    () -> ReefFaces.EF.get().rightPole, AutoConstants.l4ReefOffsetMeters)));
+                    () -> ReefFaces.EF.get().leftPole, AutoConstants.l4ReefOffsetMeters)));
 
     return routine;
   }
@@ -196,7 +220,7 @@ public class Autos {
         drive,
         () ->
             PoseUtils.getPerpendicularOffsetPose(
-                hps.get().pose().toPose2d(), AutoConstants.reefOffsetMeters));
+                hps.get().pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
   }
 
   private Command pathAndMode(AutoTrajectory trajectory, SuperStructureModes mode) {

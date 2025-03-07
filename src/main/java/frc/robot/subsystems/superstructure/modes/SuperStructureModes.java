@@ -8,7 +8,7 @@ public enum SuperStructureModes {
   TEST_90(1.0 / 2.0, Rotation2d.fromDegrees(90)),
   TEST_180(1.0 / 2.0, Rotation2d.fromDegrees(182)),
   // INTAKE(1.0 / 2.0, Rotation2d.kPi),
-  L1_L2Coral(19.0 / 2.0, Rotation2d.kZero),
+  L2Coral(19.0 / 2.0, Rotation2d.kZero),
   L3Coral(36.0 / 2.0, Rotation2d.kZero),
   L4Coral(49.0 / 2.0, Rotation2d.fromDegrees(182.0)),
   FLOOR_ALGAE(1.0 / 2.0, Rotation2d.fromDegrees(60)),
@@ -24,4 +24,3 @@ public enum SuperStructureModes {
     this.coralPos = coralPos;
   }
 }
-// 23.5 of 47.0 for L4 coral auto testing. :D

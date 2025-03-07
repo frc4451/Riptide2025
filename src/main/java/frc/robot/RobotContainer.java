@@ -165,7 +165,8 @@ public class RobotContainer {
     // autoChooser.addRoutine("Binacle", autos::binacle);
     // autoChooser.addRoutine("Triple Threat", autos::tripleThreat);
     // autoChooser.addRoutine("Barbaracle", autos::barbaracle);
-    autoChooser.addRoutine("Allred", autos::allred);
+    autoChooser.addRoutine("Allred L2", autos::allredL2);
+    autoChooser.addRoutine("Allred L4", autos::allredL4);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -299,9 +300,10 @@ public class RobotContainer {
     //     .whileTrue(
     //         superStructure.elevatorManualCommand(() -> 3.0 * -operatorController.getLeftY()));
 
-    operatorController
-        .rightY()
-        .whileTrue(superStructure.pivotManualCommand(() -> 4.0 * -operatorController.getRightY()));
+    // operatorController
+    //     .rightY()
+    //     .whileTrue(superStructure.pivotManualCommand(() -> 4.0 *
+    // -operatorController.getRightY()));
 
     operatorController
         .leftTrigger()
@@ -326,7 +328,7 @@ public class RobotContainer {
     // operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_90));
     // operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_180));
     operatorController.b().whileTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-    operatorController.a().whileTrue(superStructure.setModeCommand(SuperStructureModes.L1_L2Coral));
+    operatorController.a().whileTrue(superStructure.setModeCommand(SuperStructureModes.L2Coral));
     operatorController.x().whileTrue(superStructure.setModeCommand(SuperStructureModes.L3Coral));
     operatorController.y().whileTrue(superStructure.setModeCommand(SuperStructureModes.L4Coral));
 
@@ -341,9 +343,9 @@ public class RobotContainer {
     // Calculating Reef Offsets for Choreo
     for (ReefFaces face : ReefFaces.values()) {
       Logger.recordOutput(
-          logRoot + "/Faces/" + face.name() + "/Left/Normal",
+          logRoot + "/Faces/" + face.name() + "/Left/L2",
           PoseUtils.plusRotation(
-              face.blue.leftPole.getPerpendicularOffsetPose(AutoConstants.reefOffsetMeters),
+              face.blue.leftPole.getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
               Rotation2d.kPi));
       Logger.recordOutput(
           logRoot + "/Faces/" + face.name() + "/Left/L4",
@@ -351,9 +353,9 @@ public class RobotContainer {
               face.blue.leftPole.getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
               Rotation2d.kPi));
       Logger.recordOutput(
-          logRoot + "/Faces/" + face.name() + "/Right/Normal",
+          logRoot + "/Faces/" + face.name() + "/Right/L2",
           PoseUtils.plusRotation(
-              face.blue.rightPole.getPerpendicularOffsetPose(AutoConstants.reefOffsetMeters),
+              face.blue.rightPole.getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
               Rotation2d.kPi));
       Logger.recordOutput(
           logRoot + "/Faces/" + face.name() + "/Right/L4",
@@ -365,11 +367,11 @@ public class RobotContainer {
     Logger.recordOutput(
         logRoot + "/HPS/Left",
         PoseUtils.getPerpendicularOffsetPose(
-            FieldConstants.blueHPSDriverLeft.pose().toPose2d(), AutoConstants.reefOffsetMeters));
+            FieldConstants.blueHPSDriverLeft.pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
     Logger.recordOutput(
         logRoot + "/HPS/Right",
         PoseUtils.getPerpendicularOffsetPose(
-            FieldConstants.blueHPSDriverRight.pose().toPose2d(), AutoConstants.reefOffsetMeters));
+            FieldConstants.blueHPSDriverRight.pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
 
     driverController
         .back()
@@ -380,7 +382,7 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .leftPole
-                            .getPerpendicularOffsetPose(AutoConstants.reefOffsetMeters),
+                            .getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
                         Rotation2d.kPi)));
 
     driverController
@@ -392,7 +394,7 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .rightPole
-                            .getPerpendicularOffsetPose(AutoConstants.reefOffsetMeters),
+                            .getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
                         Rotation2d.kPi)));
   }
 
