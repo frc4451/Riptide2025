@@ -41,29 +41,30 @@ public class QuestCalibration {
                     drive)
                 .withTimeout(0.5),
             Commands.runOnce(
-                () -> {
-                  // Update current offset
-                  Translation2d offset = calculateOffsetToRobot(robotPose.get());
+                    () -> {
+                      // Update current offset
+                      Translation2d offset = calculateOffsetToRobot(robotPose.get());
 
-                  calculatedOffsetToRobot =
-                      calculatedOffsetToRobot
-                          .times((double) calculateOffsetCount / (calculateOffsetCount + 1))
-                          .plus(offset.div(calculateOffsetCount + 1));
-                  calculateOffsetCount++;
-                  Logger.recordOutput("QuestCalibration/CalculatedOffset", calculatedOffsetToRobot);
-                }) .onlyIf(() -> questPoseSupplier.get().getRotation().getDegrees() > 30)).finallyDo(
-                () -> {
-                  // Update current offset
-                  Translation2d offset = calculateOffsetToRobot(robotPose.get());
+                      calculatedOffsetToRobot =
+                          calculatedOffsetToRobot
+                              .times((double) calculateOffsetCount / (calculateOffsetCount + 1))
+                              .plus(offset.div(calculateOffsetCount + 1));
+                      calculateOffsetCount++;
+                      Logger.recordOutput(
+                          "QuestCalibration/CalculatedOffset", calculatedOffsetToRobot);
+                    })
+                .onlyIf(() -> questPoseSupplier.get().getRotation().getDegrees() > 30))
+        .finallyDo(
+            () -> {
+              // Update current offset
+              Translation2d offset = calculateOffsetToRobot(robotPose.get());
 
-                  calculatedOffsetToRobot =
-                      calculatedOffsetToRobot
-                          .times((double) calculateOffsetCount / (calculateOffsetCount + 1))
-                          .plus(offset.div(calculateOffsetCount + 1));
-                  calculateOffsetCount++;
-                  Logger.recordOutput("QuestCalibration/CalculatedOffset", calculatedOffsetToRobot);
-                })
-                ;
-
+              calculatedOffsetToRobot =
+                  calculatedOffsetToRobot
+                      .times((double) calculateOffsetCount / (calculateOffsetCount + 1))
+                      .plus(offset.div(calculateOffsetCount + 1));
+              calculateOffsetCount++;
+              Logger.recordOutput("QuestCalibration/CalculatedOffset", calculatedOffsetToRobot);
+            });
   }
 }
