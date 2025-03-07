@@ -10,7 +10,7 @@ public enum SuperStructureModes {
   // INTAKE(1.0 / 2.0, Rotation2d.kPi),
   L2Coral(19.0 / 2.0, Rotation2d.kZero),
   L3Coral(36.0 / 2.0, Rotation2d.kZero),
-  L4Coral(51.0 / 2.0, Rotation2d.fromDegrees(182.0)),
+  L4Coral(50.0 / 2.0, Rotation2d.fromDegrees(182.0)),
   FLOOR_ALGAE(1.0 / 2.0, Rotation2d.fromDegrees(60)),
   L2Algae(20 / 2.0, Rotation2d.fromDegrees(60.0)),
   L3Algae(31 / 2.0, Rotation2d.fromDegrees(60.0)),
