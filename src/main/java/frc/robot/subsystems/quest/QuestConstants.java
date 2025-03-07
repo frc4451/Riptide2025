@@ -14,7 +14,9 @@ public class QuestConstants {
   // Initial calibration transform, uncomment before calibrating
   public static final Transform2d robotToQuest =
       new Transform2d(
-          0.0, 0.0, new Rotation2d(0.0) // Initialize with actual rotation of the quest in real life
+          0.19054394434290312,
+          0.0535715470661827,
+          Rotation2d.fromDegrees(0.0) // Initialize with actual rotation of the quest in real life
           );
 
   public static final Matrix<N3, N1> stdDevs = VecBuilder.fill(0, 0, 0);

@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.Mode;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
@@ -135,27 +134,22 @@ public class RobotContainer {
   }
 
   private void configureAutos() {
-    if (Constants.showCalibrationRoutines) {
-      autoChooser.addCmd(
-          "Drive Wheel Radius Characterization",
-          () -> DriveCommands.wheelRadiusCharacterization(drive));
-      autoChooser.addCmd(
-          "Drive Simple FF Characterization",
-          () -> DriveCommands.feedforwardCharacterization(drive));
-      autoChooser.addCmd(
-          "Drive SysId (Quasistatic Forward)",
-          () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      autoChooser.addCmd(
-          "Drive SysId (Quasistatic Reverse)",
-          () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      autoChooser.addCmd(
-          "Drive SysId (Dynamic Forward)",
-          () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-      autoChooser.addCmd(
-          "Drive SysId (Dynamic Reverse)",
-          () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-      autoChooser.addCmd("Quest Offset Calibration", () -> quest.calibrateCommand(drive));
-    }
+    autoChooser.addCmd(
+        "Drive Wheel Radius Characterization",
+        () -> DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addCmd(
+        "Drive Simple FF Characterization", () -> DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addCmd(
+        "Drive SysId (Quasistatic Forward)",
+        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addCmd(
+        "Drive SysId (Quasistatic Reverse)",
+        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addCmd(
+        "Drive SysId (Dynamic Forward)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addCmd(
+        "Drive SysId (Dynamic Reverse)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addCmd("Quest Offset Calibration", () -> quest.calibrateCommand(drive));
 
     // autoChooser.addRoutine("2 Meters", autos::twoMeters);
     // autoChooser.addRoutine("3 Meters", autos::threeMeters);
@@ -182,8 +176,8 @@ public class RobotContainer {
     configurePoleBindings();
     configureSuperBindings();
 
-    if (Constants.currentMode == Mode.SIM) {
-      debugSetup();
+    if (Constants.currentMode == Constants.Mode.SIM) {
+        debugSetup();
     }
   }
 
@@ -260,8 +254,6 @@ public class RobotContainer {
       blinkin.addConditionalState(
           BobotState.humanPlayerShouldThrow(), BlinkinState.HUMAN_PLAYER_SHOULD_THROW);
 
-      blinkin.addConditionalState(BobotState.nearHumanPlayer(), BlinkinState.NEAR_HUMAN_PLAYER);
-
       blinkin.addConditionalState(superStructure.isCoralIntaked(), BlinkinState.CORAL_IN);
     }
   }
@@ -274,6 +266,10 @@ public class RobotContainer {
                 drive,
                 () -> FieldUtils.getClosestReef().leftPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
+                () ->
+                    superStructure.isL4Coral()
+                        ? AutoConstants.l4RumbleDistanceMters
+                        : AutoConstants.l2RumbleDistanceMters,
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
@@ -285,6 +281,10 @@ public class RobotContainer {
                 drive,
                 () -> FieldUtils.getClosestReef().rightPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
+                () ->
+                    superStructure.isL4Coral()
+                        ? AutoConstants.l4RumbleDistanceMters
+                        : AutoConstants.l2RumbleDistanceMters,
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
@@ -304,6 +304,11 @@ public class RobotContainer {
     //     .rightY()
     //     .whileTrue(superStructure.pivotManualCommand(() -> 4.0 *
     // -operatorController.getRightY()));
+
+    // Allred flippy thingy
+    operatorController
+        .povUp()
+        .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED_PREP));
 
     operatorController
         .leftTrigger()
@@ -338,7 +343,7 @@ public class RobotContainer {
   }
 
   private void debugSetup() {
-    String logRoot = "ChoreoWaypoints";
+    String logRoot = "Debug/ChoreoWaypoints";
 
     // Calculating Reef Offsets for Choreo
     for (ReefFaces face : ReefFaces.values()) {
@@ -382,7 +387,7 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .leftPole
-                            .getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
+                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
                         Rotation2d.kPi)));
 
     driverController
@@ -394,7 +399,7 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .rightPole
-                            .getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
+                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
                         Rotation2d.kPi)));
   }
 
