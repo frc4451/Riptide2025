@@ -90,10 +90,6 @@ public class BobotState extends VirtualSubsystem {
     return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 0.5);
   }
 
-  public static Trigger nearHumanPlayer() {
-    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 1);
-  }
-
   public static TargetAngleTracker getClosestAlignmentTracker() {
     return autoAlignmentTrackers.stream()
         .reduce((a, b) -> a.getDistanceMeters() < b.getDistanceMeters() ? a : b)
@@ -126,7 +122,6 @@ public class BobotState extends VirtualSubsystem {
       String calcLogRoot = logRoot + "HPS/";
       Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPSTag());
       Logger.recordOutput(calcLogRoot + "Distance", BobotState.hpsTracker.getDistanceMeters());
-      Logger.recordOutput(calcLogRoot + "IsClose", BobotState.nearHumanPlayer());
       Logger.recordOutput(
           calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());
       Logger.recordOutput(

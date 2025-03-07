@@ -36,7 +36,7 @@ public class QuestCalibration {
     return Commands.repeatingSequence(
             Commands.run(
                     () -> {
-                      drive.runVelocity(new ChassisSpeeds(0, 0, 0.3141));
+                      drive.runVelocity(new ChassisSpeeds(0, 0, Math.PI / 10.0));
                     },
                     drive)
                 .withTimeout(0.5),
@@ -51,7 +51,6 @@ public class QuestCalibration {
                           .plus(offset.div(calculateOffsetCount + 1));
                   calculateOffsetCount++;
                   Logger.recordOutput("QuestCalibration/CalculatedOffset", calculatedOffsetToRobot);
-                }))
-        .onlyIf(() -> questPoseSupplier.get().getRotation().getDegrees() > 30);
+                }).onlyIf(() -> questPoseSupplier.get().getRotation().getDegrees() > 30));
   }
 }

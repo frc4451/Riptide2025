@@ -135,27 +135,25 @@ public class RobotContainer {
   }
 
   private void configureAutos() {
-    if (Constants.showCalibrationRoutines) {
-      autoChooser.addCmd(
-          "Drive Wheel Radius Characterization",
-          () -> DriveCommands.wheelRadiusCharacterization(drive));
-      autoChooser.addCmd(
-          "Drive Simple FF Characterization",
-          () -> DriveCommands.feedforwardCharacterization(drive));
-      autoChooser.addCmd(
-          "Drive SysId (Quasistatic Forward)",
-          () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      autoChooser.addCmd(
-          "Drive SysId (Quasistatic Reverse)",
-          () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      autoChooser.addCmd(
-          "Drive SysId (Dynamic Forward)",
-          () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-      autoChooser.addCmd(
-          "Drive SysId (Dynamic Reverse)",
-          () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-      autoChooser.addCmd("Quest Offset Calibration", () -> quest.calibrateCommand(drive));
-    }
+    autoChooser.addCmd(
+        "Drive Wheel Radius Characterization",
+        () -> DriveCommands.wheelRadiusCharacterization(drive));
+    autoChooser.addCmd(
+        "Drive Simple FF Characterization",
+        () -> DriveCommands.feedforwardCharacterization(drive));
+    autoChooser.addCmd(
+        "Drive SysId (Quasistatic Forward)",
+        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    autoChooser.addCmd(
+        "Drive SysId (Quasistatic Reverse)",
+        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addCmd(
+        "Drive SysId (Dynamic Forward)",
+        () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    autoChooser.addCmd(
+        "Drive SysId (Dynamic Reverse)",
+        () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    autoChooser.addCmd("Quest Offset Calibration", () -> quest.calibrateCommand(drive));
 
     // autoChooser.addRoutine("2 Meters", autos::twoMeters);
     // autoChooser.addRoutine("3 Meters", autos::threeMeters);
@@ -259,8 +257,6 @@ public class RobotContainer {
     {
       blinkin.addConditionalState(
           BobotState.humanPlayerShouldThrow(), BlinkinState.HUMAN_PLAYER_SHOULD_THROW);
-
-      blinkin.addConditionalState(BobotState.nearHumanPlayer(), BlinkinState.NEAR_HUMAN_PLAYER);
 
       blinkin.addConditionalState(superStructure.isCoralIntaked(), BlinkinState.CORAL_IN);
     }
