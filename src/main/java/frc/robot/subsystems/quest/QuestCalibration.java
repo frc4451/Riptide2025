@@ -39,8 +39,8 @@ public class QuestCalibration {
                   drive.runVelocity(new ChassisSpeeds(0, 0, Math.PI / 10.0));
                 },
                 drive)
-            .withTimeout(0.5),
-        Commands.runOnce(
+            .withTimeout(0.5).finallyDo(
+        (
                 () -> {
                   // Update current offset
                   Translation2d offset = calculateOffsetToRobot(robotPose.get());
@@ -51,7 +51,7 @@ public class QuestCalibration {
                           .plus(offset.div(calculateOffsetCount + 1));
                   calculateOffsetCount++;
                   Logger.recordOutput("QuestCalibration/CalculatedOffset", calculatedOffsetToRobot);
-                })
+                }))
             .onlyIf(() -> questPoseSupplier.get().getRotation().getDegrees() > 30));
   }
 }
