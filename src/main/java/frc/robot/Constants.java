@@ -44,4 +44,6 @@ public final class Constants {
 
   public static final double controllerDeadband = 0.15;
   public static final double triggerPressedThreshold = 0.1;
+
+  public static final boolean showCalibrationRoutines = false;
 }

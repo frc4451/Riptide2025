@@ -135,32 +135,36 @@ public class RobotContainer {
   }
 
   private void configureAutos() {
-    // Set up SysId routines
-    autoChooser.addCmd(
-        "Drive Wheel Radius Characterization",
-        () -> DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addCmd(
-        "Drive Simple FF Characterization", () -> DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addCmd(
-        "Drive SysId (Quasistatic Forward)",
-        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addCmd(
-        "Drive SysId (Quasistatic Reverse)",
-        () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addCmd(
-        "Drive SysId (Dynamic Forward)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addCmd(
-        "Drive SysId (Dynamic Reverse)", () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addCmd("Quest Offset Calibration", () -> quest.calibrateCommand(drive));
+    if (Constants.showCalibrationRoutines) {
+      autoChooser.addCmd(
+          "Drive Wheel Radius Characterization",
+          () -> DriveCommands.wheelRadiusCharacterization(drive));
+      autoChooser.addCmd(
+          "Drive Simple FF Characterization",
+          () -> DriveCommands.feedforwardCharacterization(drive));
+      autoChooser.addCmd(
+          "Drive SysId (Quasistatic Forward)",
+          () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      autoChooser.addCmd(
+          "Drive SysId (Quasistatic Reverse)",
+          () -> drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      autoChooser.addCmd(
+          "Drive SysId (Dynamic Forward)",
+          () -> drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+      autoChooser.addCmd(
+          "Drive SysId (Dynamic Reverse)",
+          () -> drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+      autoChooser.addCmd("Quest Offset Calibration", () -> quest.calibrateCommand(drive));
+    }
 
-    autoChooser.addRoutine("2 Meters", autos::twoMeters);
-    autoChooser.addRoutine("3 Meters", autos::threeMeters);
-    autoChooser.addRoutine("5 Meters", autos::fiveMeters);
-    autoChooser.addRoutine("Curvy", autos::curvy);
-    autoChooser.addRoutine("Magikarp", autos::magikarp);
-    autoChooser.addRoutine("Binacle", autos::binacle);
-    autoChooser.addRoutine("Triple Threat", autos::tripleThreat);
-    autoChooser.addRoutine("Barbaracle", autos::barbaracle);
+    // autoChooser.addRoutine("2 Meters", autos::twoMeters);
+    // autoChooser.addRoutine("3 Meters", autos::threeMeters);
+    // autoChooser.addRoutine("5 Meters", autos::fiveMeters);
+    // autoChooser.addRoutine("Curvy", autos::curvy);
+    // autoChooser.addRoutine("Magikarp", autos::magikarp);
+    // autoChooser.addRoutine("Binacle", autos::binacle);
+    // autoChooser.addRoutine("Triple Threat", autos::tripleThreat);
+    // autoChooser.addRoutine("Barbaracle", autos::barbaracle);
     autoChooser.addRoutine("Allred", autos::allred);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
