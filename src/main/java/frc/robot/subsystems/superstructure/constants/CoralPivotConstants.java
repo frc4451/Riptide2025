@@ -19,7 +19,7 @@ public class CoralPivotConstants {
   public static final PivotConstraints pivotConstraints = new PivotConstraints(0, 10);
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
-      new TrapezoidProfile.Constraints(Math.PI * 2.5, Math.PI * 1.5);
+      new TrapezoidProfile.Constraints(Math.PI * 2.75, Math.PI * 1.5);
 
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html#combined-feedforward-and-feedback-control
   // No gravity in Sim, therefore no feedforward
