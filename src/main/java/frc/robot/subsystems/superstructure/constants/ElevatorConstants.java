@@ -36,8 +36,8 @@ public class ElevatorConstants {
   // No gravity in Sim, therefore no feedforward
   public static final CustomElevatorFF feedforward =
       Constants.currentMode == Mode.REAL
-          ? new CustomElevatorFF(0.36, 0.38, 0, 0.14, 0.05, 0.0, 0.0)
+          ? new CustomElevatorFF(0.350, 0.41, 0, 0.14, 0.06, 0.0, 0.0)
           : new CustomElevatorFF(0, 0, 0, 0, 0, 0, 0);
-  public static final double kP = 0.8;
+  public static final double kP = 0.4;
   public static final double kD = 0.0;
 }
