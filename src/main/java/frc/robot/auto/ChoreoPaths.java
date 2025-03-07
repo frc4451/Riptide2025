@@ -10,56 +10,52 @@ public enum ChoreoPaths {
   CURVY("Curvy"),
 
   // Start Mid to ___
-  START_MID_TO_A("StartMid-A"),
-  START_MID_TO_B("StartMid-B"),
-  START_MID_TO_C("StartMid-C"),
-  START_MID_TO_D("StartMid-D"),
-  START_MID_TO_E("StartMid-E"),
-  START_MID_TO_F("StartMid-F"),
-  START_MID_TO_G("StartMid-G"),
-  START_MID_TO_H("StartMid-H"),
-  START_MID_TO_I("StartMid-I"),
-  START_MID_TO_J("StartMid-J"),
-  START_MID_TO_K("StartMid-K"),
-  START_MID_TO_L("StartMid-L"),
+  START_MID_TO_AL4("StartMid-AL4"),
+  START_MID_TO_BL4("StartMid-BL4"),
+  START_MID_TO_CL4("StartMid-CL4"),
+  START_MID_TO_DL4("StartMid-DL4"),
+  START_MID_TO_EL4("StartMid-EL4"),
+  START_MID_TO_FL4("StartMid-FL4"),
+  START_MID_TO_GL4("StartMid-GL4"),
+  START_MID_TO_HL4("StartMid-HL4"),
+  START_MID_TO_IL4("StartMid-IL4"),
+  START_MID_TO_JL4("StartMid-JL4"),
+  START_MID_TO_KL4("StartMid-KL4"),
+  START_MID_TO_LL4("StartMid-LL4"),
 
   // Start Bottom to ___
-  START_BOTTOM_TO_E("StartBottom-E"),
-  START_BOTTOM_TO_F("StartBottom-F"),
+  START_BOTTOM_TO_EL4("StartBottom-EL4"),
+  START_BOTTOM_TO_FL4("StartBottom-FL4"),
 
   // ___ to HPS
-  A_TO_HPS_RIGHT("A-HPSRight"),
-  B_TO_HPS_RIGHT("B-HPSRight"),
-  C_TO_HPS_RIGHT("C-HPSRight"),
-  D_TO_HPS_RIGHT("D-HPSRight"),
-  E_TO_HPS_RIGHT("E-HPSRight"),
-  F_TO_HPS_RIGHT("F-HPSRight"),
-  G_TO_HPS_RIGHT("G-HPSRight"),
-  H_TO_HPS_RIGHT("H-HPSRight"),
-  I_TO_HPS_RIGHT("I-HPSRight"),
-  J_TO_HPS_RIGHT("J-HPSRight"),
-  K_TO_HPS_RIGHT("K-HPSRight"),
-  L_TO_HPS_RIGHT("L-HPSRight"),
-
-  // __ to HPS but slower and lewis or cole should rename this
-  E_TO_HPS_RIGHTS("E-HPSRightS"),
+  AL4_TO_HPS_RIGHT("AL4-HPSRight"),
+  BL4_TO_HPS_RIGHT("BL4-HPSRight"),
+  CL4_TO_HPS_RIGHT("CL4-HPSRight"),
+  DL4_TO_HPS_RIGHT("DL4-HPSRight"),
+  EL4_TO_HPS_RIGHT("EL4-HPSRight"),
+  FL4_TO_HPS_RIGHT("FL4-HPSRight"),
+  GL4_TO_HPS_RIGHT("GL4-HPSRight"),
+  HL4_TO_HPS_RIGHT("HL4-HPSRight"),
+  IL4_TO_HPS_RIGHT("IL4-HPSRight"),
+  JL4_TO_HPS_RIGHT("JL4-HPSRight"),
+  KL4_TO_HPS_RIGHT("KL4-HPSRight"),
+  LL4_TO_HPS_RIGHT("LL4-HPSRight"),
 
   // HPS to ___
-  HPS_RIGHT_TO_A("HPSRight-A"),
-  HPS_RIGHT_TO_B("HPSRight-B"),
-  HPS_RIGHT_TO_C("HPSRight-C"),
-  HPS_RIGHT_TO_D("HPSRight-D"),
-  HPS_RIGHT_TO_E("HPSRight-E"),
-  HPS_RIGHT_TO_F("HPSRight-F"),
-  HPS_RIGHT_TO_G("HPSRight-G"),
-  HPS_RIGHT_TO_H("HPSRight-H"),
-  HPS_RIGHT_TO_I("HPSRight-I"),
-  HPS_RIGHT_TO_J("HPSRight-J"),
-  HPS_RIGHT_TO_K("HPSRight-K"),
-  HPS_RIGHT_TO_L("HPSRight-L"),
-
-  // HPS to ___ but slower I DONT KNOW
-  HPS_RIGHT_TO_CS("HPSRight-CS");
+  HPS_RIGHT_TO_AL4("HPSRight-AL4"),
+  HPS_RIGHT_TO_BL4("HPSRight-BL4"),
+  HPS_RIGHT_TO_CL4("HPSRight-CL4"),
+  HPS_RIGHT_TO_DL4("HPSRight-DL4"),
+  HPS_RIGHT_TO_EL4("HPSRight-EL4"),
+  HPS_RIGHT_TO_FL4("HPSRight-FL4"),
+  HPS_RIGHT_TO_GL4("HPSRight-GL4"),
+  HPS_RIGHT_TO_HL4("HPSRight-HL4"),
+  HPS_RIGHT_TO_IL4("HPSRight-IL4"),
+  HPS_RIGHT_TO_JL4("HPSRight-JL4"),
+  HPS_RIGHT_TO_KL4("HPSRight-KL4"),
+  HPS_RIGHT_TO_LL4("HPSRight-LL4"),
+//
+;
 
   public final String name;
 

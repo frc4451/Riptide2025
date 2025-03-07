@@ -348,27 +348,35 @@ public class RobotContainer {
     // Calculating Reef Offsets for Choreo
     for (ReefFaces face : ReefFaces.values()) {
       Logger.recordOutput(
-          logRoot + "/Faces/" + face.name() + "/Left",
+          logRoot + "/Faces/" + face.name() + "/Left/Normal",
           PoseUtils.plusRotation(
-              face.blue.leftPole.getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
+              face.blue.leftPole.getPerpendicularOffsetPose(AutoConstants.reefOffsetMeters),
               Rotation2d.kPi));
       Logger.recordOutput(
-          logRoot + "/Faces/" + face.name() + "/Right",
+          logRoot + "/Faces/" + face.name() + "/Left/L4",
           PoseUtils.plusRotation(
-              face.blue.rightPole.getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
+              face.blue.leftPole.getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
+              Rotation2d.kPi));
+      Logger.recordOutput(
+          logRoot + "/Faces/" + face.name() + "/Right/Normal",
+          PoseUtils.plusRotation(
+              face.blue.rightPole.getPerpendicularOffsetPose(AutoConstants.reefOffsetMeters),
+              Rotation2d.kPi));
+      Logger.recordOutput(
+          logRoot + "/Faces/" + face.name() + "/Right/L4",
+          PoseUtils.plusRotation(
+              face.blue.rightPole.getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
               Rotation2d.kPi));
     }
 
     Logger.recordOutput(
         logRoot + "/HPS/Left",
         PoseUtils.getPerpendicularOffsetPose(
-            FieldConstants.blueHPSDriverLeft.pose().toPose2d(),
-            AutoConstants.reefScoreOffsetMeters));
+            FieldConstants.blueHPSDriverLeft.pose().toPose2d(), AutoConstants.reefOffsetMeters));
     Logger.recordOutput(
         logRoot + "/HPS/Right",
         PoseUtils.getPerpendicularOffsetPose(
-            FieldConstants.blueHPSDriverRight.pose().toPose2d(),
-            AutoConstants.reefScoreOffsetMeters));
+            FieldConstants.blueHPSDriverRight.pose().toPose2d(), AutoConstants.reefOffsetMeters));
 
     driverController
         .back()
@@ -379,7 +387,7 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .leftPole
-                            .getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
+                            .getPerpendicularOffsetPose(AutoConstants.reefOffsetMeters),
                         Rotation2d.kPi)));
 
     driverController
@@ -391,7 +399,7 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .rightPole
-                            .getPerpendicularOffsetPose(AutoConstants.reefScoreOffsetMeters),
+                            .getPerpendicularOffsetPose(AutoConstants.reefOffsetMeters),
                         Rotation2d.kPi)));
   }
 
