@@ -331,17 +331,6 @@ public class RobotContainer {
         .whileTrue(superStructure.setModeCommand(SuperStructureModes.FLOOR_ALGAE));
   }
 
-  private Command teleopCoralScoreCommand(SuperStructureModes mode) {
-    return Commands.sequence(
-            superStructure.setModeAndWaitCommand(mode),
-            Commands.deadline(
-                Commands.sequence(
-                    Commands.waitUntil(operatorController.rightTrigger()),
-                    superStructure.shootCoral()),
-                operatorController.rumble(1.0)))
-        .finallyDo(superStructure::resetModes);
-  }
-
   private void debugSetup() {
     String logRoot = "ChoreoWaypoints";
 
