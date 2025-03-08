@@ -176,9 +176,9 @@ public class RobotContainer {
     configurePoleBindings();
     configureSuperBindings();
 
-    // if (Constants.currentMode == Mode.SIM) {
-    debugSetup();
-    // }
+    if (Constants.currentMode == Constants.Mode.SIM) {
+        debugSetup();
+    }
   }
 
   private void configureRotationModes() {
