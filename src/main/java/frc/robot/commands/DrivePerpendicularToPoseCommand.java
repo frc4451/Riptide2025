@@ -5,12 +5,13 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.PoseUtils;
+
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -22,12 +23,12 @@ public class DrivePerpendicularToPoseCommand extends Command {
 
   private final Drive drive;
   private final Supplier<Pose2d> targetPoseSupplier;
-  private final Supplier<Double> perpendicularInput;
+  private final DoubleSupplier perpendicularInput;
 
   private double perpendicularError = 0;
 
   public DrivePerpendicularToPoseCommand(
-      Drive drive, Supplier<Pose2d> targetPoseSupplier, Supplier<Double> perpendicularInput) {
+      Drive drive, Supplier<Pose2d> targetPoseSupplier, DoubleSupplier perpendicularInput) {
     addRequirements(drive);
 
     this.drive = drive;
@@ -38,12 +39,13 @@ public class DrivePerpendicularToPoseCommand extends Command {
   public static DrivePerpendicularToPoseCommand withJoystickRumble(
       Drive drive,
       Supplier<Pose2d> targetPoseSupplier,
-      Supplier<Double> perpendicularInput,
+      DoubleSupplier perpendicularInput,
+      DoubleSupplier rumbleDistance,
       Command rumbleCommand) {
     DrivePerpendicularToPoseCommand command =
         new DrivePerpendicularToPoseCommand(drive, targetPoseSupplier, perpendicularInput);
 
-    command.atSetpoint().onTrue(Commands.deferredProxy(() -> rumbleCommand));
+    command.atSetpoint(rumbleDistance).onTrue(Commands.deferredProxy(() -> rumbleCommand));
 
     return command;
   }
@@ -73,18 +75,18 @@ public class DrivePerpendicularToPoseCommand extends Command {
 
     ChassisSpeeds speeds =
         new ChassisSpeeds(
-            perpendicularInput.get() * drive.getMaxLinearSpeedMetersPerSec(),
+            perpendicularInput.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec(),
             parallelSpeed,
             angularSpeed);
 
     drive.runVelocity(speeds);
   }
 
-  public Trigger atSetpoint() {
+  public Trigger atSetpoint(DoubleSupplier distance) {
     return new Trigger(
         () ->
             parallelController.atSetpoint()
                 && angleController.atSetpoint()
-                && perpendicularError < Units.feetToMeters(1.8));
+                && perpendicularError < distance.getAsDouble());
   }
 }
