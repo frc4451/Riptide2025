@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.Mode;
 import frc.robot.auto.AutoConstants;
 import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
@@ -178,7 +177,7 @@ public class RobotContainer {
     configureSuperBindings();
 
     // if (Constants.currentMode == Mode.SIM) {
-      debugSetup();
+    debugSetup();
     // }
   }
 
