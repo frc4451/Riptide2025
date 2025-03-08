@@ -267,7 +267,10 @@ public class RobotContainer {
                 drive,
                 () -> FieldUtils.getClosestReef().leftPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
-                () -> superStructure.isL4Coral() ? AutoConstants.l4RumbleDistanceMters : AutoConstants.l2RumbleDistanceMters,
+                () ->
+                    superStructure.isL4Coral()
+                        ? AutoConstants.l4RumbleDistanceMters
+                        : AutoConstants.l2RumbleDistanceMters,
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
@@ -279,7 +282,10 @@ public class RobotContainer {
                 drive,
                 () -> FieldUtils.getClosestReef().rightPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
-                () -> superStructure.isL4Coral() ? AutoConstants.l4RumbleDistanceMters : AutoConstants.l2RumbleDistanceMters,
+                () ->
+                    superStructure.isL4Coral()
+                        ? AutoConstants.l4RumbleDistanceMters
+                        : AutoConstants.l2RumbleDistanceMters,
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
