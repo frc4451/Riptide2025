@@ -177,9 +177,9 @@ public class RobotContainer {
     configurePoleBindings();
     configureSuperBindings();
 
-    if (Constants.currentMode == Mode.SIM) {
+    // if (Constants.currentMode == Mode.SIM) {
       debugSetup();
-    }
+    // }
   }
 
   private void configureRotationModes() {
@@ -306,6 +306,11 @@ public class RobotContainer {
     //     .whileTrue(superStructure.pivotManualCommand(() -> 4.0 *
     // -operatorController.getRightY()));
 
+    // Allred flippy thingy
+    operatorController
+        .povUp()
+        .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED_PREP));
+
     operatorController
         .leftTrigger()
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
@@ -339,7 +344,7 @@ public class RobotContainer {
   }
 
   private void debugSetup() {
-    String logRoot = "ChoreoWaypoints";
+    String logRoot = "Debug/ChoreoWaypoints";
 
     // Calculating Reef Offsets for Choreo
     for (ReefFaces face : ReefFaces.values()) {
@@ -383,7 +388,7 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .leftPole
-                            .getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
+                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
                         Rotation2d.kPi)));
 
     driverController
@@ -395,7 +400,7 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .rightPole
-                            .getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
+                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
                         Rotation2d.kPi)));
   }
 
