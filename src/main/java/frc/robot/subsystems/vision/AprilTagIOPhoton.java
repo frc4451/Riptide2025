@@ -72,7 +72,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
 
       // Detected Corners
       for (PhotonTrackedTarget target : result.getTargets()) {
-        if (AprilTagAlgorithms.isValid(target)) {
+        if (SingleTagAlgorithms.isUsable(target)) {
           // for (TargetCorner corner : target.getDetectedCorners()) {
           //   validCorners.add(new Translation2d(corner.x, corner.y));
           // }
@@ -153,6 +153,17 @@ public class AprilTagIOPhoton implements AprilTagIO {
 
         validPoseObservations.add(observation);
         validPoses.add(observation.robotPose());
+
+        for (PhotonTrackedTarget target : result.getTargets()) {
+          target.getDetectedCorners().stream()
+              .map(corner -> new Translation2d(corner.x, corner.y))
+              .forEach(validCorners::add);
+
+          validIds.add(target.getFiducialId());
+
+          validAprilTagPoses.add(
+              VisionConstants.fieldLayout.getTagPose(target.getFiducialId()).get());
+        }
       } else if (!result.getTargets().isEmpty()) {
         PhotonTrackedTarget target = result.getTargets().get(0);
 
@@ -161,7 +172,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
             AprilTagAlgorithms.getEstimationStdDevs(pose.toPose2d(), result.getTargets());
         PoseObservation observation =
             new PoseObservation(
-                estimatedPose.estimatedPose,
+                pose,
                 estimatedPose.timestampSeconds,
                 target.poseAmbiguity,
                 // new int[] {target.fiducialId}
@@ -169,7 +180,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
                 stdDevs,
                 PoseEstimationMethod.SINGLE_TAG);
 
-        if (AprilTagAlgorithms.isValid(target)) {
+        if (SingleTagAlgorithms.isUsable(target)) {
           validPoseObservations.add(observation);
           validPoses.add(observation.robotPose());
         } else {
