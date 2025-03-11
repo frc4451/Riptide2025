@@ -177,7 +177,7 @@ public class RobotContainer {
     configureSuperBindings();
 
     if (Constants.currentMode == Constants.Mode.SIM) {
-        debugSetup();
+      debugSetup();
     }
   }
 
@@ -306,9 +306,7 @@ public class RobotContainer {
     // -operatorController.getRightY()));
 
     // Allred flippy thingy
-    operatorController
-        .povUp()
-        .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED_PREP));
+    operatorController.povUp().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED_L4));
 
     operatorController
         .leftTrigger()
@@ -398,8 +396,8 @@ public class RobotContainer {
                 () ->
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
-                            .rightPole
-                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
+                            .leftPole
+                            .getPerpendicularOffsetPose(AutoConstants.elevatorDownOffsetMeters),
                         Rotation2d.kPi)));
   }
 

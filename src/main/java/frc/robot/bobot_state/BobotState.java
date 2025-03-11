@@ -12,6 +12,7 @@ import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
+import frc.robot.util.PoseUtils;
 import frc.robot.util.VirtualSubsystem;
 import java.util.List;
 import java.util.Queue;
@@ -87,7 +88,11 @@ public class BobotState extends VirtualSubsystem {
   }
 
   public static Trigger humanPlayerShouldThrow() {
-    return new Trigger(() -> BobotState.hpsTracker.getDistanceMeters() < 0.5);
+    return new Trigger(
+        () ->
+            PoseUtils.getPerpendicularError(
+                    BobotState.getGlobalPose(), FieldUtils.getClosestHPSTag().pose().toPose2d())
+                < 0.5);
   }
 
   public static TargetAngleTracker getClosestAlignmentTracker() {

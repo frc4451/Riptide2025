@@ -51,6 +51,13 @@ public class DriveToPoseCommand extends Command {
     drive.runVelocity(speeds);
   }
 
+  @Override
+  public void end(boolean interrupt) {
+    perpendicularController.reset();
+    parallelController.reset();
+    angleController.reset(0);
+  }
+
   public Trigger atSetpoint() {
     return new Trigger(
         () ->

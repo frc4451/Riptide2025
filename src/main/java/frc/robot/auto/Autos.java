@@ -146,19 +146,21 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
-                pathAndMode(
-                    routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name),
-                    SuperStructureModes.L4Coral),
-                alignAndScore(() -> ReefFaces.EF.get().rightPole, AutoConstants.l4ReefOffsetMeters),
-                awayFromReef(
-                    routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name),
-                    SuperStructureModes.TUCKED),
+                // L4
+                followTrajectory(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
+                superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
+                alignAndScoreNew(
+                    () -> ReefFaces.EF.get().rightPole, AutoConstants.l4ReefOffsetMeters),
+                backupFromReef(() -> ReefFaces.EF.get().rightPole),
+                // HPS
+                tuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name)),
                 superStructure.intake(),
-                pathAndMode(
-                    routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_EL4.name),
-                    SuperStructureModes.L4Coral),
-                alignAndScore(
-                    () -> ReefFaces.EF.get().leftPole, AutoConstants.l4ReefOffsetMeters)));
+                // L4
+                followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_EL4.name)),
+                superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
+                alignAndScoreNew(
+                    () -> ReefFaces.EF.get().leftPole, AutoConstants.l4ReefOffsetMeters),
+                backupFromReef(() -> ReefFaces.EF.get().leftPole)));
 
     return routine;
   }
@@ -227,6 +229,7 @@ public class Autos {
     return Commands.deadline(followTrajectory(trajectory), superStructure.setModeCommand(mode));
   }
 
+  // Classic sequencing
   private Command alignAndScore(Supplier<ReefPole> poleSupplier, double reefOffsetMeters) {
     return Commands.deadline(
         Commands.waitSeconds(1),
@@ -238,6 +241,33 @@ public class Autos {
     return Commands.deadline(
         followTrajectory(trajectory),
         Commands.sequence(Commands.waitSeconds(0.3), superStructure.setModeCommand(mode)));
+  }
+
+  // New Sequencing
+  private Command positionToPoleAndWait(Supplier<ReefPole> pole, double reefOffsetMeters) {
+    DriveToPoseCommand cmd =
+        new DriveToPoseCommand(
+            drive,
+            () ->
+                PoseUtils.plusRotation(
+                    pole.get().getPerpendicularOffsetPose(reefOffsetMeters), Rotation2d.kPi));
+
+    return cmd.until(cmd.atSetpoint()).unless(cmd.atSetpoint());
+  }
+
+  private Command alignAndScoreNew(Supplier<ReefPole> poleSupplier, double reefOffsetMeters) {
+    return Commands.sequence(
+        positionToPoleAndWait(poleSupplier, reefOffsetMeters), superStructure.shootCoral());
+  }
+
+  private Command backupFromReef(Supplier<ReefPole> pole) {
+    return Commands.sequence(
+        positionToPole(() -> pole.get(), AutoConstants.elevatorDownOffsetMeters).withTimeout(1.0),
+        superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
+  }
+
+  private Command tuckAndGo(AutoTrajectory trajectory) {
+    return pathAndMode(trajectory, SuperStructureModes.TUCKED);
   }
 
   // Routine Logic

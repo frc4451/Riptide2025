@@ -81,6 +81,12 @@ public class DrivePerpendicularToPoseCommand extends Command {
     drive.runVelocity(speeds);
   }
 
+  @Override
+  public void end(boolean interrupt) {
+    parallelController.reset();
+    angleController.reset(0);
+  }
+
   public Trigger atSetpoint(DoubleSupplier distance) {
     return new Trigger(
         () ->
