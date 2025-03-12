@@ -16,17 +16,19 @@ public class CoralPivotConstants {
   public static final boolean invert = true;
   public static final double currentLimitAmps = 30;
 
-  public static final PivotConstraints pivotConstraints = new PivotConstraints(0, 10);
+  public static final PivotConstraints pivotConstraints = new PivotConstraints(0, Math.PI);
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
-      new TrapezoidProfile.Constraints(Math.PI * 3.25, Math.PI * 2.75);
+      // new TrapezoidProfile.Constraints(Math.PI * 5.0, Math.PI * 7.0);
+      new TrapezoidProfile.Constraints(Math.PI * 5.00, Math.PI * 5.00);
 
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-vertical-arm.html#combined-feedforward-and-feedback-control
   // No gravity in Sim, therefore no feedforward
   public static final ArmFeedforward feedforward =
       Constants.currentMode == Constants.Mode.REAL
           ? new ArmFeedforward(0, 0.3, 1.1)
-          : new ArmFeedforward(0, 0, 0);
+          : new ArmFeedforward(0, 0, 0, 0);
+  // public static final double kP = 2.0;
   public static final double kP = 1.8;
   public static final double kD = 0.0;
 }

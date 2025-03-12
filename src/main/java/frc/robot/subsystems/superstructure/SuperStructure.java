@@ -64,7 +64,8 @@ public class SuperStructure extends SubsystemBase {
                 ElevatorConstants.currentLimitAmps,
                 ElevatorConstants.invert,
                 ElevatorConstants.invertFollower,
-                true);
+                ElevatorConstants.isBrake,
+                ElevatorConstants.foc);
 
         // heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
 
@@ -247,7 +248,7 @@ public class SuperStructure extends SubsystemBase {
   public Command shootCoral() {
     return Commands.sequence(
         setShooterModeCommand(ShooterModes.SHOOT),
-        Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(1.0)),
+        Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.4)),
         setShooterModeCommand(ShooterModes.NONE));
   }
 

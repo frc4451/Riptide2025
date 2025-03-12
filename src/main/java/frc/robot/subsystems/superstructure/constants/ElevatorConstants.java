@@ -24,13 +24,17 @@ public class ElevatorConstants {
   public static final boolean invertFollower = true;
   public static final double currentLimitAmps = 60;
 
+  public static final boolean isBrake = true;
+
   public static final double resetFromHeightSensorThresholdInches = 5;
   public static final ElevatorConstraints elevatorConstraints =
       new ElevatorConstraints(1.0 / 2.0, 50 / 2.0);
   public static final double startHeightInches = -0.5 / 2.0;
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =
-      new TrapezoidProfile.Constraints(40.0, 30.0);
+      new TrapezoidProfile.Constraints(50.0, 50.0);
+
+  public static final boolean foc = true;
 
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html#motion-profiled-feedforward-and-feedback-control
   // No gravity in Sim, therefore no feedforward
