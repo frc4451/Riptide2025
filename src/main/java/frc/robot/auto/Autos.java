@@ -147,20 +147,20 @@ public class Autos {
         .onTrue(
             Commands.sequence(
                 // L4
-                followTrajectory(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
+                prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
                 superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
                 alignAndScoreNew(
                     () -> ReefFaces.EF.get().rightPole, AutoConstants.l4ReefOffsetMeters),
                 backupFromReef(() -> ReefFaces.EF.get().rightPole),
                 // HPS
-                tuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name)),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name)),
                 superStructure.intake(),
                 // L4
-                followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_EL4.name)),
+                prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
                 superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
                 alignAndScoreNew(
-                    () -> ReefFaces.EF.get().leftPole, AutoConstants.l4ReefOffsetMeters),
-                backupFromReef(() -> ReefFaces.EF.get().leftPole)));
+                    () -> ReefFaces.CD.get().leftPole, AutoConstants.l4ReefOffsetMeters),
+                backupFromReef(() -> ReefFaces.CD.get().leftPole)));
 
     return routine;
   }
@@ -262,12 +262,23 @@ public class Autos {
 
   private Command backupFromReef(Supplier<ReefPole> pole) {
     return Commands.sequence(
-        positionToPole(() -> pole.get(), AutoConstants.elevatorDownOffsetMeters).withTimeout(1.0),
+        positionToPoleAndWait(() -> pole.get(), AutoConstants.elevatorDownOffsetMeters),
         superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
+  }
+
+  private Command prepAndGo(AutoTrajectory trajectory) {
+    return pathAndMode(trajectory, SuperStructureModes.TUCKED_L4);
   }
 
   private Command tuckAndGo(AutoTrajectory trajectory) {
     return pathAndMode(trajectory, SuperStructureModes.TUCKED);
+  }
+
+  private Command delayedTuckAndGo(AutoTrajectory trajectory) {
+    return Commands.deadline(
+        followTrajectory(trajectory),
+        Commands.waitSeconds(1.575)
+            .andThen(superStructure.setModeCommand(SuperStructureModes.TUCKED)));
   }
 
   // Routine Logic
