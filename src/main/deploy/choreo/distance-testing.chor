@@ -7,15 +7,15 @@
    "MaxAccel":{
     "dimension":"LinAcc",
     "var":{
-     "exp":"3 m / s ^ 2",
-     "val":3.0
+     "exp":"4 m / s ^ 2",
+     "val":4.0
     }
    },
    "MaxVel":{
     "dimension":"LinVel",
     "var":{
-     "exp":"3 m / s",
-     "val":3.0
+     "exp":"4 m / s",
+     "val":4.0
     }
    }
   },
