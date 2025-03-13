@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.util.PoseUtils;
 
 public class QuestIOReal implements QuestIO {
   // Configure Network Tables topics (questnav/...) to communicate with the Quest
@@ -61,7 +62,7 @@ public class QuestIOReal implements QuestIO {
   /** Sets supplied pose as origin of all calculations */
   public void resetPose(Pose2d pose) {
     zeroAbsolutePosition();
-    resetPose = pose.plus(QuestConstants.robotToQuest);
+    resetPose = pose;
   }
 
   /** Zeroes the absolute 3D position of the robot (similar to long-pressing the quest logo) */
@@ -97,15 +98,11 @@ public class QuestIOReal implements QuestIO {
   }
 
   private Pose2d getQuestPose() {
-    // spotless: off
-    return new Pose2d(
-        getQuestTranslation().plus(resetPose.getTranslation()),
-        Rotation2d.fromRadians(getQuestYawRad()).plus(resetPose.getRotation()));
-    // spotless: on
+    return getRawPose().transformBy(QuestConstants.robotToQuest);
   }
 
   private Pose2d getRobotPose() {
-    return getQuestPose().transformBy(QuestConstants.robotToQuest.inverse());
+    return PoseUtils.plus(getQuestPose(), resetPose);
   }
 
   @Override

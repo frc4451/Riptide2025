@@ -25,7 +25,7 @@ public class VisionConstants {
   }
 
   public static final AprilTagFieldLayout fieldLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+      AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
   public static final Optional<VisionSystemSim> aprilTagSim =
       Constants.currentMode == Mode.SIM
@@ -50,19 +50,19 @@ public class VisionConstants {
           // FLO
           new AprilTagCameraConfig(
               new VisionSource(
-                  "FrontLeftOuter",
+                  "RearLeft",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(-4.594), // forward+
+                          Units.inchesToMeters(-6.094), // forward+
                           Units.inchesToMeters(12.728), // left+
                           Units.inchesToMeters(8.010)), // up+
                       new Rotation3d(
-                          0, Units.degreesToRadians(-27.5), Units.degreesToRadians(30)))),
+                          0, Units.degreesToRadians(-20.0), Units.degreesToRadians(30)))),
               SimCameraConfig.THRIFTY_CAM_80),
           // FLI
           new AprilTagCameraConfig(
               new VisionSource(
-                  "FrontLeftInner",
+                  "FrontLeft",
                   new Transform3d(
                       new Translation3d(
                           Units.inchesToMeters(6.915), // forward+
@@ -73,7 +73,7 @@ public class VisionConstants {
           // FRI
           new AprilTagCameraConfig(
               new VisionSource(
-                  "FrontRightInner",
+                  "FrontRight",
                   new Transform3d(
                       new Translation3d(
                           Units.inchesToMeters(6.915), // forward+
@@ -84,14 +84,14 @@ public class VisionConstants {
           // FRO
           new AprilTagCameraConfig(
               new VisionSource(
-                  "FrontRightOuter",
+                  "RearRight",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(-4.594), // forward+
+                          Units.inchesToMeters(-6.094), // forward+
                           Units.inchesToMeters(-12.728), // left+
                           Units.inchesToMeters(8.010)), // up+
                       new Rotation3d(
-                          0, Units.degreesToRadians(-27.5), Units.degreesToRadians(-30)))),
+                          0, Units.degreesToRadians(-20.0), Units.degreesToRadians(-30)))),
               SimCameraConfig.THRIFTY_CAM_80));
 
   public static final List<AprilTagCameraConfig> aprilTagCamerasConfigs =

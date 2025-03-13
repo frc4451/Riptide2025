@@ -173,9 +173,9 @@ public class Drive extends SubsystemBase {
       PoseObservation observation;
       while ((observation = BobotState.getVisionObservations().poll()) != null) {
         poseEstimator.addVisionMeasurement(
-            observation.robotPose().toPose2d(), observation.timestampSeconds()
-            // ,observation.stdDevs()
-            );
+            observation.robotPose().toPose2d(),
+            observation.timestampSeconds(),
+            observation.stdDevs());
       }
 
       // Quest

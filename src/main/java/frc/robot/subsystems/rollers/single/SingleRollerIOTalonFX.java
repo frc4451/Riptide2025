@@ -4,8 +4,6 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -29,18 +27,15 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   private final StatusSignal<Current> torqueCurrentAmps;
   private final StatusSignal<Temperature> tempCelsius;
 
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
-  private final VelocityVoltage velocityOut =
-      new VelocityVoltage(0).withEnableFOC(true).withUpdateFreqHz(0);
-  private final PositionVoltage positionOut =
-      new PositionVoltage(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+  private final VoltageOut voltageOut =
+      new VoltageOut(0.0).withEnableFOC(false).withUpdateFreqHz(0);
   private final NeutralOut neutralOut = new NeutralOut();
 
   public SingleRollerIOTalonFX(
-      int canId, double reduction, double currentLimitAmps, boolean invert) {
+      int canId, double reduction, double currentLimitAmps, boolean invert, boolean isBrakeMode) {
     this.reduction = reduction;
 
-    talon = new TalonFX(canId);
+    talon = new TalonFX(canId, Constants.alternateCanBus);
 
     position = talon.getPosition();
     velocity = talon.getVelocity();
@@ -53,7 +48,7 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
     // spotless:off
     cfg.MotorOutput
         .withInverted(invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Brake);
+        .withNeutralMode(isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(currentLimitAmps);
@@ -91,15 +86,6 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   @Override
   public void runVolts(double volts) {
     talon.setControl(voltageOut.withOutput(volts));
-  }
-
-  public void runVelocity(double velocityRadPerSecond) {
-    talon.setControl(velocityOut.withVelocity(Units.radiansToRotations(velocityRadPerSecond)));
-  }
-
-  @Override
-  public void runPosition(double positionRad) {
-    talon.setControl(positionOut.withPosition(Units.radiansToRotations(positionRad) * reduction));
   }
 
   @Override

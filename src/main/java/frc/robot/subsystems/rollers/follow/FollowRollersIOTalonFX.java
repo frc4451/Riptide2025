@@ -5,8 +5,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -39,11 +37,7 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
   private final StatusSignal<Current> followerTorqueCurrentAmps;
   private final StatusSignal<Temperature> followerTempCelsius;
 
-  private final VoltageOut voltageOut = new VoltageOut(0.0).withEnableFOC(true).withUpdateFreqHz(0);
-  private final VelocityVoltage velocityOut =
-      new VelocityVoltage(0).withEnableFOC(true).withUpdateFreqHz(0);
-  private final PositionVoltage positionOut =
-      new PositionVoltage(0.0).withEnableFOC(true).withUpdateFreqHz(0);
+  private final VoltageOut voltageOut = new VoltageOut(0.0).withUpdateFreqHz(0);
   private final NeutralOut neutralOut = new NeutralOut();
 
   private final Follower followOut;
@@ -53,13 +47,18 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
       int followerCanId,
       double reduction,
       double currentLimitAmps,
-      boolean invert) {
+      boolean invert,
+      boolean invertFollower,
+      boolean isBrakeMode,
+      boolean foc) {
     this.reduction = reduction;
 
-    leader = new TalonFX(leaderCanId);
-    follower = new TalonFX(followerCanId);
+    voltageOut.withEnableFOC(foc);
 
-    followOut = new Follower(leaderCanId, invert);
+    leader = new TalonFX(leaderCanId, Constants.alternateCanBus);
+    follower = new TalonFX(followerCanId, Constants.alternateCanBus);
+
+    followOut = new Follower(leaderCanId, invertFollower);
     follower.setControl(followOut);
 
     leaderPosition = leader.getPosition();
@@ -80,7 +79,7 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     // spotless:off
     cfg.MotorOutput
         .withInverted(invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-        .withNeutralMode(NeutralModeValue.Brake);
+        .withNeutralMode(isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(currentLimitAmps);
@@ -107,6 +106,7 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     follower.getConfigurator().apply(cfg);
   }
 
+  @Override
   public void updateInputs(FollowRollersIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
@@ -145,16 +145,9 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     inputs.followerTemperatureCelsius = followerTempCelsius.getValueAsDouble();
   }
 
+  @Override
   public void runVolts(double volts) {
     leader.setControl(voltageOut.withOutput(volts));
-  }
-
-  public void runVelocity(double velocityRadPerSecond) {
-    leader.setControl(velocityOut.withVelocity(Units.radiansToRotations(velocityRadPerSecond)));
-  }
-
-  public void runPosition(double positionRad) {
-    leader.setControl(positionOut.withPosition(Units.radiansToRotations(positionRad) * reduction));
   }
 
   @Override
@@ -163,6 +156,7 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     follower.setPosition(Units.radiansToRotations(positionRad) * reduction);
   }
 
+  @Override
   public void stop() {
     leader.setControl(neutralOut);
   }

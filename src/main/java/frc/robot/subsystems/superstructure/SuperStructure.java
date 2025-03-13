@@ -1,6 +1,7 @@
 package frc.robot.subsystems.superstructure;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -11,25 +12,23 @@ import frc.robot.Constants;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOSim;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOTalonFX;
-import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
-import frc.robot.subsystems.superstructure.can_range.CanRange;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIOReal;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIOSim;
-import frc.robot.subsystems.superstructure.constants.AlgaePivotConstants;
 import frc.robot.subsystems.superstructure.constants.CoralPivotConstants;
 import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import frc.robot.subsystems.superstructure.constants.ShooterConstants;
+import frc.robot.subsystems.superstructure.constants.SuperStructureConstants;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.mechanism.SuperStructureMechanism;
-import frc.robot.subsystems.superstructure.modes.ExitInstructions;
-import frc.robot.subsystems.superstructure.modes.IntoInstructions;
-import frc.robot.subsystems.superstructure.modes.ShooterModes;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.pivot.Pivot;
+import frc.robot.subsystems.superstructure.shooter.Shooter;
+import frc.robot.subsystems.superstructure.shooter.ShooterModes;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure extends SubsystemBase {
@@ -37,22 +36,14 @@ public class SuperStructure extends SubsystemBase {
 
   private final Elevator elevator;
   private final Pivot coralPivot;
-  private final SingleRoller shooter;
-  private final Pivot algaePivot;
-  private final CanRange coralSensor;
+  private final Shooter shooter;
 
   private final SuperStructureMechanism goalMechanism =
-      new SuperStructureMechanism(
-          "Goal", Color.kLightBlue, Color.kLightGreen, Color.kTurquoise, 10.0);
+      new SuperStructureMechanism("Goal", Color.kLightBlue, Color.kLightGreen, 10.0);
   private final SuperStructureMechanism measuredMechanism =
-      new SuperStructureMechanism(
-          "Measured", Color.kDarkBlue, Color.kDarkGreen, Color.kDarkTurquoise, 3.0);
+      new SuperStructureMechanism("Measured", Color.kDarkBlue, Color.kDarkGreen, 3.0);
 
   private SuperStructureModes currentMode = SuperStructureModes.TUCKED;
-  private ShooterModes currentShooterMode = ShooterModes.NONE;
-
-  private IntoInstructions intoInstructions = IntoInstructions.NONE;
-  private ExitInstructions exitInstructions = ExitInstructions.NONE;
 
   private boolean isAtMode = false;
 
@@ -61,7 +52,6 @@ public class SuperStructure extends SubsystemBase {
     CanRangeIO heightSensorIO;
     SingleRollerIO coralPivotIO;
     SingleRollerIO shooterIO;
-    SingleRollerIO algaePivotIO;
     CanRangeIO coralSensorIO;
 
     switch (Constants.currentMode) {
@@ -72,30 +62,28 @@ public class SuperStructure extends SubsystemBase {
                 ElevatorConstants.followerCanId,
                 ElevatorConstants.reduction,
                 ElevatorConstants.currentLimitAmps,
-                ElevatorConstants.invertFollower);
+                ElevatorConstants.invert,
+                ElevatorConstants.invertFollower,
+                ElevatorConstants.isBrake,
+                ElevatorConstants.foc);
 
-        heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
+        // heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
 
         coralPivotIO =
             new SingleRollerIOTalonFX(
                 CoralPivotConstants.canId,
                 CoralPivotConstants.reduction,
                 CoralPivotConstants.currentLimitAmps,
-                CoralPivotConstants.invert);
+                CoralPivotConstants.invert,
+                true);
 
         shooterIO =
             new SingleRollerIOTalonFX(
                 ShooterConstants.canId,
                 ShooterConstants.reduction,
                 ShooterConstants.currentLimitAmps,
-                ShooterConstants.invert);
-
-        algaePivotIO =
-            new SingleRollerIOTalonFX(
-                AlgaePivotConstants.canId,
-                AlgaePivotConstants.reduction,
-                AlgaePivotConstants.currentLimitAmps,
-                AlgaePivotConstants.invert);
+                ShooterConstants.invert,
+                true);
 
         coralSensorIO = new CanRangeIOReal(ShooterConstants.coralSensorId, false);
         break;
@@ -121,12 +109,6 @@ public class SuperStructure extends SubsystemBase {
             new SingleRollerIOSim(
                 ShooterConstants.gearbox, ShooterConstants.reduction, ShooterConstants.moi);
 
-        algaePivotIO =
-            new SingleRollerIOSim(
-                AlgaePivotConstants.gearbox,
-                AlgaePivotConstants.reduction,
-                AlgaePivotConstants.moi);
-
         coralSensorIO = new CanRangeIOSim();
         break;
 
@@ -136,7 +118,6 @@ public class SuperStructure extends SubsystemBase {
         heightSensorIO = new CanRangeIO() {};
         coralPivotIO = new SingleRollerIO() {};
         shooterIO = new SingleRollerIO() {};
-        algaePivotIO = new SingleRollerIO() {};
         coralSensorIO = new CanRangeIO() {};
         break;
     }
@@ -145,147 +126,142 @@ public class SuperStructure extends SubsystemBase {
         new Elevator(
             name + "/Elevator",
             elevatorIO,
-            heightSensorIO,
+            new CanRangeIO() {},
             ElevatorConstants.trapezoidConstraints,
             ElevatorConstants.inchesPerRad,
-            ElevatorConstants.elevatorConstraints);
+            ElevatorConstants.elevatorConstraints,
+            ElevatorConstants.feedforward,
+            ElevatorConstants.kP,
+            ElevatorConstants.kD);
+    elevator.setHeightInches(ElevatorConstants.startHeightInches);
 
     coralPivot =
         new Pivot(
             name + "/Coral/Pivot",
             coralPivotIO,
             CoralPivotConstants.trapezoidConstraints,
-            CoralPivotConstants.pivotConstraints);
+            CoralPivotConstants.pivotConstraints,
+            CoralPivotConstants.feedforward,
+            CoralPivotConstants.kP,
+            CoralPivotConstants.kD);
 
-    shooter = new SingleRoller(name + "/Shooter", shooterIO);
-
-    algaePivot =
-        new Pivot(
-            name + "/Algae/Pivot",
-            algaePivotIO,
-            AlgaePivotConstants.trapezoidConstraints,
-            AlgaePivotConstants.pivotConstraints);
-
-    coralSensor = new CanRange(name + "/CoralSensor", coralSensorIO);
+    shooter = new Shooter(name + "/Shooter", shooterIO, coralSensorIO);
   }
 
   @Override
   public void periodic() {
     if (DriverStation.isDisabled()) {
       setCurrentMode(SuperStructureModes.TUCKED);
-      setCurrentShooterMode(ShooterModes.NONE);
+      shooter.setShooterMode(ShooterModes.NONE);
     }
 
-    if (currentShooterMode.useCanRange && coralSensor.isNear()) {
-      shooter.stop();
-    } else {
-      shooter.runVolts(currentShooterMode.voltage);
-    }
-
-    if (intoInstructions == IntoInstructions.PIVOTS_BEFORE_ELEVATOR
-        && coralPivot.atGoal()
-        && algaePivot.atGoal()) {
-      elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
-    }
-
-    if (exitInstructions == ExitInstructions.ELEVATOR_BEFORE_PIVOTS
-        && elevator.underL4Threshold()) {
-      coralPivot.setGoal(currentMode.coralPos);
-      algaePivot.setGoal(currentMode.algaePos);
-    }
-
-    isAtMode =
+    boolean isElevatorAtMode =
         MathUtil.isNear(
-                elevator.getHeightInches(),
-                currentMode.elevatorHeightInches,
-                Elevator.atGoalToleranceInches)
-            && MathUtil.isNear(
-                coralPivot.getPosition().getRadians(),
-                currentMode.coralPos.getRadians(),
-                Pivot.atGoalToleranceRad)
-            && MathUtil.isNear(
-                algaePivot.getPosition().getRadians(),
-                currentMode.algaePos.getRadians(),
-                Pivot.atGoalToleranceRad);
+            elevator.getHeightInches(),
+            currentMode.elevatorHeightInches,
+            Elevator.atGoalToleranceInches);
 
-    Logger.recordOutput(name + "/IsAtMode", isAtMode);
+    boolean isPivotAtMode =
+        MathUtil.isNear(
+            coralPivot.getPosition().getRadians(),
+            currentMode.coralPos.getRadians(),
+            Pivot.atGoalToleranceRad);
+
+    isAtMode = isElevatorAtMode && isPivotAtMode;
+
+    // Make sure Pivot is tucked while moving so that
+    if (currentMode.elevatorHeightInches > SuperStructureConstants.pivotTuckThresholdInches
+        || elevator.getHeightInches() > SuperStructureConstants.pivotTuckThresholdInches) {
+      if (!isElevatorAtMode) {
+        coralPivot.setGoal(Rotation2d.kPi);
+        if (MathUtil.isNear(coralPivot.getPosition().getDegrees(), 180, 90)) {
+          elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
+        }
+      } else {
+        coralPivot.setGoal(currentMode.coralPos);
+      }
+    } else {
+      elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
+      coralPivot.setGoal(currentMode.coralPos);
+    }
+
+    Logger.recordOutput(name + "/IsElevatorAtMode", isElevatorAtMode);
+    Logger.recordOutput(name + "/IsPivotAtMode", isPivotAtMode);
     Logger.recordOutput(name + "/Mode", currentMode);
-    Logger.recordOutput(name + "/ShooterMode", currentShooterMode);
 
     elevator.periodic();
     coralPivot.periodic();
-    coralSensor.periodic();
-    shooter.periodic();
-    algaePivot.periodic();
+    shooter.periodic(currentMode);
 
-    measuredMechanism.update(
-        elevator.getHeightInches(), coralPivot.getPosition(), algaePivot.getPosition());
-    goalMechanism.update(
-        elevator.getGoalHeightInches(), coralPivot.getGoalPosition(), algaePivot.getGoalPosition());
+    measuredMechanism.update(elevator.getHeightInches(), coralPivot.getPosition());
+    goalMechanism.update(elevator.getGoalHeightInches(), coralPivot.getGoalPosition());
+  }
+
+  public Command elevatorManualCommand(DoubleSupplier supplier) {
+    return run(() -> elevator.runVolts(supplier.getAsDouble())).finallyDo(() -> elevator.stop());
+  }
+
+  public Command pivotManualCommand(DoubleSupplier supplier) {
+    return run(() -> coralPivot.runVolts(supplier.getAsDouble()))
+        .finallyDo(() -> coralPivot.stop());
   }
 
   private void setCurrentMode(SuperStructureModes nextMode) {
     if (currentMode != nextMode) {
-      intoInstructions = nextMode.intoInstructions;
-      exitInstructions = currentMode.exitInstructions;
-
-      if (intoInstructions == IntoInstructions.PIVOTS_BEFORE_ELEVATOR
-          || exitInstructions == ExitInstructions.NONE) {
-        coralPivot.setGoal(nextMode.coralPos);
-        algaePivot.setGoal(nextMode.algaePos);
-      }
-
-      if (exitInstructions == ExitInstructions.ELEVATOR_BEFORE_PIVOTS
-          || intoInstructions == IntoInstructions.NONE) {
-        elevator.setGoalHeightInches(nextMode.elevatorHeightInches);
-      }
-
       currentMode = nextMode;
     }
   }
 
   public Command setModeCommand(SuperStructureModes nextMode) {
-    return runOnce(() -> setCurrentMode(nextMode));
-  }
-
-  private void setCurrentShooterMode(ShooterModes nextShooterMode) {
-    if (currentShooterMode != nextShooterMode) {
-      currentShooterMode = nextShooterMode;
-    }
+    return Commands.runOnce(() -> setCurrentMode(nextMode));
   }
 
   public Command setShooterModeCommand(ShooterModes nextShooterMode) {
-    return runOnce(() -> setCurrentShooterMode(nextShooterMode));
+    return Commands.runOnce(() -> shooter.setShooterMode(nextShooterMode));
   }
 
   public Trigger isAtMode() {
     return new Trigger(() -> isAtMode);
   }
 
-  public Trigger isCoralIntaked() {
-    return new Trigger(coralSensor::isNear);
-  }
-
   public Command intake() {
-    return Commands.none();
+    return Commands.sequence(
+            setShooterModeCommand(ShooterModes.INTAKE),
+            Commands.waitUntil(
+                isCoralIntaked().or(() -> Constants.currentMode == Constants.Mode.SIM)))
+        .finallyDo(() -> shooter.setShooterMode(ShooterModes.NONE));
   }
 
   public Command score(SuperStructureModes mode) {
     return Commands.sequence(
-            setModeCommand(mode),
-            Commands.waitUntil(isAtMode()),
-            Commands.sequence(
-                setShooterModeCommand(ShooterModes.SHOOT),
-                Commands.sequence(
-                    Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.1)),
-                setShooterModeCommand(ShooterModes.NONE)),
-            setModeCommand(SuperStructureModes.TUCKED),
-            Commands.waitUntil(isAtMode()))
-        .onlyIf(isCoralIntaked())
-        .finallyDo(
-            () -> {
-              setCurrentShooterMode(ShooterModes.NONE);
-              setCurrentMode(SuperStructureModes.TUCKED);
-            });
+            setModeAndWaitCommand(mode),
+            shootCoral(),
+            setModeAndWaitCommand(SuperStructureModes.TUCKED))
+        // .onlyIf(isCoralIntaked())
+        .finallyDo(this::resetModes);
+  }
+
+  public Command setModeAndWaitCommand(SuperStructureModes mode) {
+    return Commands.sequence(setModeCommand(mode), Commands.waitUntil(isAtMode()));
+  }
+
+  public Command shootCoral() {
+    return Commands.sequence(
+        setShooterModeCommand(ShooterModes.SHOOT),
+        Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.4)),
+        setShooterModeCommand(ShooterModes.NONE));
+  }
+
+  public void resetModes() {
+    shooter.setShooterMode(ShooterModes.NONE);
+    setCurrentMode(SuperStructureModes.TUCKED);
+  }
+
+  public Trigger isCoralIntaked() {
+    return new Trigger(() -> shooter.isCoralDetected());
+  }
+
+  public boolean isL4Coral() {
+    return currentMode == SuperStructureModes.L4Coral;
   }
 }

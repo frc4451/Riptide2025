@@ -3,9 +3,8 @@ package frc.robot.subsystems.quest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants;
-import frc.robot.bobot_state.BobotState;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.VirtualSubsystem;
 import org.littletonrobotics.junction.Logger;
 
@@ -16,6 +15,8 @@ public class Quest extends VirtualSubsystem {
   private final Alert disconnectedAlert = new Alert("Quest Disconnected!", AlertType.kWarning);
   private final Alert lowBatteryAlert =
       new Alert("Quest Battery is Low! (<25%)", AlertType.kWarning);
+
+  private final QuestCalibration calibration = new QuestCalibration();
 
   public Quest(QuestIO io) {
     this.io = io;
@@ -30,11 +31,9 @@ public class Quest extends VirtualSubsystem {
     disconnectedAlert.set(!inputs.connected);
     lowBatteryAlert.set(inputs.batteryLevel < 25 && inputs.connected);
 
-    if (DriverStation.isEnabled()
-        && inputs.connected
-        && Constants.currentMode == Constants.Mode.REAL) {
-      BobotState.offerQuestMeasurement(new TimestampedPose(inputs.robotPose, inputs.timestamp));
-    }
+    // if (DriverStation.isEnabled() && Constants.currentMode == Constants.Mode.REAL) {
+    //   BobotState.offerQuestMeasurement(new TimestampedPose(inputs.robotPose, inputs.timestamp));
+    // }
   }
 
   public void resetPose(Pose2d pose) {
@@ -43,4 +42,9 @@ public class Quest extends VirtualSubsystem {
 
   @Override
   public void simulationPeriodic() {}
+
+  public Command calibrateCommand(Drive drive) {
+    return calibration.determineOffsetToRobotCenter(
+        drive, () -> inputs.robotPose, () -> inputs.questPose);
+  }
 }

@@ -1,17 +1,16 @@
 package frc.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
-import frc.robot.Constants.Mode;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.follow.FollowRollers;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
 import frc.robot.subsystems.superstructure.can_range.CanRange;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
-import frc.robot.subsystems.superstructure.constants.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends FollowRollers {
@@ -24,6 +23,10 @@ public class Elevator extends FollowRollers {
 
   private TrapezoidProfile.State goal = new TrapezoidProfile.State();
 
+  private final CustomElevatorFF feedforward;
+
+  private final PIDController positionController;
+
   private final double inchesPerRad;
   private final ElevatorConstraints elevatorConstraints;
 
@@ -33,12 +36,18 @@ public class Elevator extends FollowRollers {
       CanRangeIO heightSensorIO,
       TrapezoidProfile.Constraints trapezoidConstraints,
       double inchesPerRad,
-      ElevatorConstraints elevatorConstraints) {
+      ElevatorConstraints elevatorConstraints,
+      CustomElevatorFF feedforward,
+      double kP,
+      double kD) {
     super(name, io);
     this.heightSensor = new CanRange(name + "/HeightSensor", heightSensorIO);
     this.trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
     this.inchesPerRad = inchesPerRad;
     this.elevatorConstraints = elevatorConstraints;
+    this.feedforward = feedforward;
+    positionController = new PIDController(kP, 0, kD);
+    Logger.recordOutput(name + "/Feedforward", feedforward);
   }
 
   public void periodic() {
@@ -47,10 +56,10 @@ public class Elevator extends FollowRollers {
     // If we are close enough to our sensor, use that instead of our motor encoders.
     // We trust our height sensor more than our encoders at this point, this should account for
     // chain skipping. This doesn't happen in simulation.
-    if (getEncoderHeightInches() < ElevatorConstants.resetFromHeightSensorThresholdInches
-        && Constants.currentMode != Mode.SIM) {
-      io.resetPosition(getSensorHeightInches() / inchesPerRad);
-    }
+    // if (getEncoderHeightInches() < ElevatorConstants.resetFromHeightSensorThresholdInches
+    //     && Constants.currentMode != Mode.SIM) {
+    //   io.resetPosition(getSensorHeightInches() / inchesPerRad);
+    // }
 
     if (DriverStation.isDisabled()) {
       resetController();
@@ -59,22 +68,16 @@ public class Elevator extends FollowRollers {
     }
 
     Logger.recordOutput(
-        name + "/Profile/Setpoint/Rad",
+        name + "/Profile/SetpointInches",
         new LoggedTrapezoidState(setpoint.position, setpoint.velocity));
-    Logger.recordOutput(
-        name + "/Profile/Setpoint/In",
-        new LoggedTrapezoidState(
-            setpoint.position * inchesPerRad, setpoint.velocity * inchesPerRad));
 
     Logger.recordOutput(
-        name + "/Profile/Goal/Rad", new LoggedTrapezoidState(goal.position, goal.velocity));
-    Logger.recordOutput(
-        name + "/Profile/Goal/In",
-        new LoggedTrapezoidState(goal.position * inchesPerRad, goal.velocity * inchesPerRad));
+        name + "/Profile/GoalInches", new LoggedTrapezoidState(goal.position, goal.velocity));
 
     Logger.recordOutput(name + "/EncoderHeightInches", getEncoderHeightInches());
     Logger.recordOutput(name + "/SensorHeightInches", getSensorHeightInches());
     Logger.recordOutput(name + "/HeightInches", getHeightInches());
+    Logger.recordOutput(name + "/VelocityInchesPerSec", getVelocityInchesPerSec());
   }
 
   public double getEncoderHeightInches() {
@@ -90,31 +93,41 @@ public class Elevator extends FollowRollers {
     return getEncoderHeightInches();
   }
 
+  public double getVelocityInchesPerSec() {
+    return inputs.leaderVelocityRadPerSec;
+  }
+
   public void runTrapezoidProfile() {
     setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
-    io.runPosition(setpoint.position);
+    // setpoint = new TrapezoidProfile.State(0, 6);
+    runPosition(setpoint);
+  }
+
+  private void runPosition(TrapezoidProfile.State setpoint) {
+    double ff = feedforward.calculate(setpoint.velocity, 0);
+    double output = positionController.calculate(getHeightInches(), setpoint.position);
+    io.runVolts(output + ff);
+  }
+
+  public void setHeightInches(double positionInches) {
+    io.resetPosition(positionInches / inchesPerRad);
   }
 
   public void setGoalHeightInches(double positionInches) {
-    double clampedPositionRad =
+    double clampedPositionIn =
         MathUtil.clamp(
-            positionInches / inchesPerRad,
-            elevatorConstraints.minHeightInches() / inchesPerRad,
-            elevatorConstraints.maxHeightInches() / inchesPerRad);
-    goal = new TrapezoidProfile.State(clampedPositionRad, 0.0);
+            positionInches,
+            elevatorConstraints.minHeightInches(),
+            elevatorConstraints.maxHeightInches());
+    goal = new TrapezoidProfile.State(clampedPositionIn, 0.0);
   }
 
   public double getGoalHeightInches() {
-    return goal.position * inchesPerRad;
-  }
-
-  public boolean underL4Threshold() {
-    return getHeightInches() < ElevatorConstants.l4ThresholdInches;
+    return goal.position;
   }
 
   private void resetController() {
-    setGoalHeightInches(0.0);
-    setpoint = new TrapezoidProfile.State(0.0, 0.0);
+    setpoint = new TrapezoidProfile.State(getHeightInches(), 0.0);
   }
 
   public boolean atGoal() {

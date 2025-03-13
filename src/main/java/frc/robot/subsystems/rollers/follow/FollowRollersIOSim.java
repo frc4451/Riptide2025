@@ -1,7 +1,6 @@
 package frc.robot.subsystems.rollers.follow;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -11,10 +10,6 @@ import frc.robot.Constants;
 public class FollowRollersIOSim implements FollowRollersIO {
   private final DCMotorSim leader;
   private final DCMotorSim follower;
-
-  private final PIDController controller = new PIDController(5.0, 0, 0);
-
-  private boolean closedLoop = false;
 
   private final boolean invertFollower;
 
@@ -39,8 +34,6 @@ public class FollowRollersIOSim implements FollowRollersIO {
     // DO NOT RUN WHEN DISABLED
     if (DriverStation.isDisabled()) {
       stop();
-    } else if (closedLoop) {
-      setSimInputVoltage(controller.calculate(leader.getAngularPositionRad()));
     }
 
     inputs.connected = true;
@@ -59,29 +52,11 @@ public class FollowRollersIOSim implements FollowRollersIO {
     inputs.followerSupplyCurrentAmps = leader.getCurrentDrawAmps();
   }
 
-  private void setSimInputVoltage(double volts) {
+  @Override
+  public void runVolts(double volts) {
     double voltage = MathUtil.clamp(volts, -12.0, 12.0);
     leader.setInputVoltage(voltage);
     follower.setInputVoltage(invertFollower ? -voltage : voltage);
-  }
-
-  @Override
-  public void runVolts(double volts) {
-    closedLoop = false;
-    setSimInputVoltage(volts);
-  }
-
-  @Override
-  public void runVelocity(double velocityRadPerSecond) {
-    closedLoop = false;
-    leader.setAngularVelocity(velocityRadPerSecond);
-    follower.setAngularVelocity(invertFollower ? -velocityRadPerSecond : velocityRadPerSecond);
-  }
-
-  @Override
-  public void runPosition(double positionRad) {
-    closedLoop = true;
-    controller.setSetpoint(positionRad);
   }
 
   @Override

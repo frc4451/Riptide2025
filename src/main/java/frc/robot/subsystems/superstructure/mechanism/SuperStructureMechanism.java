@@ -4,8 +4,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import frc.robot.subsystems.superstructure.constants.AlgaePivotConstants;
-import frc.robot.subsystems.superstructure.constants.CoralPivotConstants;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
@@ -19,13 +17,10 @@ public class SuperStructureMechanism {
   private final LoggedMechanismLigament2d coralPivot;
   private final LoggedMechanismLigament2d coralPosition;
 
-  private final LoggedMechanismLigament2d algaePivot;
-  private final LoggedMechanismLigament2d algaePosition;
-
   private final String key;
 
   public SuperStructureMechanism(
-      String key, Color elevatorColor, Color coralColor, Color algaeColor, double lineWidth) {
+      String key, Color elevatorColor, Color coralColor, double lineWidth) {
     this.key = key;
     mechanism =
         new LoggedMechanism2d(
@@ -62,36 +57,18 @@ public class SuperStructureMechanism {
         new LoggedMechanismLigament2d(
             "coralPivot",
             MechanismConstants.coralPivotLength,
-            CoralPivotConstants.initialAngle.getDegrees(),
+            MechanismConstants.coralPivotInitialAngle.getDegrees(),
             lineWidth,
             new Color8Bit(coralColor));
     coralPosition.append(coralPivot);
-
-    algaePosition =
-        new LoggedMechanismLigament2d(
-            "algaePosition",
-            MechanismConstants.algaePositionOffset,
-            0.0,
-            0.0,
-            new Color8Bit(Color.kWhite));
-    coralPivot.append(algaePosition);
-    algaePivot =
-        new LoggedMechanismLigament2d(
-            "algaePivot",
-            MechanismConstants.algaePivotLength,
-            AlgaePivotConstants.initialAngle.getDegrees(),
-            lineWidth,
-            new Color8Bit(algaeColor));
-    algaePosition.append(algaePivot);
   }
 
   /** Update arm visualizer with current arm angle */
-  public void update(double elevatorHeightInches, Rotation2d coralAngle, Rotation2d algaeAngle) {
+  public void update(double elevatorHeightInches, Rotation2d coralAngle) {
     elevator.setLength(
         MechanismConstants.elevatorInitialHeight + Units.inchesToMeters(elevatorHeightInches));
 
-    coralPivot.setAngle(coralAngle);
-    algaePivot.setAngle(algaeAngle);
+    coralPivot.setAngle(MechanismConstants.coralPivotInitialAngle.plus(coralAngle));
 
     Logger.recordOutput("Superstructure/" + key + "/Mechanism2d", mechanism);
 

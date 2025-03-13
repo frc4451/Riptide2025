@@ -45,11 +45,6 @@ public class SingleRollerIOTalonSRX implements SingleRollerIO {
   }
 
   @Override
-  public void runPosition(double position) {
-    throw new IllegalStateException("There is no position control for a TalonSRX");
-  }
-
-  @Override
   public void resetPosition(double positionRad) {
     throw new IllegalStateException("There is no position for a TalonSRX");
   }

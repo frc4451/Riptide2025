@@ -29,12 +29,6 @@ public interface FollowRollersIO {
   /** Run rollers at set voltage */
   public default void runVolts(double volts) {}
 
-  /** Run rollers at set velocity */
-  public default void runVelocity(double velocityRadPerSec) {}
-
-  /** Run rollers to set position */
-  public default void runPosition(double positionRad) {}
-
   /** Reset encoders to position */
   public default void resetPosition(double positionRad) {}
 

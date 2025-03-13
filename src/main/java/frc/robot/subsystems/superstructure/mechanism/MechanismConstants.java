@@ -15,6 +15,7 @@ public class MechanismConstants {
 
   public static final double coralPivotLength = Units.inchesToMeters(7.0);
   public static final double coralPositionOffset = Units.inchesToMeters(-21.0);
+  public static final Rotation2d coralPivotInitialAngle = Rotation2d.fromDegrees(180.0);
 
   public static final double algaePivotLength = Units.inchesToMeters(7.0);
   public static final double algaePositionOffset = Units.inchesToMeters(-3.0);
