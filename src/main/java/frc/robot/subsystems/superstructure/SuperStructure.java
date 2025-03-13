@@ -75,7 +75,7 @@ public class SuperStructure extends SubsystemBase {
                 CoralPivotConstants.reduction,
                 CoralPivotConstants.currentLimitAmps,
                 CoralPivotConstants.invert,
-                true);
+                CoralPivotConstants.isBrakeMode);
 
         shooterIO =
             new SingleRollerIOTalonFX(
@@ -155,17 +155,9 @@ public class SuperStructure extends SubsystemBase {
       shooter.setShooterMode(ShooterModes.NONE);
     }
 
-    boolean isElevatorAtMode =
-        MathUtil.isNear(
-            elevator.getHeightInches(),
-            currentMode.elevatorHeightInches,
-            Elevator.atGoalToleranceInches);
+    boolean isElevatorAtMode = elevator.isNear(currentMode.elevatorHeightInches);
 
-    boolean isPivotAtMode =
-        MathUtil.isNear(
-            coralPivot.getPosition().getRadians(),
-            currentMode.coralPos.getRadians(),
-            Pivot.atGoalToleranceRad);
+    boolean isPivotAtMode = coralPivot.isNear(currentMode.coralPos.getRadians());
 
     isAtMode = isElevatorAtMode && isPivotAtMode;
 
@@ -239,6 +231,19 @@ public class SuperStructure extends SubsystemBase {
             setModeAndWaitCommand(SuperStructureModes.TUCKED))
         // .onlyIf(isCoralIntaked())
         .finallyDo(this::resetModes);
+  }
+
+  public Command scoreAlgae() {
+    return Commands.sequence(
+            setModeCommand(SuperStructureModes.Barge),
+            Commands.waitUntil(() -> elevator.isNear(SuperStructureConstants.shootNetHeight)),
+            setShooterModeCommand(ShooterModes.ALGAE_SHOOT),
+            Commands.waitSeconds(0.4))
+        .finallyDo(
+            () -> {
+              setCurrentMode(SuperStructureModes.TUCKED_L4);
+              shooter.setShooterMode(ShooterModes.NONE);
+            });
   }
 
   public Command setModeAndWaitCommand(SuperStructureModes mode) {

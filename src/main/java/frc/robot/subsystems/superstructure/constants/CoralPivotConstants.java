@@ -16,6 +16,8 @@ public class CoralPivotConstants {
   public static final boolean invert = true;
   public static final double currentLimitAmps = 30;
 
+  public static final boolean isBrakeMode = true;
+
   public static final PivotConstraints pivotConstraints = new PivotConstraints(0, Math.PI);
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =

@@ -288,26 +288,18 @@ public class RobotContainer {
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
+
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            new DrivePerpendicularToPoseCommand(
+                drive,
+                () -> FieldUtils.getClosestReef().tag.pose().toPose2d(),
+                () -> -driverController.getLeftYSquared()));
   }
 
   private void configureSuperBindings() {
-    // operatorController
-    //     .rightBumper()
-    //     .onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-
-    // operatorController
-    //     .povDown()
-    //     .whileTrue(
-    //         superStructure.elevatorManualCommand(() -> 3.0 * -operatorController.getLeftY()));
-
-    // operatorController
-    //     .rightY()
-    //     .whileTrue(superStructure.pivotManualCommand(() -> 4.0 *
-    // -operatorController.getRightY()));
-
-    // Allred flippy thingy
-    operatorController.povUp().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED_L4));
-
+    // -- Coral --
     operatorController
         .leftTrigger()
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
@@ -318,6 +310,12 @@ public class RobotContainer {
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.SHOOT))
         .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
+    operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.L2Coral));
+    operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.L3Coral));
+    operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.L4Coral));
+
+    // -- Algae --
     operatorController
         .leftBumper()
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.ALGAE_INTAKING));
@@ -326,18 +324,16 @@ public class RobotContainer {
         .rightBumper()
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.ALGAE_SHOOT))
         .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
-    // operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-    // operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_45));
-    // operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_90));
-    // operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.TEST_180));
-    operatorController.b().whileTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
-    operatorController.a().whileTrue(superStructure.setModeCommand(SuperStructureModes.L2Coral));
-    operatorController.x().whileTrue(superStructure.setModeCommand(SuperStructureModes.L3Coral));
-    operatorController.y().whileTrue(superStructure.setModeCommand(SuperStructureModes.L4Coral));
 
+    // spotless: off
     operatorController
-        .povDown()
-        .whileTrue(superStructure.setModeCommand(SuperStructureModes.FLOOR_ALGAE));
+        .povRight()
+        .onTrue(superStructure.setModeCommand(SuperStructureModes.FLOOR_ALGAE));
+    operatorController.povDown().onTrue(superStructure.setModeCommand(SuperStructureModes.L2Algae));
+    operatorController.povLeft().onTrue(superStructure.setModeCommand(SuperStructureModes.L3Algae));
+    operatorController.povUp().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED_L4));
+    operatorController.back().whileTrue(superStructure.scoreAlgae());
+    // spotless: on
   }
 
   private void debugSetup() {

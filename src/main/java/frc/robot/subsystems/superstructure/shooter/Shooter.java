@@ -4,6 +4,7 @@ import frc.robot.subsystems.rollers.single.SingleRoller;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.superstructure.can_range.CanRange;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
+import frc.robot.subsystems.superstructure.constants.ShooterConstants;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import org.littletonrobotics.junction.Logger;
 
@@ -40,7 +41,7 @@ public class Shooter extends SingleRoller {
         break;
       case ALGAE_INTAKING:
         io.runVolts(currentShooterMode.voltage);
-        if (inputs.supplyCurrentAmps >= 22) {
+        if (inputs.supplyCurrentAmps >= ShooterConstants.algaeHoldingThresholdAmps) {
           currentShooterMode = ShooterModes.ALGAE_INTAKED;
         }
         break;
