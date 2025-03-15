@@ -54,11 +54,15 @@ public class ElevatorV2Constants {
   public static final DCMotor elevatorMotorSim = DCMotor.getFalcon500Foc(2);
   public static final double carriageMassKg = Units.lbsToKilograms(20);
   public static final boolean simulateGravity = true;
-  public static final double motionMagicVelocity = 3000;
-  public static final double motionMagicAcceleration = 80;
+  public static final double motionMagicVelocity = 80;
+  public static final double motionMagicAcceleration = 160;
   public static final double motionMagicJerk = 1600;
 
   public static final Gains staticGains = new Gains(0.41, 0.1, 0.01, 0.42, 1.0, 0.0);
 
-  public static final MotionMagicProps motionMagicProps = new MotionMagicProps(3000, 80, 1600);
+  public static final MotionMagicProps motionMagicProps = new MotionMagicProps(
+    80, 
+    160,
+     1600
+     );
 }
