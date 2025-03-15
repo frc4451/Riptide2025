@@ -1,7 +1,6 @@
 package frc.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,9 +22,7 @@ public class Elevator extends FollowRollers {
 
   private TrapezoidProfile.State goal = new TrapezoidProfile.State();
 
-  private final CustomElevatorFF feedforward;
-
-  private final PIDController positionController;
+  private final CustomElevatorController controller;
 
   private final double inchesPerRad;
   private final ElevatorConstraints elevatorConstraints;
@@ -37,17 +34,13 @@ public class Elevator extends FollowRollers {
       TrapezoidProfile.Constraints trapezoidConstraints,
       double inchesPerRad,
       ElevatorConstraints elevatorConstraints,
-      CustomElevatorFF feedforward,
-      double kP,
-      double kD) {
+      CustomElevatorController feedforward) {
     super(name, io);
     this.heightSensor = new CanRange(name + "/HeightSensor", heightSensorIO);
     this.trapezoidProfile = new TrapezoidProfile(trapezoidConstraints);
     this.inchesPerRad = inchesPerRad;
     this.elevatorConstraints = elevatorConstraints;
-    this.feedforward = feedforward;
-    positionController = new PIDController(kP, 0, kD);
-    Logger.recordOutput(name + "/Feedforward", feedforward);
+    this.controller = feedforward;
   }
 
   public void periodic() {
@@ -62,7 +55,7 @@ public class Elevator extends FollowRollers {
     // }
 
     if (DriverStation.isDisabled()) {
-      resetController();
+      resetSetpoint();
     } else {
       runTrapezoidProfile();
     }
@@ -98,15 +91,18 @@ public class Elevator extends FollowRollers {
   }
 
   public void runTrapezoidProfile() {
-    setpoint = trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
-    // setpoint = new TrapezoidProfile.State(0, 6);
-    runPosition(setpoint);
+    TrapezoidProfile.State newSetpoint =
+        trapezoidProfile.calculate(Constants.loopPeriodSecs, setpoint, goal);
+    runPosition(setpoint, newSetpoint);
+    setpoint = newSetpoint;
   }
 
-  private void runPosition(TrapezoidProfile.State setpoint) {
-    double ff = feedforward.calculate(setpoint.velocity, 0);
-    double output = positionController.calculate(getHeightInches(), setpoint.position);
-    io.runVolts(output + ff);
+  private void runPosition(TrapezoidProfile.State setpoint, TrapezoidProfile.State newSetpoint) {
+    // double ff = feedforward.calculate(setpoint.velocity, 0);
+    double output =
+        controller.calculateWithVelocities(
+            getHeightInches(), newSetpoint.position, setpoint.velocity, newSetpoint.velocity);
+    io.runVolts(output);
   }
 
   public void setHeightInches(double positionInches) {
@@ -126,7 +122,7 @@ public class Elevator extends FollowRollers {
     return goal.position;
   }
 
-  private void resetController() {
+  private void resetSetpoint() {
     setpoint = new TrapezoidProfile.State(getHeightInches(), 0.0);
   }
 

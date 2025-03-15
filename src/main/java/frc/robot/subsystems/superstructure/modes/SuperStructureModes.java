@@ -3,7 +3,7 @@ package frc.robot.subsystems.superstructure.modes;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public enum SuperStructureModes {
-  TUCKED(1.1 / 2.0, Rotation2d.kZero),
+  TUCKED(5.0 / 2.0, Rotation2d.kZero),
   TUCKED_L4(1.1 / 2.0, Rotation2d.fromDegrees(180.0)),
   // TEST_45(1.0 / 2.0, Rotation2d.fromDegrees(45)),
   // TEST_90(1.0 / 2.0, Rotation2d.fromDegrees(90)),
