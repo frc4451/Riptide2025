@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.subsystems.rollers.follow_magic.FollowRollersMagicIO;
-import frc.robot.subsystems.rollers.follow_magic.FollowRollersMagicIOTalonFX;
+import frc.robot.subsystems.rollers.follow.FollowRollersIO;
+import frc.robot.subsystems.rollers.follow.FollowRollersIOTalonFX;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
@@ -44,7 +44,7 @@ public class SuperStructure extends SubsystemBase {
   private boolean isAtMode = false;
 
   public SuperStructure() {
-    FollowRollersMagicIO elevatorIO;
+    FollowRollersIO elevatorIO;
     SingleRollerIO coralPivotIO;
     SingleRollerIO shooterIO;
     CanRangeIO coralSensorIO;
@@ -52,7 +52,7 @@ public class SuperStructure extends SubsystemBase {
     switch (Constants.currentMode) {
       case REAL:
         elevatorIO =
-            new FollowRollersMagicIOTalonFX(
+            new FollowRollersIOTalonFX(
                 ElevatorConstants.leaderCanId,
                 ElevatorConstants.followerCanId,
                 ElevatorConstants.reduction,
@@ -91,7 +91,7 @@ public class SuperStructure extends SubsystemBase {
         //         ElevatorConstants.reduction,
         //         ElevatorConstants.moi,
         //         ElevatorConstants.invertFollower);
-        elevatorIO = new FollowRollersMagicIO() {};
+        elevatorIO = new FollowRollersIO() {};
 
         coralPivotIO =
             new SingleRollerIOSim(
@@ -108,7 +108,7 @@ public class SuperStructure extends SubsystemBase {
 
       case REPLAY:
       default:
-        elevatorIO = new FollowRollersMagicIO() {};
+        elevatorIO = new FollowRollersIO() {};
         coralPivotIO = new SingleRollerIO() {};
         shooterIO = new SingleRollerIO() {};
         coralSensorIO = new CanRangeIO() {};

@@ -8,7 +8,8 @@ public class FollowRollers {
   protected final String name;
   protected final FollowRollersIO io;
 
-  protected final FollowRollersIOInputsAutoLogged inputs = new FollowRollersIOInputsAutoLogged();
+  protected final FollowRollersMagicIOInputsAutoLogged inputs =
+      new FollowRollersMagicIOInputsAutoLogged();
 
   private final Alert disconnected;
 
@@ -31,6 +32,10 @@ public class FollowRollers {
 
   public void runVolts(double inputsVolts) {
     io.runVolts(inputsVolts);
+  }
+
+  public void setGoal(double positionRad) {
+    io.setGoal(positionRad);
   }
 
   public void stop() {

@@ -2,11 +2,12 @@ package frc.robot.subsystems.superstructure.elevator;
 
 import edu.wpi.first.math.MathUtil;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
-import frc.robot.subsystems.rollers.follow_magic.FollowRollersMagic;
-import frc.robot.subsystems.rollers.follow_magic.FollowRollersMagicIO;
+import frc.robot.subsystems.rollers.follow.FollowRollers;
+import frc.robot.subsystems.rollers.follow.FollowRollersIO;
+
 import org.littletonrobotics.junction.Logger;
 
-public class Elevator extends FollowRollersMagic {
+public class Elevator extends FollowRollers {
   public static final double isNearToleranceInches = 1;
 
   private final double inchesPerRotation;
@@ -14,7 +15,7 @@ public class Elevator extends FollowRollersMagic {
 
   public Elevator(
       String name,
-      FollowRollersMagicIO io,
+      FollowRollersIO io,
       double inchesPerRad,
       ElevatorConstraints elevatorConstraints) {
     super(name, io);
