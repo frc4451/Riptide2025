@@ -125,7 +125,7 @@ public class FollowRollersMagicIOTalonFX implements FollowRollersMagicIO {
   }
 
   @Override
-  public void updateInputs(FollowRollersIOInputs inputs) {
+  public void updateInputs(FollowRollersMagicIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
                 leaderPosition,

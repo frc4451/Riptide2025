@@ -8,7 +8,8 @@ public class FollowRollersMagic {
   protected final String name;
   protected final FollowRollersMagicIO io;
 
-  protected final FollowRollersIOInputsAutoLogged inputs = new FollowRollersIOInputsAutoLogged();
+  protected final FollowRollersMagicIOInputsAutoLogged inputs =
+      new FollowRollersMagicIOInputsAutoLogged();
 
   private final Alert disconnected;
 

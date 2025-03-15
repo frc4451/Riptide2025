@@ -4,7 +4,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface FollowRollersMagicIO {
   @AutoLog
-  public static class FollowRollersIOInputs {
+  public static class FollowRollersMagicIOInputs {
     public boolean connected = false;
 
     public double leaderPositionRotations = 0.0;
@@ -28,15 +28,16 @@ public interface FollowRollersMagicIO {
     public double velocitySetpointRotationsPerSec = 0.0;
   }
 
-  public default void updateInputs(FollowRollersIOInputs inputs) {}
+  public default void updateInputs(FollowRollersMagicIOInputs inputs) {}
 
   /** Run rollers at set voltage */
   public default void runVolts(double volts) {}
 
-  public default void setGoal(double positionRad) {}
+  /** Set goal position of rollers to position */
+  public default void setGoal(double positionRotations) {}
 
   /** Reset encoders to position */
-  public default void resetPosition(double positionRad) {}
+  public default void resetPosition(double positionRotations) {}
 
   /** Stop rollers */
   public default void stop() {}
