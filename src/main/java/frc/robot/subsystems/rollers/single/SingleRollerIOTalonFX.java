@@ -2,13 +2,15 @@ package frc.robot.subsystems.rollers.single;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -27,12 +29,24 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   private final StatusSignal<Current> torqueCurrentAmps;
   private final StatusSignal<Temperature> tempCelsius;
 
+  private final StatusSignal<Double> positionSetpointRotations;
+  private final StatusSignal<Double> velocitySetpointRotationsPerSec;
+
+  private final MotionMagicVoltage mmVoltage = new MotionMagicVoltage(0.0).withUpdateFreqHz(0);
   private final VoltageOut voltageOut =
       new VoltageOut(0.0).withEnableFOC(false).withUpdateFreqHz(0);
   private final NeutralOut neutralOut = new NeutralOut();
 
+  private double positionGoalRotations = 0;
+
   public SingleRollerIOTalonFX(
-      int canId, double reduction, double currentLimitAmps, boolean invert, boolean isBrakeMode) {
+      int canId,
+      double reduction,
+      double currentLimitAmps,
+      boolean invert,
+      boolean isBrakeMode,
+      Slot0Configs gains,
+      MotionMagicConfigs mmConfig) {
     this.reduction = reduction;
 
     talon = new TalonFX(canId, Constants.alternateCanBus);
@@ -44,6 +58,9 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
     torqueCurrentAmps = talon.getTorqueCurrent();
     tempCelsius = talon.getDeviceTemp();
 
+    positionSetpointRotations = talon.getClosedLoopReference();
+    velocitySetpointRotationsPerSec = talon.getClosedLoopReferenceSlope();
+
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     // spotless:off
     cfg.MotorOutput
@@ -52,6 +69,8 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
     cfg.CurrentLimits
         .withSupplyCurrentLimitEnable(true)
         .withSupplyCurrentLimit(currentLimitAmps);
+    cfg.Slot0 = gains;
+    cfg.MotionMagic = mmConfig;
     // spotless:on
 
     BaseStatusSignal.setUpdateFrequencyForAll(
@@ -61,7 +80,9 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
         voltage,
         supplyCurrentAmps,
         torqueCurrentAmps,
-        tempCelsius);
+        tempCelsius,
+        positionSetpointRotations,
+        velocitySetpointRotationsPerSec);
     talon.optimizeBusUtilization(0.0, 1.0);
 
     talon.getConfigurator().apply(cfg);
@@ -71,16 +92,28 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   public void updateInputs(SingleRollerIOInputs inputs) {
     inputs.connected =
         BaseStatusSignal.refreshAll(
-                position, velocity, voltage, supplyCurrentAmps, torqueCurrentAmps, tempCelsius)
+                position,
+                velocity,
+                voltage,
+                supplyCurrentAmps,
+                torqueCurrentAmps,
+                tempCelsius,
+                positionSetpointRotations,
+                velocitySetpointRotationsPerSec)
             .isOK();
 
-    inputs.positionRad = Units.rotationsToRadians(position.getValueAsDouble()) / reduction;
-    inputs.velocityRadPerSec = Units.rotationsToRadians(velocity.getValueAsDouble()) / reduction;
+    inputs.positionRotations = position.getValueAsDouble() / reduction;
+    inputs.velocityRotationsPerSec = velocity.getValueAsDouble() / reduction;
 
     inputs.appliedVoltage = voltage.getValueAsDouble();
     inputs.supplyCurrentAmps = supplyCurrentAmps.getValueAsDouble();
     inputs.torqueCurrentAmps = torqueCurrentAmps.getValueAsDouble();
     inputs.temperatureCelsius = tempCelsius.getValueAsDouble();
+
+    inputs.positionGoalRotations = positionGoalRotations / reduction;
+    inputs.positionSetpointRotations = positionSetpointRotations.getValueAsDouble() / reduction;
+    inputs.velocitySetpointRotationsPerSec =
+        velocitySetpointRotationsPerSec.getValueAsDouble() / reduction;
   }
 
   @Override
@@ -89,8 +122,14 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   }
 
   @Override
+  public void setGoal(double positionRotations) {
+    positionGoalRotations = positionRotations * reduction;
+    talon.setControl(mmVoltage.withPosition(positionGoalRotations));
+  }
+
+  @Override
   public void resetPosition(double positionRad) {
-    talon.setPosition(Units.radiansToRotations(positionRad) * reduction);
+    talon.setPosition(positionRad * reduction);
   }
 
   @Override
