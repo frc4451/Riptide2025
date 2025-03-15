@@ -1,7 +1,5 @@
 package frc.robot.subsystems.superstructure;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -9,9 +7,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.subsystems.rollers.follow.FollowRollersIO;
-import frc.robot.subsystems.rollers.follow.FollowRollersIOSim;
-import frc.robot.subsystems.rollers.follow.FollowRollersIOTalonFX;
+import frc.robot.subsystems.rollers.follow_magic.FollowRollersMagicIO;
+import frc.robot.subsystems.rollers.follow_magic.FollowRollersMagicIOTalonFX;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
@@ -28,7 +25,6 @@ import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.pivot.Pivot;
 import frc.robot.subsystems.superstructure.shooter.Shooter;
 import frc.robot.subsystems.superstructure.shooter.ShooterModes;
-import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure extends SubsystemBase {
@@ -48,8 +44,7 @@ public class SuperStructure extends SubsystemBase {
   private boolean isAtMode = false;
 
   public SuperStructure() {
-    FollowRollersIO elevatorIO;
-    CanRangeIO heightSensorIO;
+    FollowRollersMagicIO elevatorIO;
     SingleRollerIO coralPivotIO;
     SingleRollerIO shooterIO;
     CanRangeIO coralSensorIO;
@@ -57,7 +52,7 @@ public class SuperStructure extends SubsystemBase {
     switch (Constants.currentMode) {
       case REAL:
         elevatorIO =
-            new FollowRollersIOTalonFX(
+            new FollowRollersMagicIOTalonFX(
                 ElevatorConstants.leaderCanId,
                 ElevatorConstants.followerCanId,
                 ElevatorConstants.reduction,
@@ -65,9 +60,9 @@ public class SuperStructure extends SubsystemBase {
                 ElevatorConstants.invert,
                 ElevatorConstants.invertFollower,
                 ElevatorConstants.isBrake,
-                ElevatorConstants.foc);
-
-        // heightSensorIO = new CanRangeIOReal(ElevatorConstants.heightSensorId, true);
+                ElevatorConstants.foc,
+                ElevatorConstants.gains,
+                ElevatorConstants.mmConfig);
 
         coralPivotIO =
             new SingleRollerIOTalonFX(
@@ -89,15 +84,14 @@ public class SuperStructure extends SubsystemBase {
         break;
 
       case SIM:
-        elevatorIO =
-            new FollowRollersIOSim(
-                ElevatorConstants.leaderGearbox,
-                ElevatorConstants.followerGearbox,
-                ElevatorConstants.reduction,
-                ElevatorConstants.moi,
-                ElevatorConstants.invertFollower);
-
-        heightSensorIO = new CanRangeIOSim();
+        // elevatorIO =
+        //     new FollowRollersMagicIOSim(
+        //         ElevatorConstants.leaderGearbox,
+        //         ElevatorConstants.followerGearbox,
+        //         ElevatorConstants.reduction,
+        //         ElevatorConstants.moi,
+        //         ElevatorConstants.invertFollower);
+        elevatorIO = new FollowRollersMagicIO() {};
 
         coralPivotIO =
             new SingleRollerIOSim(
@@ -114,8 +108,7 @@ public class SuperStructure extends SubsystemBase {
 
       case REPLAY:
       default:
-        elevatorIO = new FollowRollersIO() {};
-        heightSensorIO = new CanRangeIO() {};
+        elevatorIO = new FollowRollersMagicIO() {};
         coralPivotIO = new SingleRollerIO() {};
         shooterIO = new SingleRollerIO() {};
         coralSensorIO = new CanRangeIO() {};
@@ -126,11 +119,8 @@ public class SuperStructure extends SubsystemBase {
         new Elevator(
             name + "/Elevator",
             elevatorIO,
-            new CanRangeIO() {},
-            ElevatorConstants.trapezoidConstraints,
-            ElevatorConstants.inchesPerRad,
-            ElevatorConstants.elevatorConstraints,
-            ElevatorConstants.feedforward);
+            ElevatorConstants.inchesPerRotation,
+            ElevatorConstants.elevatorConstraints);
     elevator.setHeightInches(ElevatorConstants.startHeightInches);
 
     coralPivot =
@@ -159,21 +149,8 @@ public class SuperStructure extends SubsystemBase {
 
     isAtMode = isElevatorAtMode && isPivotAtMode;
 
-    // Make sure Pivot is tucked while moving so that
-    if (currentMode.elevatorHeightInches > SuperStructureConstants.pivotTuckThresholdInches
-        || elevator.getHeightInches() > SuperStructureConstants.pivotTuckThresholdInches) {
-      if (!isElevatorAtMode) {
-        coralPivot.setGoal(Rotation2d.kPi);
-        if (MathUtil.isNear(coralPivot.getPosition().getDegrees(), 180, 90)) {
-          elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
-        }
-      } else {
-        coralPivot.setGoal(currentMode.coralPos);
-      }
-    } else {
-      elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
-      coralPivot.setGoal(currentMode.coralPos);
-    }
+    elevator.setGoalHeightInches(currentMode.elevatorHeightInches);
+    coralPivot.setGoal(currentMode.coralPos);
 
     Logger.recordOutput(name + "/IsElevatorAtMode", isElevatorAtMode);
     Logger.recordOutput(name + "/IsPivotAtMode", isPivotAtMode);
@@ -187,14 +164,14 @@ public class SuperStructure extends SubsystemBase {
     goalMechanism.update(elevator.getGoalHeightInches(), coralPivot.getGoalPosition());
   }
 
-  public Command elevatorManualCommand(DoubleSupplier supplier) {
-    return run(() -> elevator.runVolts(supplier.getAsDouble())).finallyDo(() -> elevator.stop());
-  }
+  // public Command elevatorManualCommand(DoubleSupplier supplier) {
+  //   return run(() -> elevator.runVolts(supplier.getAsDouble())).finallyDo(() -> elevator.stop());
+  // }
 
-  public Command pivotManualCommand(DoubleSupplier supplier) {
-    return run(() -> coralPivot.runVolts(supplier.getAsDouble()))
-        .finallyDo(() -> coralPivot.stop());
-  }
+  // public Command pivotManualCommand(DoubleSupplier supplier) {
+  //   return run(() -> coralPivot.runVolts(supplier.getAsDouble()))
+  //       .finallyDo(() -> coralPivot.stop());
+  // }
 
   private void setCurrentMode(SuperStructureModes nextMode) {
     if (currentMode != nextMode) {

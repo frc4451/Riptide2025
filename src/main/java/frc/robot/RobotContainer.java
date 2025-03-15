@@ -183,12 +183,12 @@ public class RobotContainer {
 
   private void configureRotationModes() {
     // Default, auto-align to closest tracker
-    drive.setDefaultCommand(
-        DriveCommands.joystickDriveAtAngle(
-            drive,
-            () -> -driverController.getLeftYSquared(),
-            () -> -driverController.getLeftXSquared(),
-            () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDriveAtAngle(
+    //         drive,
+    //         () -> -driverController.getLeftYSquared(),
+    //         () -> -driverController.getLeftXSquared(),
+    //         () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
 
     // Normal field-relative drive when overridden via a button
     driverController

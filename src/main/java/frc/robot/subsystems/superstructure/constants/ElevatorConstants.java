@@ -1,10 +1,10 @@
 package frc.robot.subsystems.superstructure.constants;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.robot.Constants;
-import frc.robot.Constants.Mode;
-import frc.robot.subsystems.superstructure.elevator.CustomElevatorController;
 import frc.robot.subsystems.superstructure.elevator.ElevatorConstraints;
 
 public class ElevatorConstants {
@@ -18,7 +18,8 @@ public class ElevatorConstants {
 
   public static final double reduction = 5.0;
   public static final double moi = 0.01;
-  public static final double inchesPerRad = 0.88; // equal to radius
+  public static final double inchesPerRotation =
+      0.88 * 2.0 * Math.PI; // equal to radius in inches * 2pi
 
   public static final boolean invert = false;
   public static final boolean invertFollower = true;
@@ -40,21 +41,40 @@ public class ElevatorConstants {
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/introduction-to-feedforward.html#the-permanent-magnet-dc-motor-feedforward-equation
   // https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/tuning-elevator.html#motion-profiled-feedforward-and-feedback-control
   // No gravity in Sim, therefore no feedforward
-  public static final CustomElevatorController feedforward =
-      Constants.currentMode == Mode.REAL
-          ? new CustomElevatorController(
-              // feedback
-              0.1,
-              0.7,
-              0.0,
-              0.0,
-              // feedforward
-              0.460,
-              0.22,
-              0.22,
-              0.10,
-              0.07,
-              0.004,
-              0.006)
-          : new CustomElevatorController(0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  //   public static final CustomElevatorController feedforward =
+  //       Constants.currentMode == Mode.REAL
+  //           ? new CustomElevatorController(
+  //               // feedback
+  //               0.1,
+  //               0.7,
+  //               0.0,
+  //               0.0,
+  //               // feedforward
+  //               0.460,
+  //               0.22,
+  //               0.22,
+  //               0.10,
+  //               0.07,
+  //               0.004,
+  //               0.006)
+  //           : new CustomElevatorController(0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+  public static final Slot0Configs gains =
+      new Slot0Configs()
+          // feedforward
+          .withKG(0.47)
+          .withGravityType(GravityTypeValue.Elevator_Static)
+          .withKS(0.22)
+          .withKV(0.1)
+          .withKA(0.003)
+          // feedback
+          .withKP(3.5)
+          .withKI(0.0)
+          .withKD(0.1);
+
+  public static final MotionMagicConfigs mmConfig =
+      new MotionMagicConfigs()
+          .withMotionMagicCruiseVelocity(50 / inchesPerRotation * reduction)
+          .withMotionMagicAcceleration(200 / inchesPerRotation * reduction)
+          .withMotionMagicJerk(2000 / inchesPerRotation * reduction);
 }
