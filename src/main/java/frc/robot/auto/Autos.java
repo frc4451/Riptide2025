@@ -160,7 +160,9 @@ public class Autos {
                 superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
                 alignAndScoreNew(
                     () -> ReefFaces.CD.get().leftPole, AutoConstants.l4ReefOffsetMeters),
-                backupFromReef(() -> ReefFaces.CD.get().leftPole)));
+                backupFromReef(() -> ReefFaces.CD.get().leftPole),
+                // HPS
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name))));
 
     return routine;
   }

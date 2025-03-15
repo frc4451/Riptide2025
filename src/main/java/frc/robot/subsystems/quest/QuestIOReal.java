@@ -9,7 +9,6 @@ import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.util.PoseUtils;
 
 public class QuestIOReal implements QuestIO {
   // Configure Network Tables topics (questnav/...) to communicate with the Quest
@@ -35,6 +34,7 @@ public class QuestIOReal implements QuestIO {
   private DoubleSubscriber questBattery = nt4Table.getDoubleTopic("batteryPercent").subscribe(0.0);
 
   private Pose2d resetPose;
+  private float yaw_offset = 0.0f;
 
   public QuestIOReal() {
     resetPose(new Pose2d());
@@ -43,6 +43,7 @@ public class QuestIOReal implements QuestIO {
   public void updateInputs(QuestIOInputs inputs) {
     inputs.questPose = getQuestPose();
     inputs.robotPose = getRobotPose();
+    inputs.questTranslation = getQuestTranslation();
 
     inputs.rawPose = getRawPose();
 
@@ -72,6 +73,11 @@ public class QuestIOReal implements QuestIO {
     }
   }
 
+  private void zeroHeading() {
+    float[] eulerAngles = questEulerAngles.get();
+    yaw_offset = eulerAngles[1];
+  }
+
   /**
    * IMPORTANT: Run periodically after processing.<br>
    * Cleans up Oculus subroutine messages after processing on the headset
@@ -85,11 +91,18 @@ public class QuestIOReal implements QuestIO {
   /** Gets the yaw Euler angle of the headset */
   private double getQuestYawRad() {
     float[] eulerAngles = questEulerAngles.get();
-    return -Math.toRadians(eulerAngles[1]); // may need MathUtil.angleModulus(), not sure
+    float ret = eulerAngles[1] - yaw_offset;
+    ret %= 360;
+    if (ret < 0) {
+      ret += 360;
+    }
+    return Rotation2d.fromDegrees(ret).getRadians();
+    // return -Math.toRadians(eulerAngles[1]); // may need MathUtil.angleModulus(), not sure
   }
 
   private Translation2d getQuestTranslation() {
     float[] oculusPosition = questPosition.get();
+    // return new Translation2d(-oculusPosition[0], oculusPosition[2]);
     return new Translation2d(oculusPosition[2], -oculusPosition[0]);
   }
 
@@ -98,11 +111,25 @@ public class QuestIOReal implements QuestIO {
   }
 
   private Pose2d getQuestPose() {
-    return getRawPose().transformBy(QuestConstants.robotToQuest);
+    return new Pose2d(
+        getQuestTranslation().minus(QuestConstants.robotToQuest),
+        Rotation2d.fromRadians(getQuestYawRad()));
   }
 
   private Pose2d getRobotPose() {
-    return PoseUtils.plus(getQuestPose(), resetPose);
+    return new Pose2d(
+        getQuestPose().minus(resetPose).getTranslation(), Rotation2d.fromRadians(getQuestYawRad()));
+
+    // return new Pose2d(
+    //     getQuestTranslation()
+    //         .rotateAround(getQuestTranslation(), QuestConstants.robotToQuest.getRotation())
+    //         .plus(QuestConstants.robotToQuest.getTranslation())
+    //         .plus(resetPose.getTranslation())
+    //         .rotateAround(resetPose.getTranslation(), resetPose.getRotation()),
+    //     Rotation2d.fromRadians(getQuestYawRad()).plus(resetPose.getRotation()));
+
+    // return getQuestPose()
+    //     .transformBy(new Transform2d(resetPose.getTranslation(), Rotation2d.kZero));
   }
 
   @Override

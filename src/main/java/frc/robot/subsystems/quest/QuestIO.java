@@ -1,6 +1,7 @@
 package frc.robot.subsystems.quest;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface QuestIO extends AutoCloseable {
@@ -11,6 +12,7 @@ public interface QuestIO extends AutoCloseable {
     // These are with relative with offsets applied (probably what you want)
     public Pose2d questPose = new Pose2d();
     public Pose2d robotPose = new Pose2d();
+    public Translation2d questTranslation = new Translation2d();
 
     public Pose2d rawPose = new Pose2d();
 
