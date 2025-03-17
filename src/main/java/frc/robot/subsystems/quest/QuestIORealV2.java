@@ -50,6 +50,7 @@ public class QuestIORealV2 implements QuestIO {
 
   public void updateInputs(QuestIOInputs inputs) {
     inputs.questPose = getQuestPose();
+    inputs.robotPose = getRobotPose();
     inputs.rawPose = getUncorrectedOculusPose();
 
     // This changed in V0.7.0
@@ -126,6 +127,15 @@ public class QuestIORealV2 implements QuestIO {
     return resetRobotPose
         .transformBy(QuestConstants.robotToQuestTransform)
         .transformBy(poseRelativeToReset);
+  }
+
+  /**
+   * Reads the Quest's pose on the field from `getQuestPose` and transforms it to get the robot's pose.
+   *
+   * @return Estimated pose of the Robot on the field
+   */
+  public Pose2d getRobotPose() {
+    return getQuestPose().transformBy(QuestConstants.robotToQuestTransform.inverse());
   }
 
   @Override
