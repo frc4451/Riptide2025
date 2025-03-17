@@ -139,8 +139,37 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine allredL4() {
-    AutoRoutine routine = drive.autoFactory.newRoutine("Allred L4");
+  public AutoRoutine allLeftL4() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("AllLeft L4");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.START_TOP_TO_IL4.name)),
+                superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
+                alignAndScoreNew(
+                    () -> ReefFaces.IJ.get().leftPole, AutoConstants.l4ReefOffsetMeters),
+                backupFromReef(() -> ReefFaces.IJ.get().leftPole),
+                // HPS
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT.name)),
+                superStructure.intake(),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4.name)),
+                superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
+                alignAndScoreNew(
+                    () -> ReefFaces.KL.get().rightPole, AutoConstants.l4ReefOffsetMeters),
+                backupFromReef(() -> ReefFaces.KL.get().rightPole),
+                // HPS
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.LL4_TO_HPS_LEFT.name)),
+                superStructure.intake()));
+
+    return routine;
+  }
+
+  public AutoRoutine allRightL4() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("AllRight L4");
 
     routine
         .active()
@@ -162,7 +191,8 @@ public class Autos {
                     () -> ReefFaces.CD.get().leftPole, AutoConstants.l4ReefOffsetMeters),
                 backupFromReef(() -> ReefFaces.CD.get().leftPole),
                 // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name))));
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name)),
+                superStructure.intake()));
 
     return routine;
   }
@@ -279,7 +309,7 @@ public class Autos {
   private Command delayedTuckAndGo(AutoTrajectory trajectory) {
     return Commands.deadline(
         followTrajectory(trajectory),
-        Commands.waitSeconds(1.575)
+        Commands.waitSeconds(1.0)
             .andThen(superStructure.setModeCommand(SuperStructureModes.TUCKED)));
   }
 
