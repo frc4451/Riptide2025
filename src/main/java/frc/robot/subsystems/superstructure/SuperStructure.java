@@ -75,6 +75,7 @@ public class SuperStructure extends SubsystemBase {
                 PivotConstants.currentLimitAmps,
                 PivotConstants.invert,
                 PivotConstants.isBrakeMode,
+                PivotConstants.foc,
                 PivotConstants.gains,
                 PivotConstants.mmConfig);
 
@@ -84,7 +85,8 @@ public class SuperStructure extends SubsystemBase {
                 ShooterConstants.reduction,
                 ShooterConstants.currentLimitAmps,
                 ShooterConstants.invert,
-                true,
+                ShooterConstants.isBrakeMode,
+                ShooterConstants.foc,
                 new Slot0Configs(),
                 new MotionMagicConfigs());
 

@@ -39,6 +39,8 @@ public class PivotConstants {
   public static final MotionMagicConfigs mmConfig =
       new MotionMagicConfigs()
           .withMotionMagicCruiseVelocity(2.5 * reduction)
-          .withMotionMagicAcceleration(2.5 * reduction)
-          .withMotionMagicJerk(2500 * reduction);
+          .withMotionMagicAcceleration(10 * reduction)
+          .withMotionMagicJerk(1000 * reduction);
+
+  public static final boolean foc = true;
 }

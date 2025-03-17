@@ -32,9 +32,8 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
   private final StatusSignal<Double> positionSetpointRotations;
   private final StatusSignal<Double> velocitySetpointRotationsPerSec;
 
-  private final MotionMagicVoltage mmVoltage = new MotionMagicVoltage(0.0).withUpdateFreqHz(0);
-  private final VoltageOut voltageOut =
-      new VoltageOut(0.0).withEnableFOC(false).withUpdateFreqHz(0);
+  private final MotionMagicVoltage mmVoltage;
+  private final VoltageOut voltageOut;
   private final NeutralOut neutralOut = new NeutralOut();
 
   private double positionGoalRotations = 0;
@@ -45,11 +44,15 @@ public class SingleRollerIOTalonFX implements SingleRollerIO {
       double currentLimitAmps,
       boolean invert,
       boolean isBrakeMode,
+      boolean foc,
       Slot0Configs gains,
       MotionMagicConfigs mmConfig) {
     this.reduction = reduction;
 
     talon = new TalonFX(canId, Constants.alternateCanBus);
+
+    voltageOut = new VoltageOut(0.0).withUpdateFreqHz(0).withEnableFOC(foc);
+    mmVoltage = new MotionMagicVoltage(0.0).withUpdateFreqHz(0).withEnableFOC(foc);
 
     position = talon.getPosition();
     velocity = talon.getVelocity();
