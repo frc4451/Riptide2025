@@ -29,18 +29,19 @@ public class PivotConstants {
           // feedforward
           .withKG(0.3)
           .withGravityType(GravityTypeValue.Arm_Cosine)
-          .withKS(0.0)
-          .withKV(1.1)
+          .withKS(0.15)
+          .withKV(0.1)
+          .withKA(0.0)
           // feedback
-          .withKP(18.0)
+          .withKP(3.2)
           .withKI(0.0)
-          .withKD(0.0);
+          .withKD(0.1);
 
   public static final MotionMagicConfigs mmConfig =
       new MotionMagicConfigs()
-          .withMotionMagicCruiseVelocity(2.5 * reduction)
-          .withMotionMagicAcceleration(10 * reduction)
-          .withMotionMagicJerk(1000 * reduction);
+          .withMotionMagicCruiseVelocity(reduction * 3.0 / 2.0)
+          .withMotionMagicAcceleration(4.5 * reduction)
+          .withMotionMagicJerk(20 * reduction);
 
   public static final boolean foc = true;
 }
