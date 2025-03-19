@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import frc.robot.subsystems.rollers.LoggedTrapezoidState;
 import frc.robot.subsystems.rollers.follow.FollowRollers;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends FollowRollers {

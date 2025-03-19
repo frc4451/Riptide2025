@@ -9,6 +9,9 @@ public enum ChoreoPaths {
   FIVE_METERS("5 Meters"),
   CURVY("Curvy"),
 
+  // Start Top to ___
+  START_TOP_TO_IL4("StartTop-IL4"),
+
   // Start Mid to ___
   START_MID_TO_AL4("StartMid-AL4"),
   START_MID_TO_BL4("StartMid-BL4"),
@@ -73,6 +76,9 @@ public enum ChoreoPaths {
   JL4_TO_HPS_LEFT("JL4-HPSLeft"),
   KL4_TO_HPS_LEFT("KL4-HPSLeft"),
   LL4_TO_HPS_LEFT("LL4-HPSLeft"),
+
+  // HPS Left to ___
+  HPS_LEFT_TO_LL4("HPSLeft-LL4"),
 //
 ;
 

@@ -29,7 +29,7 @@
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"first", "to":"last", "data":{"type":"KeepInRectangle", "props":{"x":{"exp":"0 m", "val":0.0}, "y":{"exp":"0 m", "val":0.0}, "w":{"exp":"17.548 m", "val":17.548}, "h":{"exp":"8.052 m", "val":8.052}}}, "enabled":false},
-    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"MaxVel", "val":4.0}}}, "enabled":true},
+    {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"MaxVel", "val":3.0}}}, "enabled":true},
     {"from":"first", "to":"last", "data":{"type":"MaxAcceleration", "props":{"max":{"exp":"MaxAccel", "val":4.0}}}, "enabled":true}],
   "targetDt":{
    "exp":"0.05 s",
