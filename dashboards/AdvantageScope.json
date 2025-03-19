@@ -43,7 +43,6 @@
             "/RealOutputs/Superstructure/Goal/Mechanism2d/superstructure/elevator",
             "/RealOutputs/Superstructure/Measured/Mechanism2d/superstructure/elevator",
             "/RealOutputs/Superstructure/Measured/Mechanism2d/superstructure/elevator/coralPosition",
-            "/RealOutputs/Odometry/Choreo/Sample/PoseError",
             "/RealOutputs/Odometry/Choreo/Sample/PoseError/translation",
             "/RealOutputs/Controller",
             "/Oculus/QuestPose/translation",
@@ -56,13 +55,11 @@
             "/RealOutputs/Commands/DriveToPoseCommand/Error/translation",
             "/RealOutputs/Superstructure/Algae/Pivot",
             "/RealOutputs/Superstructure/Coral/Pivot/Profile",
-            "/Superstructure/Shooter",
             "/Superstructure/Shooter/CoralSensor",
             "/RealOutputs/Superstructure/Shooter",
             "/RealOutputs/Superstructure/Shooter/CoralSensor",
             "/RealOutputs/Superstructure/CoralSensor",
             "/RealOutputs/Superstructure/Elevator",
-            "/RealOutputs",
             "/RealOutputs/Faces",
             "/RealOutputs/Faces/AB/Left/translation",
             "/RealOutputs/Faces/AB/Right",
@@ -100,16 +97,18 @@
             "/RealOutputs/ChoreoWaypoints/HPS/Left/rotation",
             "/RealOutputs/BobotState/AutoAlignment",
             "/RealOutputs/BobotState/ClosestAlignment",
-            "/AprilTagCamera",
             "/AprilTagCamera/SillyCam",
             "/AprilTagCamera/SillyCam/ValidLocaPoseObservations",
             "/AprilTagCamera/SillyCam/ValidPoseObservations/0",
+            "/RealOutputs/Odometry/TrigSolution",
+            "/RealOutputs",
             "/RealOutputs/Odometry",
-            "/RealOutputs/Odometry/TrigSolution"
+            "/RealOutputs/Odometry/Choreo",
+            "/RealOutputs/Odometry/Choreo/Sample"
           ]
         },
         "tabs": {
-          "selected": 4,
+          "selected": 3,
           "tabs": [
             {
               "type": 0,
@@ -230,6 +229,100 @@
               "controlsHeight": 200
             },
             {
+              "type": 2,
+              "title": "Odometry",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "/RealOutputs/Odometry/Robot",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {}
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Odometry/Constrained",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Odometry/Choreo/Sample/Pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ffff00"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "/RealOutputs/Odometry/Choreo/Trajectory",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "game": "2025 Field (Welded)",
+                "bumpers": "auto",
+                "origin": "blue",
+                "orientation": 0,
+                "size": 30
+              },
+              "controllerUUID": "mjyz650skeqo2f2dik2aa5t9deaiiwov",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Auto Timing",
+              "controller": {
+                "leftSources": [],
+                "rightSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/DriverStation/Enabled",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "/Superstructure/Shooter/CoralSensor/IsDetected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "ppyc8riq8gtzhqnhpy9mdjo6ti8v44wd",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
               "type": 10,
               "title": "Mechanism",
               "controller": [
@@ -253,125 +346,14 @@
               "controlsHeight": 200
             },
             {
-              "type": 2,
-              "title": "Odometry",
-              "controller": {
-                "sources": [
-                  {
-                    "type": "robot",
-                    "logKey": "/RealOutputs/Odometry/GlobalRobot",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "trajectory",
-                    "logKey": "/RealOutputs/Odometry/Choreo/Trajectory",
-                    "logType": "Pose2d[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ff00",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "/RealOutputs/Odometry/Choreo/Sample/Pose",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "color": "#ffff00"
-                    }
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "/RealOutputs/Odometry/LocalRobot",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "color": "#ffff00"
-                    }
-                  }
-                ],
-                "game": "2025 Field (Welded)",
-                "bumpers": "auto",
-                "origin": "blue",
-                "orientation": 0,
-                "size": 30
-              },
-              "controllerUUID": "q1f6xmec6hrkd85aosom4lrc75qad0oa",
+              "type": 4,
+              "title": "Table",
+              "controller": [
+                "/DriverStation/Enabled"
+              ],
+              "controllerUUID": "y8njujrm3aa9sne0txe6hhchudafgnpd",
               "renderer": null,
-              "controlsHeight": 203
-            },
-            {
-              "type": 1,
-              "title": "Line Graph",
-              "controller": {
-                "leftSources": [
-                  {
-                    "type": "stepped",
-                    "logKey": "/RealOutputs/Faces/CD/Left/rotation/value",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#2b66a2",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "rightSources": [],
-                "discreteSources": [],
-                "leftLockedRange": null,
-                "rightLockedRange": null,
-                "leftUnitConversion": {
-                  "type": null,
-                  "factor": 1
-                },
-                "rightUnitConversion": {
-                  "type": null,
-                  "factor": 1
-                },
-                "leftFilter": 0,
-                "rightFilter": 0
-              },
-              "controllerUUID": "dzeo77vifzoejekhnprmid8prvpxrqko",
-              "renderer": null,
-              "controlsHeight": 200
-            },
-            {
-              "type": 1,
-              "title": "Line Graph",
-              "controller": {
-                "leftSources": [
-                  {
-                    "type": "stepped",
-                    "logKey": "/Oculus/TimestampDelta",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#2b66a2",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "rightSources": [],
-                "discreteSources": [],
-                "leftLockedRange": null,
-                "rightLockedRange": null,
-                "leftUnitConversion": {
-                  "type": null,
-                  "factor": 1
-                },
-                "rightUnitConversion": {
-                  "type": null,
-                  "factor": 1
-                },
-                "leftFilter": 0,
-                "rightFilter": 0
-              },
-              "controllerUUID": "k5dqjqinqjk6ih6hk4h48fj7n5od7pn8",
-              "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 0
             }
           ]
         }
@@ -379,5 +361,5 @@
     }
   ],
   "satellites": [],
-  "version": "4.1.2"
+  "version": "4.1.5"
 }
