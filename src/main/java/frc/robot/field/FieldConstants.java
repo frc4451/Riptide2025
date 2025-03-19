@@ -69,13 +69,18 @@ public class FieldConstants {
   public static final ReefFace redReefKL =
       new ReefFace(new AprilTagStruct(6, VisionConstants.fieldLayout.getTagPose(6).get()));
 
-  public static final List<ReefFace> blueReefTags =
+  public static final List<ReefFace> blueReefFaces =
       List.of(blueReefAB, blueReefCD, blueReefEF, blueReefGH, blueReefIJ, blueReefKL);
-  public static final List<ReefFace> redReefTags =
+  public static final List<ReefFace> redReefFaces =
       List.of(redReefAB, redReefCD, redReefEF, redReefGH, redReefIJ, redReefKL);
 
   public static final List<AprilTagStruct> blueHPSTags =
       List.of(blueHPSDriverLeft, blueHPSDriverRight);
   public static final List<AprilTagStruct> redHPSTags =
       List.of(redHPSDriverLeft, redHPSDriverRight);
+
+  public static final List<AprilTagStruct> blueReefTags =
+      blueReefFaces.stream().map(reefFace -> reefFace.tag).toList();
+  public static final List<AprilTagStruct> redReefTags =
+      redReefFaces.stream().map(reefFace -> reefFace.tag).toList();
 }

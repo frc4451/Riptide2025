@@ -51,7 +51,7 @@ public class DrivePerpendicularToPoseCommand extends Command {
 
   @Override
   public void execute() {
-    Pose2d robotPose = drive.getPose();
+    Pose2d robotPose = drive.getGlobalPose();
     Pose2d targetPose = targetPoseSupplier.get();
     Logger.recordOutput("Commands/" + getName() + "/targetPose", targetPose);
 

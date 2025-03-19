@@ -21,7 +21,9 @@ public class VisionConstants {
 
   public static enum PoseEstimationMethod {
     MULTI_TAG,
-    SINGLE_TAG
+    SINGLE_TAG,
+    TRIG,
+    CONSTRAINED
   }
 
   public static final AprilTagFieldLayout fieldLayout =
