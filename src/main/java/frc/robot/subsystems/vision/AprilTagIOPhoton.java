@@ -1,19 +1,13 @@
 package frc.robot.subsystems.vision;
 
-import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.numbers.N8;
-import edu.wpi.first.networktables.DoubleArraySubscriber;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.field.FieldConstants.AprilTagStruct;
+import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.vision.VisionConstants.PoseEstimationMethod;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +16,6 @@ import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.ConstrainedSolvepnpParams;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -37,24 +30,14 @@ public class AprilTagIOPhoton implements AprilTagIO {
   /** This should compute our localized pose to targets we care about */
   private final PhotonPoseEstimator constrainedEstimator;
 
-  private final Transform3d robotToCamera;
-
   private final Supplier<Rotation2d> headingSupplier;
-  private final List<AprilTagStruct> constrainedTargets;
-
-  /*
-   * These are necessary only for CONSTRAINED_SOLVEPNP
-   */
-  private final DoubleArraySubscriber intrinsicsSubscriber;
-  private final DoubleArraySubscriber distortionSubscriber;
+  private final List<AprilTagStruct> trigConstrainedTargets;
 
   public AprilTagIOPhoton(
       VisionSource source,
-      List<AprilTagStruct> constrainedTargets,
+      List<AprilTagStruct> trigConstrainedTargets,
       Supplier<Rotation2d> headingSupplier) {
     camera = new PhotonCamera(source.name());
-
-    robotToCamera = source.robotToCamera();
 
     globalEstimator =
         new PhotonPoseEstimator(
@@ -68,26 +51,12 @@ public class AprilTagIOPhoton implements AprilTagIO {
         new PhotonPoseEstimator(
             VisionConstants.fieldLayout,
             // See which one you like better
-            PhotonPoseEstimator.PoseStrategy.CONSTRAINED_SOLVEPNP,
-            // PhotonPoseEstimator.PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
+            // PhotonPoseEstimator.PoseStrategy.CONSTRAINED_SOLVEPNP,
+            PhotonPoseEstimator.PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
             source.robotToCamera());
 
     this.headingSupplier = headingSupplier;
-    this.constrainedTargets = constrainedTargets;
-
-    this.distortionSubscriber =
-        NetworkTableInstance.getDefault()
-            .getTable("photonvision")
-            .getSubTable(this.camera.getName())
-            .getDoubleArrayTopic("cameraDistortion")
-            .subscribe(new double[0]);
-
-    this.intrinsicsSubscriber =
-        NetworkTableInstance.getDefault()
-            .getTable("photonvision")
-            .getSubTable(this.camera.getName())
-            .getDoubleArrayTopic("cameraIntrinsics")
-            .subscribe(new double[0]);
+    this.trigConstrainedTargets = trigConstrainedTargets;
   }
 
   @Override
@@ -149,34 +118,17 @@ public class AprilTagIOPhoton implements AprilTagIO {
        * to give the RIO the information needed to compute CONSTRAINED_SOLVEPNP.
        */
       if (constrainedEstimator.getPrimaryStrategy() == PoseStrategy.CONSTRAINED_SOLVEPNP) {
-        double[] intrinsics = this.intrinsicsSubscriber.get();
-        double[] distortion = this.distortionSubscriber.get();
-
-        Optional<Matrix<N3, N3>> intrinsicsMat =
-            intrinsics.length == 9
-                ? Optional.of(MatBuilder.fill(Nat.N3(), Nat.N3(), intrinsics))
-                : Optional.empty();
-
-        Optional<Matrix<N8, N1>> distortionVec =
-            distortion.length == 8
-                ? Optional.of(
-                    VecBuilder.fill(
-                        distortion[0],
-                        distortion[1],
-                        distortion[2],
-                        distortion[3],
-                        distortion[4],
-                        distortion[5],
-                        distortion[6],
-                        distortion[7]))
-                : Optional.empty();
-
         maybeConstrainedPose =
             constrainedEstimator.update(
                 result,
-                intrinsicsMat,
-                distortionVec,
-                Optional.of(new ConstrainedSolvepnpParams(true, 0)));
+                camera.getCameraMatrix(),
+                camera.getDistCoeffs(),
+                VisionConstants.constrainedSolvePnpParams);
+      } else if (constrainedEstimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE
+          && result.getBestTarget() != null
+          && FieldUtils.getClosestReef().tag.fiducialId() == result.getBestTarget().fiducialId) {
+        // .anyMatch(id -> id == result.getBestTarget().fiducialId)) {
+        maybeConstrainedPose = constrainedEstimator.update(result);
       } else {
         maybeConstrainedPose = constrainedEstimator.update(result);
       }
@@ -195,7 +147,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
           new PoseObservation(
               estimatedConstrainedPose.estimatedPose,
               estimatedConstrainedPose.timestampSeconds,
-              -1, // constrained observations use gyro heading as validation
+              VisionConstants
+                  .noAmbiguity, // constrained observations use gyro heading as validation
               result.getBestTarget().getFiducialId(),
               constrainedStdDevs,
               PoseEstimationMethod.TRIG);
@@ -225,7 +178,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
                 estimatedPose.timestampSeconds,
                 multiTagResult.estimatedPose.ambiguity,
                 // multiTagResult.fiducialIDsUsed.stream().mapToInt(id -> id).toArray()
-                -100,
+                VisionConstants.noAmbiguity,
                 stdDevs,
                 PoseEstimationMethod.MULTI_TAG);
 
