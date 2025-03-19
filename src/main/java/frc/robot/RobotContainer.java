@@ -260,6 +260,7 @@ public class RobotContainer {
   }
 
   private void configurePoleBindings() {
+    // -- Coral --
     driverController
         .leftBumper()
         .whileTrue(
@@ -291,6 +292,16 @@ public class RobotContainer {
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
+
+    // -- Algae --
+    driverController
+        .rightTrigger()
+        .whileTrue(
+            new DrivePerpendicularToPoseCommand(
+                drive,
+                true,
+                () -> FieldUtils.getClosestReef().tag.pose().toPose2d(),
+                () -> -driverController.getLeftYSquared()));
   }
 
   private void configureSuperBindings() {
