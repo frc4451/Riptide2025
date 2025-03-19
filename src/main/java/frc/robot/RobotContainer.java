@@ -160,7 +160,8 @@ public class RobotContainer {
     // autoChooser.addRoutine("Triple Threat", autos::tripleThreat);
     // autoChooser.addRoutine("Barbaracle", autos::barbaracle);
     autoChooser.addRoutine("Allred L2", autos::allredL2);
-    autoChooser.addRoutine("Allred L4", autos::allredL4);
+    autoChooser.addRoutine("AllRight L4", autos::allRightL4);
+    autoChooser.addRoutine("AllLeft L4", autos::allLeftL4);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -183,12 +184,12 @@ public class RobotContainer {
 
   private void configureRotationModes() {
     // Default, auto-align to closest tracker
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDriveAtAngle(
-    //         drive,
-    //         () -> -driverController.getLeftYSquared(),
-    //         () -> -driverController.getLeftXSquared(),
-    //         () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDriveAtAngle(
+            drive,
+            () -> -driverController.getLeftYSquared(),
+            () -> -driverController.getLeftXSquared(),
+            () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
 
     // Normal field-relative drive when overridden via a button
     driverController
