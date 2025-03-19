@@ -7,8 +7,8 @@
    "MaxAccel":{
     "dimension":"LinAcc",
     "var":{
-     "exp":"4 m / s ^ 2",
-     "val":4.0
+     "exp":"3 m / s ^ 2",
+     "val":3.0
     }
    },
    "MaxVel":{
