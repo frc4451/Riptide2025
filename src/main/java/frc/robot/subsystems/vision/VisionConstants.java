@@ -14,6 +14,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import java.util.List;
 import java.util.Optional;
+import org.photonvision.PhotonPoseEstimator.ConstrainedSolvepnpParams;
 import org.photonvision.simulation.VisionSystemSim;
 
 public class VisionConstants {
@@ -21,7 +22,9 @@ public class VisionConstants {
 
   public static enum PoseEstimationMethod {
     MULTI_TAG,
-    SINGLE_TAG
+    SINGLE_TAG,
+    TRIG,
+    CONSTRAINED
   }
 
   public static final AprilTagFieldLayout fieldLayout =
@@ -99,6 +102,11 @@ public class VisionConstants {
 
   public static final double ambiguityCutoff = 0.05;
   public static final double singleTagPoseCutoffMeters = 4;
+
+  public static final int noAmbiguity = -100;
+
+  public static final Optional<ConstrainedSolvepnpParams> constrainedSolvePnpParams =
+      Optional.of(new ConstrainedSolvepnpParams(true, 0));
 
   // The standard deviations of our vision estimated poses, which affect correction rate
   // (Fake values. Experiment and determine estimation noise on an actual robot.)

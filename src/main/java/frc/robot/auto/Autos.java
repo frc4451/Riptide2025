@@ -230,7 +230,7 @@ public class Autos {
   }
 
   private Command resetQuest() {
-    return Commands.runOnce(() -> quest.resetPose(drive.getPose()));
+    return Commands.runOnce(() -> quest.resetPose(drive.getGlobalPose()));
   }
 
   private Command resetOdometry(AutoTrajectory trajectory) {
@@ -244,6 +244,7 @@ public class Autos {
   private Command positionToPole(Supplier<ReefPole> pole, double reefOffsetMeters) {
     return new DriveToPoseCommand(
         drive,
+        true,
         () ->
             PoseUtils.plusRotation(
                 pole.get().getPerpendicularOffsetPose(reefOffsetMeters), Rotation2d.kPi));
@@ -252,6 +253,7 @@ public class Autos {
   private Command positionToHPS(Supplier<AprilTagStruct> hps) {
     return new DriveToPoseCommand(
         drive,
+        false,
         () ->
             PoseUtils.getPerpendicularOffsetPose(
                 hps.get().pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
@@ -280,6 +282,7 @@ public class Autos {
     DriveToPoseCommand cmd =
         new DriveToPoseCommand(
             drive,
+            true,
             () ->
                 PoseUtils.plusRotation(
                     pole.get().getPerpendicularOffsetPose(reefOffsetMeters), Rotation2d.kPi));

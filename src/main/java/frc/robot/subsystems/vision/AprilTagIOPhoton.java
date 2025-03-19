@@ -2,38 +2,61 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.robot.field.FieldConstants.AprilTagStruct;
+import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.vision.VisionConstants.PoseEstimationMethod;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.MultiTargetPNPResult;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class AprilTagIOPhoton implements AprilTagIO {
   protected final PhotonCamera camera;
-  private final PhotonPoseEstimator estimator;
-  private final Transform3d robotToCamera;
 
-  public AprilTagIOPhoton(VisionSource source) {
+  /** This should compute our global pose we trust */
+  private final PhotonPoseEstimator globalEstimator;
+
+  /** This should compute our localized pose to targets we care about */
+  private final PhotonPoseEstimator constrainedEstimator;
+
+  private final Supplier<Rotation2d> headingSupplier;
+  private final List<AprilTagStruct> trigConstrainedTargets;
+
+  public AprilTagIOPhoton(
+      VisionSource source,
+      List<AprilTagStruct> trigConstrainedTargets,
+      Supplier<Rotation2d> headingSupplier) {
     camera = new PhotonCamera(source.name());
 
-    robotToCamera = source.robotToCamera();
-
-    estimator =
+    globalEstimator =
         new PhotonPoseEstimator(
             VisionConstants.fieldLayout,
             PhotonPoseEstimator.PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             source.robotToCamera());
 
-    estimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+    globalEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+
+    constrainedEstimator =
+        new PhotonPoseEstimator(
+            VisionConstants.fieldLayout,
+            // See which one you like better
+            // PhotonPoseEstimator.PoseStrategy.CONSTRAINED_SOLVEPNP,
+            PhotonPoseEstimator.PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
+            source.robotToCamera());
+
+    this.headingSupplier = headingSupplier;
+    this.trigConstrainedTargets = trigConstrainedTargets;
   }
 
   @Override
@@ -58,24 +81,9 @@ public class AprilTagIOPhoton implements AprilTagIO {
     List<Pose3d> rejectedAprilTagPoses = new ArrayList<>();
 
     for (PhotonPipelineResult result : unreadResults) {
-      // Filtering of tags by ambiguity threshold & validity of id
-      // Does not apply to global pose estimation
-      // List<PhotonTrackedTarget> filteredTargets =
-      // result.getTargets().stream()
-      // .filter(
-      // target ->
-      // target.getPoseAmbiguity() < VisionConstants.ambiguityCutoff
-      // && target.getFiducialId() != -1)
-      // .toList();
-
-      // allTargets.addAll(targets);
-
       // Detected Corners
       for (PhotonTrackedTarget target : result.getTargets()) {
         if (AprilTagAlgorithms.isValid(target)) {
-          // for (TargetCorner corner : target.getDetectedCorners()) {
-          //   validCorners.add(new Translation2d(corner.x, corner.y));
-          // }
           target.getDetectedCorners().stream()
               .map(corner -> new Translation2d(corner.x, corner.y))
               .forEach(validCorners::add);
@@ -85,9 +93,6 @@ public class AprilTagIOPhoton implements AprilTagIO {
           validAprilTagPoses.add(
               VisionConstants.fieldLayout.getTagPose(target.getFiducialId()).get());
         } else {
-          // for (TargetCorner corner : target.getDetectedCorners()) {
-          //   rejectedCorners.add(new Translation2d(corner.x, corner.y));
-          // }
           target.getDetectedCorners().stream()
               .map(corner -> new Translation2d(corner.x, corner.y))
               .forEach(rejectedCorners::add);
@@ -102,31 +107,57 @@ public class AprilTagIOPhoton implements AprilTagIO {
         }
       }
 
-      // List<PoseObservation> localizedPoseObservations =
-      // filteredTargets.stream()
-      // .map(
-      // target -> {
-      // Transform3d robotToTarget =
-      // target.getBestCameraToTarget().plus(robotToCamera);
-      // Pose3d tagPose =
-      // VisionConstants.fieldLayout.getTagPose(target.getFiducialId()).get();
-      // Pose3d localizedRobotPose = tagPose.transformBy(robotToTarget.inverse());
-      // // TODO: account for gyro
-      //
-      // return new PoseObservation(
-      // localizedRobotPose,
-      // result.getTimestampSeconds(),
-      // target.getPoseAmbiguity(),
-      // // new int[] {target.getFiducialId()}
-      // target.getFiducialId(),
-      // PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
-      // })
-      // .toList();
+      // Constrained Pose Estimation
 
-      // allLocalizedPoseObservations.addAll(localizedPoseObservations);
+      // Heading is required for CONSTRAINED_SOLVEPNP and PNP_DISTANCE_TRIG_SOLVE
+      constrainedEstimator.addHeadingData(result.getTimestampSeconds(), headingSupplier.get());
+      Optional<EstimatedRobotPose> maybeConstrainedPose;
 
-      // Pose Estimation
-      Optional<EstimatedRobotPose> maybeEstimatedPose = estimator.update(result);
+      /*
+       * We have to provide camera intrinsics and distortion from Network Tables
+       * to give the RIO the information needed to compute CONSTRAINED_SOLVEPNP.
+       */
+      if (constrainedEstimator.getPrimaryStrategy() == PoseStrategy.CONSTRAINED_SOLVEPNP) {
+        maybeConstrainedPose =
+            constrainedEstimator.update(
+                result,
+                camera.getCameraMatrix(),
+                camera.getDistCoeffs(),
+                VisionConstants.constrainedSolvePnpParams);
+      } else if (constrainedEstimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE
+          && result.getBestTarget() != null
+          && FieldUtils.getClosestReef().tag.fiducialId() == result.getBestTarget().fiducialId) {
+        // .anyMatch(id -> id == result.getBestTarget().fiducialId)) {
+        maybeConstrainedPose = constrainedEstimator.update(result);
+      } else {
+        maybeConstrainedPose = constrainedEstimator.update(result);
+      }
+
+      if (!maybeConstrainedPose.isPresent()) {
+        continue;
+      }
+
+      EstimatedRobotPose estimatedConstrainedPose = maybeConstrainedPose.get();
+
+      Pose3d constrainedPose = estimatedConstrainedPose.estimatedPose;
+      Matrix<N3, N1> constrainedStdDevs =
+          AprilTagAlgorithms.getEstimationStdDevs(constrainedPose.toPose2d(), result.getTargets());
+
+      PoseObservation constrainedObservation =
+          new PoseObservation(
+              estimatedConstrainedPose.estimatedPose,
+              estimatedConstrainedPose.timestampSeconds,
+              VisionConstants
+                  .noAmbiguity, // constrained observations use gyro heading as validation
+              result.getBestTarget().getFiducialId(),
+              constrainedStdDevs,
+              PoseEstimationMethod.TRIG);
+
+      validPoseObservations.add(constrainedObservation);
+      validPoses.add(constrainedObservation.robotPose());
+
+      // Global Pose Estimation
+      Optional<EstimatedRobotPose> maybeEstimatedPose = globalEstimator.update(result);
 
       if (!maybeEstimatedPose.isPresent()) {
         continue;
@@ -147,7 +178,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
                 estimatedPose.timestampSeconds,
                 multiTagResult.estimatedPose.ambiguity,
                 // multiTagResult.fiducialIDsUsed.stream().mapToInt(id -> id).toArray()
-                -100,
+                VisionConstants.noAmbiguity,
                 stdDevs,
                 PoseEstimationMethod.MULTI_TAG);
 

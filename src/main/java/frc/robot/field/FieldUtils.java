@@ -26,7 +26,7 @@ public class FieldUtils {
 
   public static ReefFace getClosestReef() {
     List<ReefFace> reefTags =
-        FieldUtils.isBlueAlliance() ? FieldConstants.blueReefTags : FieldConstants.redReefTags;
+        FieldUtils.isBlueAlliance() ? FieldConstants.blueReefFaces : FieldConstants.redReefFaces;
     Translation2d robotTranslation = BobotState.getGlobalPose().getTranslation();
 
     ReefFace closestReef =
@@ -66,5 +66,9 @@ public class FieldUtils {
 
   public static AprilTagStruct getBargeTag() {
     return FieldUtils.isBlueAlliance() ? FieldConstants.blueBarge : FieldConstants.redBarge;
+  }
+
+  public static List<AprilTagStruct> getReefTags() {
+    return FieldUtils.isBlueAlliance() ? FieldConstants.blueReefTags : FieldConstants.redReefTags;
   }
 }

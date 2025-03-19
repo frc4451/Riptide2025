@@ -63,7 +63,10 @@ public class Drive extends SubsystemBase {
         new SwerveModulePosition(),
         new SwerveModulePosition()
       };
-  private SwerveDrivePoseEstimator poseEstimator =
+  private SwerveDrivePoseEstimator globalPoseEstimator =
+      new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+
+  private SwerveDrivePoseEstimator constrainedPoseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
   public AutoFactory autoFactory;
@@ -90,7 +93,8 @@ public class Drive extends SubsystemBase {
     SparkOdometryThread.getInstance().start();
 
     // Configure AutoFactory for Choreo
-    autoFactory = new AutoFactory(this::getPose, this::setPose, this::followTrajectory, true, this);
+    autoFactory =
+        new AutoFactory(this::getGlobalPose, this::setPose, this::followTrajectory, true, this);
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Configure SysId
@@ -163,26 +167,38 @@ public class Drive extends SubsystemBase {
       }
 
       // Apply update
-      poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      globalPoseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
+      constrainedPoseEstimator.updateWithTime(
+          sampleTimestamps[i], rawGyroRotation, modulePositions);
     }
 
     // TODO: Confidence for AprilTags & Quest
 
     {
-      // AprilTag Cameras
-      PoseObservation observation;
-      while ((observation = BobotState.getVisionObservations().poll()) != null) {
-        poseEstimator.addVisionMeasurement(
-            observation.robotPose().toPose2d(),
-            observation.timestampSeconds(),
-            observation.stdDevs());
+      // AprilTag Cameras (Global)
+      PoseObservation globalObservation;
+      while ((globalObservation = BobotState.getGlobalVisionObservations().poll()) != null) {
+        globalPoseEstimator.addVisionMeasurement(
+            globalObservation.robotPose().toPose2d(),
+            globalObservation.timestampSeconds(),
+            globalObservation.stdDevs());
+      }
+
+      // AprilTag Cameras (Constrained)
+      PoseObservation constrainedObservation;
+      while ((constrainedObservation = BobotState.getConstrainedVisionObservations().poll())
+          != null) {
+        constrainedPoseEstimator.addVisionMeasurement(
+            constrainedObservation.robotPose().toPose2d(),
+            constrainedObservation.timestampSeconds(),
+            constrainedObservation.stdDevs());
       }
 
       // Quest
       if (DriverStation.isEnabled()) {
         TimestampedPose timestampedPose;
         while ((timestampedPose = BobotState.getQuestMeasurments().poll()) != null) {
-          poseEstimator.addVisionMeasurement(
+          globalPoseEstimator.addVisionMeasurement(
               timestampedPose.pose(), timestampedPose.timestamp()
               // , QuestConstants.stdDevs
               );
@@ -190,7 +206,8 @@ public class Drive extends SubsystemBase {
       }
     }
 
-    BobotState.updateGlobalPose(getPose());
+    BobotState.updateGlobalPose(getGlobalPose());
+    BobotState.updateConstrainedPose(getConstrainedPose());
   }
 
   /**
@@ -232,7 +249,7 @@ public class Drive extends SubsystemBase {
 
   public void followTrajectory(SwerveSample sample) {
     // Get the current pose of the robot
-    Pose2d pose = getPose();
+    Pose2d pose = getGlobalPose();
 
     // Generate the next speeds for the robot
     ChassisSpeeds speeds =
@@ -321,18 +338,23 @@ public class Drive extends SubsystemBase {
 
   /** Returns the current odometry pose. */
   @AutoLogOutput(key = "Odometry/Robot")
-  public Pose2d getPose() {
-    return poseEstimator.getEstimatedPosition();
+  public Pose2d getGlobalPose() {
+    return globalPoseEstimator.getEstimatedPosition();
+  }
+
+  @AutoLogOutput(key = "Odometry/Constrained")
+  public Pose2d getConstrainedPose() {
+    return constrainedPoseEstimator.getEstimatedPosition();
   }
 
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
-    return getPose().getRotation();
+    return getGlobalPose().getRotation();
   }
 
   /** Resets the current odometry pose. */
   public void setPose(Pose2d pose) {
-    poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+    globalPoseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
   }
 
   /** Returns the maximum linear speed in meters per sec. */

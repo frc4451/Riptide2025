@@ -19,18 +19,21 @@ public class DriveToPoseCommand extends Command {
   private final ProfiledPIDController angleController = DriveCommandConstants.makeAngleController();
 
   private final Drive drive;
+  private final boolean useConstrainedPose;
   private final Supplier<Pose2d> targetPoseSupplier;
 
-  public DriveToPoseCommand(Drive drive, Supplier<Pose2d> targetPoseSupplier) {
+  public DriveToPoseCommand(
+      Drive drive, boolean useConstrainedPose, Supplier<Pose2d> targetPoseSupplier) {
     addRequirements(drive);
 
     this.drive = drive;
+    this.useConstrainedPose = useConstrainedPose;
     this.targetPoseSupplier = targetPoseSupplier;
   }
 
   @Override
   public void execute() {
-    Pose2d robotPose = drive.getPose();
+    Pose2d robotPose = useConstrainedPose ? drive.getConstrainedPose() : drive.getGlobalPose();
     Pose2d targetPose = targetPoseSupplier.get();
     Logger.recordOutput("Commands/" + getName() + "/TargetPose", targetPose);
 

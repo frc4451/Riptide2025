@@ -2,6 +2,7 @@ package frc.robot.subsystems.quest;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.FloatArraySubscriber;
@@ -10,7 +11,7 @@ import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class QuestIOReal implements QuestIO {
+public class QuestIORealV2 implements QuestIO {
   // Configure Network Tables topics (questnav/...) to communicate with the Quest
   private NetworkTableInstance nt4Instance = NetworkTableInstance.getDefault();
   private NetworkTable nt4Table = nt4Instance.getTable("questnav");
@@ -33,21 +34,26 @@ public class QuestIOReal implements QuestIO {
       nt4Table.getFloatArrayTopic("eulerAngles").subscribe(new float[] {0.0f, 0.0f, 0.0f});
   private DoubleSubscriber questBattery = nt4Table.getDoubleTopic("batteryPercent").subscribe(0.0);
 
-  private Pose2d resetPose;
-  private float yaw_offset = 0.0f;
+  private Pose2d resetOculusPose;
+  private Pose2d resetRobotPose;
 
-  public QuestIOReal() {
-    resetPose(new Pose2d());
+  public QuestIORealV2() {
+    zeroAbsolutePosition();
+  }
+
+  /** Zeroes the absolute 3D position of the robot (similar to long-pressing the quest logo) */
+  private void zeroAbsolutePosition() {
+    if (questMiso.get() != 99) {
+      questMosi.set(1);
+    }
   }
 
   public void updateInputs(QuestIOInputs inputs) {
     inputs.questPose = getQuestPose();
-    inputs.robotPose = getRobotPose();
-    inputs.questTranslation = getQuestTranslation();
+    inputs.rawPose = getUncorrectedOculusPose();
 
-    inputs.rawPose = getRawPose();
-
-    double timestamp = questTimestamp.get();
+    // This changed in V0.7.0
+    double timestamp = questTimestamp.getAtomic().serverTime;
     inputs.timestampDelta = timestamp - inputs.timestamp;
     inputs.timestamp = timestamp;
 
@@ -60,22 +66,10 @@ public class QuestIOReal implements QuestIO {
     cleanUpOculusMessages();
   }
 
-  /** Sets supplied pose as origin of all calculations */
-  public void resetPose(Pose2d pose) {
-    zeroAbsolutePosition();
-    resetPose = pose;
-  }
-
-  /** Zeroes the absolute 3D position of the robot (similar to long-pressing the quest logo) */
-  private void zeroAbsolutePosition() {
-    if (questMiso.get() != 99) {
-      questMosi.set(1);
-    }
-  }
-
-  private void zeroHeading() {
-    float[] eulerAngles = questEulerAngles.get();
-    yaw_offset = eulerAngles[1];
+  /** Sets supplied pose as origin of robot for calculations */
+  public void resetPose(Pose2d robotPose) {
+    resetOculusPose = getUncorrectedOculusPose();
+    resetRobotPose = robotPose;
   }
 
   /**
@@ -88,48 +82,50 @@ public class QuestIOReal implements QuestIO {
     }
   }
 
-  /** Gets the yaw Euler angle of the headset */
-  private double getQuestYawRad() {
+  /**
+   * Reads EulerAngles and calculates the assumed Yaw of the Oculus's pose. Input is in degrees.
+   *
+   * @return Rotation2d object of Oculus Yaw
+   */
+  private Rotation2d getUncorrectedOculusYaw() {
     float[] eulerAngles = questEulerAngles.get();
-    float ret = eulerAngles[1] - yaw_offset;
-    ret %= 360;
-    if (ret < 0) {
-      ret += 360;
-    }
-    return Rotation2d.fromDegrees(ret).getRadians();
-    // return -Math.toRadians(eulerAngles[1]); // may need MathUtil.angleModulus(), not sure
+    return Rotation2d.fromDegrees(-Math.IEEEremainder(eulerAngles[1], 360d));
   }
 
-  private Translation2d getQuestTranslation() {
-    float[] oculusPosition = questPosition.get();
-    // return new Translation2d(-oculusPosition[0], oculusPosition[2]);
-    return new Translation2d(oculusPosition[2], -oculusPosition[0]);
+  /**
+   * Reads the XY values of the Oculus on the field
+   *
+   * @return Translation2d representation of the Quest on the field
+   */
+  private Translation2d getUncorrectedOculusTranslation() {
+    float[] questNavPosition = questPosition.get();
+    return new Translation2d(questNavPosition[2], -questNavPosition[0]);
   }
 
-  private Pose2d getRawPose() {
-    return new Pose2d(getQuestTranslation(), Rotation2d.fromRadians(getQuestYawRad()));
+  /**
+   * Combines `getUncorrectedOculusTranslation` and `getUncorrectedOculusYaw` to get combined pose
+   *
+   * @return Uncorrected Oculus Pose on the field
+   */
+  private Pose2d getUncorrectedOculusPose() {
+    return new Pose2d(getUncorrectedOculusTranslation(), getUncorrectedOculusYaw());
   }
 
+  /**
+   * To get the headset's actual pose on the field, you need to know: 1. Origin of the headset when
+   * the match started 2. Origin of the robot when the match started 3. Transform of the "reset" and
+   * "current" pose for the headset 4. The robot-to-field Pose when the headset was reset 5. The
+   * robot-to-camera of the headset
+   *
+   * <p>Then you transform the "reset" robot pose by robot-to-camera and reset-to-current.
+   *
+   * @return Estimated pose of Oculus on the field
+   */
   private Pose2d getQuestPose() {
-    return new Pose2d(
-        getQuestTranslation().minus(QuestConstants.robotToQuestTranslation),
-        Rotation2d.fromRadians(getQuestYawRad()));
-  }
-
-  private Pose2d getRobotPose() {
-    return new Pose2d(
-        getQuestPose().minus(resetPose).getTranslation(), Rotation2d.fromRadians(getQuestYawRad()));
-
-    // return new Pose2d(
-    //     getQuestTranslation()
-    //         .rotateAround(getQuestTranslation(), QuestConstants.robotToQuest.getRotation())
-    //         .plus(QuestConstants.robotToQuest.getTranslation())
-    //         .plus(resetPose.getTranslation())
-    //         .rotateAround(resetPose.getTranslation(), resetPose.getRotation()),
-    //     Rotation2d.fromRadians(getQuestYawRad()).plus(resetPose.getRotation()));
-
-    // return getQuestPose()
-    //     .transformBy(new Transform2d(resetPose.getTranslation(), Rotation2d.kZero));
+    Transform2d poseRelativeToReset = getUncorrectedOculusPose().minus(resetOculusPose);
+    return resetRobotPose
+        .transformBy(QuestConstants.robotToQuestTransform)
+        .transformBy(poseRelativeToReset);
   }
 
   @Override

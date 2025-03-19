@@ -21,28 +21,35 @@ public class DrivePerpendicularToPoseCommand extends Command {
   private final ProfiledPIDController angleController = DriveCommandConstants.makeAngleController();
 
   private final Drive drive;
+  private final boolean useConstrainedPose;
   private final Supplier<Pose2d> targetPoseSupplier;
   private final DoubleSupplier perpendicularInput;
 
   private double perpendicularError = 0;
 
   public DrivePerpendicularToPoseCommand(
-      Drive drive, Supplier<Pose2d> targetPoseSupplier, DoubleSupplier perpendicularInput) {
+      Drive drive,
+      boolean useConstrainedPose,
+      Supplier<Pose2d> targetPoseSupplier,
+      DoubleSupplier perpendicularInput) {
     addRequirements(drive);
 
     this.drive = drive;
+    this.useConstrainedPose = useConstrainedPose;
     this.targetPoseSupplier = targetPoseSupplier;
     this.perpendicularInput = perpendicularInput;
   }
 
   public static DrivePerpendicularToPoseCommand withJoystickRumble(
       Drive drive,
+      boolean useConstrainedPose,
       Supplier<Pose2d> targetPoseSupplier,
       DoubleSupplier perpendicularInput,
       DoubleSupplier rumbleDistance,
       Command rumbleCommand) {
     DrivePerpendicularToPoseCommand command =
-        new DrivePerpendicularToPoseCommand(drive, targetPoseSupplier, perpendicularInput);
+        new DrivePerpendicularToPoseCommand(
+            drive, useConstrainedPose, targetPoseSupplier, perpendicularInput);
 
     command.atSetpoint(rumbleDistance).onTrue(Commands.deferredProxy(() -> rumbleCommand));
 
@@ -51,7 +58,7 @@ public class DrivePerpendicularToPoseCommand extends Command {
 
   @Override
   public void execute() {
-    Pose2d robotPose = drive.getPose();
+    Pose2d robotPose = useConstrainedPose ? drive.getConstrainedPose() : drive.getGlobalPose();
     Pose2d targetPose = targetPoseSupplier.get();
     Logger.recordOutput("Commands/" + getName() + "/targetPose", targetPose);
 
