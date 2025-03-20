@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.field.FieldConstants.AprilTagStruct;
 import frc.robot.util.PoseUtils;
 
-public record ReefPole(AprilTagStruct tag) {
+public record ProcessorLocation(AprilTagStruct tag) {
   public Pose2d getPose() {
     return PoseUtils.getParallelOffsetPose(tag.pose().toPose2d());
   }

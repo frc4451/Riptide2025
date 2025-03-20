@@ -4,15 +4,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.field.FieldConstants.AprilTagStruct;
 import frc.robot.util.PoseUtils;
 
-public class ReefFace {
+public class HPSFace {
   public final AprilTagStruct tag;
-  public final ReefPole leftPole;
-  public final ReefPole rightPole;
+  public final HPSLocation HPS;
 
-  public ReefFace(AprilTagStruct tag) {
+  public HPSFace(AprilTagStruct tag) {
     this.tag = tag;
-    this.leftPole = new ReefPole(tag);
-    this.rightPole = new ReefPole(tag);
+    this.HPS = new HPSLocation(tag);
   }
 
   public double getPerpendicularError(Pose2d robotPose) {
