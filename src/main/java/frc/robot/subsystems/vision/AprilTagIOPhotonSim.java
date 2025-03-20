@@ -2,7 +2,7 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
-import frc.robot.field.FieldConstants.AprilTagStruct;
+import frc.robot.field.ReefFace;
 import java.util.List;
 import java.util.function.Supplier;
 import org.photonvision.simulation.PhotonCameraSim;
@@ -13,7 +13,7 @@ public class AprilTagIOPhotonSim extends AprilTagIOPhoton {
 
   public AprilTagIOPhotonSim(
       VisionSource source,
-      List<AprilTagStruct> constrainedTargets,
+      List<ReefFace> constrainedTargets,
       Supplier<Rotation2d> headingSupplier,
       SimCameraConfig config) {
     super(source, constrainedTargets, headingSupplier);

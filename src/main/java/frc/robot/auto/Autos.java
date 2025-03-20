@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.field.FieldConstants;
-import frc.robot.field.FieldConstants.AprilTagStruct;
+import frc.robot.field.HPSFace;
 import frc.robot.field.HumanPlayerStations;
 import frc.robot.field.ReefFaces;
 import frc.robot.field.ReefPole;
@@ -250,13 +250,13 @@ public class Autos {
                 pole.get().getPerpendicularOffsetPose(reefOffsetMeters), Rotation2d.kPi));
   }
 
-  private Command positionToHPS(Supplier<AprilTagStruct> hps) {
+  private Command positionToHPS(Supplier<HPSFace> hps) {
     return new DriveToPoseCommand(
         drive,
         false,
         () ->
             PoseUtils.getPerpendicularOffsetPose(
-                hps.get().pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
+                hps.get().HPS.getPose(), AutoConstants.l2ReefOffsetMeters));
   }
 
   private Command pathAndMode(AutoTrajectory trajectory, SuperStructureModes mode) {
