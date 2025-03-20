@@ -23,8 +23,6 @@ public class PoseUtils {
     // return pose.transformBy(new Transform2d(0, offsetMeters, Rotation2d.kZero));
   }
 
-
-
   public static Pose2d getPerpendicularOffsetPose(Pose2d pose, double perpendicularOffsetMeters) {
     Translation2d offsetTranslation =
         pose.getTranslation()
