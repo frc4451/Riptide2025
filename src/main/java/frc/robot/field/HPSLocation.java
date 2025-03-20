@@ -6,7 +6,7 @@ import frc.robot.util.PoseUtils;
 
 public record HPSLocation(AprilTagStruct tag) {
   public Pose2d getPose() {
-    return PoseUtils.getParallelOffsetPose2(tag.pose().toPose2d());
+    return tag.pose().toPose2d();
   }
 
   public double getParallellError(Pose2d robotPose) {
