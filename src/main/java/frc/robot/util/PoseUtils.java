@@ -23,6 +23,21 @@ public class PoseUtils {
     // return pose.transformBy(new Transform2d(0, offsetMeters, Rotation2d.kZero));
   }
 
+  public static Pose2d getParallelOffsetPose2(Pose2d pose) {
+    Translation2d offsetTranslation = pose.getTranslation();
+    // .plus(
+    //     new Translation2d(
+    //         // Add 90 degrees to all trig functions
+    //         // so it is offset parallel to the face of the tag
+    //         -offsetMeters * pose.getRotation().getSin(),
+    //         offsetMeters * pose.getRotation().getCos()));
+
+    return new Pose2d(offsetTranslation, pose.getRotation());
+
+    // But this way simpler to reason about & understand
+    // return pose.transformBy(new Transform2d(0, offsetMeters, Rotation2d.kZero));
+  }
+
   public static Pose2d getPerpendicularOffsetPose(Pose2d pose, double perpendicularOffsetMeters) {
     Translation2d offsetTranslation =
         pose.getTranslation()

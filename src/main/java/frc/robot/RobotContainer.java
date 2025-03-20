@@ -372,11 +372,11 @@ public class RobotContainer {
     Logger.recordOutput(
         logRoot + "/HPS/Left",
         PoseUtils.getPerpendicularOffsetPose(
-            FieldConstants.blueHPSDriverLeft.pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
+            FieldConstants.blueHPSDriverLeft.HPS.getPose(), AutoConstants.l2ReefOffsetMeters));
     Logger.recordOutput(
         logRoot + "/HPS/Right",
         PoseUtils.getPerpendicularOffsetPose(
-            FieldConstants.blueHPSDriverRight.pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
+            FieldConstants.blueHPSDriverRight.HPS.getPose(), AutoConstants.l2ReefOffsetMeters));
 
     driverController
         .back()

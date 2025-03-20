@@ -3,7 +3,7 @@ package frc.robot.field;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.bobot_state2.BobotState;
+import frc.robot.bobot_state.BobotState;
 import frc.robot.field.FieldConstants.AprilTagStruct;
 import java.util.List;
 
@@ -70,6 +70,10 @@ public class FieldUtils {
     ProcessorFace closestTag = processorTags;
 
     return closestTag;
+  }
+
+  public static List<ReefFace> getReefTags() {
+    return FieldUtils.isBlueAlliance() ? FieldConstants.blueReefTags : FieldConstants.redReefTags;
   }
 
   public static AprilTagStruct getBargeTag() {

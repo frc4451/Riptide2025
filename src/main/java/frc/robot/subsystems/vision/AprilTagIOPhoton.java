@@ -6,8 +6,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import frc.robot.field.FieldConstants.AprilTagStruct;
 import frc.robot.field.FieldUtils;
+import frc.robot.field.ReefFace;
 import frc.robot.subsystems.vision.VisionConstants.PoseEstimationMethod;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +31,11 @@ public class AprilTagIOPhoton implements AprilTagIO {
   private final PhotonPoseEstimator constrainedEstimator;
 
   private final Supplier<Rotation2d> headingSupplier;
-  private final List<AprilTagStruct> trigConstrainedTargets;
+  private final List<ReefFace> trigConstrainedTargets;
 
   public AprilTagIOPhoton(
       VisionSource source,
-      List<AprilTagStruct> trigConstrainedTargets,
+      List<ReefFace> trigConstrainedTargets,
       Supplier<Rotation2d> headingSupplier) {
     camera = new PhotonCamera(source.name());
 

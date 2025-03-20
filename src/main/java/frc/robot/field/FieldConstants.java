@@ -2,7 +2,7 @@ package frc.robot.field;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.vision2.VisionConstants;
+import frc.robot.subsystems.vision.VisionConstants;
 import java.util.List;
 
 public class FieldConstants {
