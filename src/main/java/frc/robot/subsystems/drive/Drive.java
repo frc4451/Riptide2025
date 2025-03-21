@@ -179,8 +179,7 @@ public class Drive extends SubsystemBase {
       PoseObservation globalObservation;
       while ((globalObservation = BobotState.getGlobalVisionObservations().poll()) != null) {
         globalPoseEstimator.addVisionMeasurement(
-            globalObservation.robotPose().toPose2d(),
-            globalObservation.timestampSeconds()
+            globalObservation.robotPose().toPose2d(), globalObservation.timestampSeconds()
             // ,globalObservation.stdDevs()
             );
       }
