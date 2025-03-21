@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 public class DriveCommands {
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
@@ -253,6 +255,11 @@ public class DriveCommands {
                       }
                       double wheelRadius =
                           (state.gyroDelta * DriveConstants.driveBaseRadius) / wheelDelta;
+                      Logger.recordOutput("Commands/WheelRadiusCharacterization/WheelDeltaRad", wheelDelta);
+                      Logger.recordOutput("Commands/WheelRadiusCharacterization/GyroDeltaRad", state.gyroDelta);
+                      Logger.recordOutput("Commands/WheelRadiusCharacterization/GyroDeltaDeg", Units.radiansToDegrees(state.gyroDelta));
+                      Logger.recordOutput("Commands/WheelRadiusCharacterization/Radius", wheelRadius);
+                      Logger.recordOutput("Commands/WheelRadiusCharacterization/RadiusIn", Units.metersToInches(wheelRadius));
 
                       NumberFormat formatter = new DecimalFormat("#0.000");
                       System.out.println(

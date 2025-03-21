@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import frc.robot.field.FieldConstants.AprilTagStruct;
+import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.vision.VisionConstants.PoseEstimationMethod;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,9 +126,9 @@ public class AprilTagIOPhoton implements AprilTagIO {
                 VisionConstants.constrainedSolvePnpParams);
       } else if (constrainedEstimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE
           && result.getBestTarget() != null
-          // && FieldUtils.getClosestReef().tag.fiducialId() == result.getBestTarget().fiducialId) {
-          && trigConstrainedTargets.stream()
-              .anyMatch(id -> id.fiducialId() == result.getBestTarget().fiducialId)) {
+          && FieldUtils.getClosestReef().tag.fiducialId() == result.getBestTarget().fiducialId) {
+          // && trigConstrainedTargets.stream()
+          //     .anyMatch(id -> id.fiducialId() == result.getBestTarget().fiducialId)) {
         maybeConstrainedPose = constrainedEstimator.update(result);
       } else {
         maybeConstrainedPose = constrainedEstimator.update(result);
