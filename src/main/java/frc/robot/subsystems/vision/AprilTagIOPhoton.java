@@ -140,6 +140,10 @@ public class AprilTagIOPhoton implements AprilTagIO {
 
       EstimatedRobotPose estimatedConstrainedPose = maybeConstrainedPose.get();
 
+
+      Matrix<N3, N1> stdDevs =
+          AprilTagAlgorithms.getEstimationStdDevs(estimatedConstrainedPose.estimatedPose.toPose2d(), result.getTargets());
+
       PoseObservation constrainedObservation =
           new PoseObservation(
               estimatedConstrainedPose.estimatedPose,
@@ -147,7 +151,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
               VisionConstants
                   .noAmbiguity, // constrained observations use gyro heading as validation
               result.getBestTarget().getFiducialId(),
-              VisionConstants.noStdDevs,
+              stdDevs,
               PoseEstimationMethod.TRIG);
 
       validPoseObservations.add(constrainedObservation);
