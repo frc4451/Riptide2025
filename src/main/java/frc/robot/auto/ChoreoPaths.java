@@ -14,7 +14,6 @@ public enum ChoreoPaths {
 
   // Start Mid to ___
   START_MID_TO_AL4("StartMid-AL4"),
-  START_MID_TO_BL4("StartMid-BL4"),
   START_MID_TO_CL4("StartMid-CL4"),
   START_MID_TO_DL4("StartMid-DL4"),
   START_MID_TO_EL4("StartMid-EL4"),
