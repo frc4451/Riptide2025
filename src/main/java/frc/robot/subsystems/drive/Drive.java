@@ -190,8 +190,9 @@ public class Drive extends SubsystemBase {
           != null) {
         constrainedPoseEstimator.addVisionMeasurement(
             constrainedObservation.robotPose().toPose2d(),
-            constrainedObservation.timestampSeconds(),
-            constrainedObservation.stdDevs());
+            constrainedObservation.timestampSeconds()
+            // ,constrainedObservation.stdDevs()
+            );
       }
 
       // Quest
