@@ -204,7 +204,8 @@ public class SuperStructure extends SubsystemBase {
 
   public Command intake() {
     return Commands.sequence(
-            setShooterModeCommand(ShooterModes.INTAKE).unless(isCoralIntaked()),
+            setShooterModeCommand(ShooterModes.INTAKE)
+                .unless(isCoralIntaked().or(() -> Constants.currentMode == Constants.Mode.SIM)),
             Commands.waitUntil(
                 isCoralIntaked().or(() -> Constants.currentMode == Constants.Mode.SIM)))
         .finallyDo(() -> shooter.setShooterMode(ShooterModes.NONE));
