@@ -50,10 +50,11 @@ public class Pivot extends SingleRoller {
   }
 
   public void setGoal(Rotation2d angle) {
-    double clampedPosition =
-        MathUtil.clamp(
-            angle.getRotations(), pivotConstraints.minRotations(), pivotConstraints.maxRotations());
-    io.setGoal(clampedPosition);
+    // double clampedPosition =
+    //     MathUtil.clamp(
+    //         angle.getRotations(), pivotConstraints.minRotations(),
+    // pivotConstraints.maxRotations());
+    io.setGoal(angle.getRotations());
   }
 
   public Rotation2d getGoalPosition() {
