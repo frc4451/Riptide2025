@@ -14,9 +14,13 @@ public class ReefTagTracker extends TargetAngleTracker {
     Pose2d closestPose = FieldUtils.getClosestReef().tag.pose().toPose2d();
     rotationTarget = closestPose.getRotation().plus(Rotation2d.kPi);
     distanceMeters =
-        closestPose.getTranslation().getDistance(
-          (AutoConstants.useConstrainedPoseForReef ? BobotState.getConstrainedPose() : BobotState.getGlobalPose())
-          .getTranslation());
+        closestPose
+            .getTranslation()
+            .getDistance(
+                (AutoConstants.useConstrainedPoseForReef
+                        ? BobotState.getConstrainedPose()
+                        : BobotState.getGlobalPose())
+                    .getTranslation());
   }
 
   public Rotation2d getRotationTarget() {
