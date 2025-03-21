@@ -261,7 +261,6 @@ public class DriveCommands {
                       Logger.recordOutput(
                           "Commands/WheelRadiusCharacterization/RadiusIn",
                           Units.metersToInches(wheelRadius));
-
                     })
 
                 // When cancelled, calculate and print results
