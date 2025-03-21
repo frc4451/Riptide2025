@@ -189,8 +189,7 @@ public class Drive extends SubsystemBase {
       while ((constrainedObservation = BobotState.getConstrainedVisionObservations().poll())
           != null) {
         constrainedPoseEstimator.addVisionMeasurement(
-            constrainedObservation.robotPose().toPose2d(),
-            constrainedObservation.timestampSeconds()
+            constrainedObservation.robotPose().toPose2d(), constrainedObservation.timestampSeconds()
             // ,constrainedObservation.stdDevs()
             );
       }

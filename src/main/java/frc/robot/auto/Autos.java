@@ -250,7 +250,7 @@ public class Autos {
   private Command positionToPole(Supplier<ReefPole> pole, double reefOffsetMeters) {
     return new DriveToPoseCommand(
         drive,
-        true,
+        AutoConstants.useConstrainedPoseForReef,
         () ->
             PoseUtils.plusRotation(
                 pole.get().getPerpendicularOffsetPose(reefOffsetMeters), Rotation2d.kPi));
@@ -288,7 +288,7 @@ public class Autos {
     DriveToPoseCommand cmd =
         new DriveToPoseCommand(
             drive,
-            true,
+            AutoConstants.useConstrainedPoseForReef,
             () ->
                 PoseUtils.plusRotation(
                     pole.get().getPerpendicularOffsetPose(reefOffsetMeters), Rotation2d.kPi));
