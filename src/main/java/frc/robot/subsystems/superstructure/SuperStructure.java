@@ -150,10 +150,10 @@ public class SuperStructure extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (DriverStation.isDisabled()) {
-      setCurrentMode(SuperStructureModes.TUCKED);
-      shooter.setShooterMode(ShooterModes.NONE);
-    }
+    // if (DriverStation.isDisabled()) {
+    //   setCurrentMode(SuperStructureModes.TUCKED);
+    //   shooter.setShooterMode(ShooterModes.NONE);
+    // }
 
     boolean isElevatorAtMode = elevator.isNear(currentMode.elevatorHeightInches);
 
@@ -205,7 +205,7 @@ public class SuperStructure extends SubsystemBase {
 
   public Command intake() {
     return Commands.sequence(
-            setShooterModeCommand(ShooterModes.INTAKE),
+            setShooterModeCommand(ShooterModes.INTAKE).unless(isCoralIntaked()),
             Commands.waitUntil(
                 isCoralIntaked().or(() -> Constants.currentMode == Constants.Mode.SIM)))
         .finallyDo(() -> shooter.setShooterMode(ShooterModes.NONE));

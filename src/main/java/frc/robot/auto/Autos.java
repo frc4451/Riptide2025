@@ -282,7 +282,7 @@ public class Autos {
     DriveToPoseCommand cmd =
         new DriveToPoseCommand(
             drive,
-            true,
+            false,
             () ->
                 PoseUtils.plusRotation(
                     pole.get().getPerpendicularOffsetPose(reefOffsetMeters), Rotation2d.kPi));
@@ -293,6 +293,13 @@ public class Autos {
   private Command alignAndScoreNew(Supplier<ReefPole> poleSupplier, double reefOffsetMeters) {
     return Commands.sequence(
         positionToPoleAndWait(poleSupplier, reefOffsetMeters), superStructure.shootCoral());
+  }
+
+  private Command alignAndScoreCorrecting(Supplier<ReefPole> poleSupplier, double reefOffsetMeters) {
+    return Commands.sequence(
+          positionToPoleAndWait(poleSupplier, reefOffsetMeters),
+          superStructure.shootCoral(),
+          backupFromReef(poleSupplier)).withTimeout(1.0);
   }
 
   private Command backupFromReef(Supplier<ReefPole> pole) {
