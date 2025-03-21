@@ -264,34 +264,42 @@ public class RobotContainer {
     driverController
         .leftBumper()
         .whileTrue(
-            DrivePerpendicularToPoseCommand.withJoystickRumble(
+            DrivePerpendicularToPoseCommand.rumbleWithinThreshold(
                 drive,
                 AutoConstants.useConstrainedPoseForReef,
                 () -> FieldUtils.getClosestReef().leftPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
                 () ->
                     superStructure.isL4Coral()
-                        ? AutoConstants.l4RumbleDistanceMters
-                        : AutoConstants.l2RumbleDistanceMters,
+                        ? AutoConstants.l4MinDistanceMeters
+                        : AutoConstants.l2MinDistanceMeters,
+                () ->
+                    superStructure.isL4Coral()
+                        ? AutoConstants.l4MaxDistanceMeters
+                        : AutoConstants.l2MaxDistanceMeters,
                 Commands.parallel(
-                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
-                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
+                    driverController.rumbleSeconds(1, 0.25),
+                    operatorController.rumbleSeconds(1, 0.25))));
 
     driverController
         .rightBumper()
         .whileTrue(
-            DrivePerpendicularToPoseCommand.withJoystickRumble(
+            DrivePerpendicularToPoseCommand.rumbleWithinThreshold(
                 drive,
                 AutoConstants.useConstrainedPoseForReef,
                 () -> FieldUtils.getClosestReef().rightPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
                 () ->
                     superStructure.isL4Coral()
-                        ? AutoConstants.l4RumbleDistanceMters
-                        : AutoConstants.l2RumbleDistanceMters,
+                        ? AutoConstants.l4MinDistanceMeters
+                        : AutoConstants.l2MinDistanceMeters,
+                () ->
+                    superStructure.isL4Coral()
+                        ? AutoConstants.l4MaxDistanceMeters
+                        : AutoConstants.l2MaxDistanceMeters,
                 Commands.parallel(
-                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
-                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
+                    driverController.rumbleSeconds(1, 0.25),
+                    operatorController.rumbleSeconds(1, 0.25))));
 
     // -- Algae --
     driverController
