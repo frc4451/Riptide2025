@@ -266,7 +266,7 @@ public class RobotContainer {
         .whileTrue(
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
-                true,
+                false,
                 () -> FieldUtils.getClosestReef().leftPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
                 () ->
@@ -282,7 +282,7 @@ public class RobotContainer {
         .whileTrue(
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
-                true,
+                false,
                 () -> FieldUtils.getClosestReef().rightPole.getPose(),
                 () -> -driverController.getLeftYSquared(),
                 () ->
@@ -299,7 +299,7 @@ public class RobotContainer {
         .whileTrue(
             new DrivePerpendicularToPoseCommand(
                 drive,
-                true,
+                false,
                 () -> FieldUtils.getClosestReef().tag.pose().toPose2d(),
                 () -> -driverController.getLeftYSquared()));
   }

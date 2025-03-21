@@ -6,7 +6,7 @@ public enum ShooterModes {
   SHOOT(3.0),
   L4_SHOOT(-3.0),
   ALGAE_INTAKING(-9.0),
-  ALGAE_INTAKED(-1.0),
+  ALGAE_INTAKED(-1.5),
   ALGAE_SHOOT(12.0),
   ;
 

@@ -21,7 +21,7 @@ public class QuestConstants {
           );
 
   public static final Transform2d robotToQuestTransform =
-      new Transform2d(0.0535715470661827, 0.19054394434290312, Rotation2d.kCCW_90deg);
+      new Transform2d(0.0535715470661827, 0.19054394434290312, Rotation2d.kZero);
 
   public static final Matrix<N3, N1> stdDevs = VecBuilder.fill(0, 0, 0);
 }
