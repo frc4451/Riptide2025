@@ -154,7 +154,9 @@ public class Autos {
                 backupFromReef(() -> ReefFaces.IJ.get().leftPole),
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT.name)),
-                superStructure.intake(),
+                Commands.parallel(
+                  superStructure.intake(),
+                  positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4.name)),
                 superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
@@ -163,7 +165,9 @@ public class Autos {
                 backupFromReef(() -> ReefFaces.KL.get().rightPole),
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.LL4_TO_HPS_LEFT.name)),
-                superStructure.intake()));
+                Commands.parallel(
+                  superStructure.intake(),
+                  positionToHPS(() -> HumanPlayerStations.RIGHT.get()))));
 
     return routine;
   }
@@ -184,8 +188,7 @@ public class Autos {
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name)),
                 Commands.parallel(
-                  superStructure.intake(),
-                  positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
+                    superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
                 superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
@@ -195,8 +198,8 @@ public class Autos {
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name)),
                 Commands.parallel(
-                  superStructure.intake(),
-                  positionToHPS(() -> HumanPlayerStations.RIGHT.get()))));
+                    superStructure.intake(),
+                    positionToHPS(() -> HumanPlayerStations.RIGHT.get()))));
 
     return routine;
   }
