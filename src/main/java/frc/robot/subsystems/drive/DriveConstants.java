@@ -66,8 +66,7 @@ public class DriveConstants {
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 40;
-  public static final double wheelRadiusMeters =
-      Units.inchesToMeters(1.4792190309261872);
+  public static final double wheelRadiusMeters = Units.inchesToMeters(1.4792190309261872);
   public static final double driveMotorReduction =
       (45.0 * 22.0)
           / ((Constants.isGuido ? 12.0 : 13.0)
