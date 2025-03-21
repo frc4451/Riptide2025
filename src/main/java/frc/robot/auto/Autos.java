@@ -183,7 +183,9 @@ public class Autos {
                 backupFromReef(() -> ReefFaces.EF.get().rightPole),
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name)),
-                superStructure.intake(),
+                Commands.parallel(
+                  superStructure.intake(),
+                  positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
                 superStructure.setModeAndWaitCommand(SuperStructureModes.L4Coral),
@@ -192,7 +194,9 @@ public class Autos {
                 backupFromReef(() -> ReefFaces.CD.get().leftPole),
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name)),
-                superStructure.intake()));
+                Commands.parallel(
+                  superStructure.intake(),
+                  positionToHPS(() -> HumanPlayerStations.RIGHT.get()))));
 
     return routine;
   }
