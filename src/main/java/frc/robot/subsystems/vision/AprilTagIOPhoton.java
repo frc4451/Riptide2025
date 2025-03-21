@@ -140,9 +140,7 @@ public class AprilTagIOPhoton implements AprilTagIO {
 
       EstimatedRobotPose estimatedConstrainedPose = maybeConstrainedPose.get();
 
-
-      Matrix<N3, N1> stdDevs =
-          AprilTagAlgorithms.getEstimationStdDevs(estimatedConstrainedPose.estimatedPose.toPose2d(), result.getTargets());
+      Matrix<N3, N1> stdDevs = AprilTagAlgorithms.getEstimationStdDevs(estimatedConstrainedPose.estimatedPose.toPose2d(), result.getTargets());
 
       PoseObservation constrainedObservation =
           new PoseObservation(
