@@ -127,8 +127,8 @@ public class AprilTagIOPhoton implements AprilTagIO {
       } else if (constrainedEstimator.getPrimaryStrategy() == PoseStrategy.PNP_DISTANCE_TRIG_SOLVE
           && result.getBestTarget() != null
           && FieldUtils.getClosestReef().tag.fiducialId() == result.getBestTarget().fiducialId) {
-          // && trigConstrainedTargets.stream()
-          //     .anyMatch(id -> id.fiducialId() == result.getBestTarget().fiducialId)) {
+        // && trigConstrainedTargets.stream()
+        //     .anyMatch(id -> id.fiducialId() == result.getBestTarget().fiducialId)) {
         maybeConstrainedPose = constrainedEstimator.update(result);
       } else {
         maybeConstrainedPose = constrainedEstimator.update(result);

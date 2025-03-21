@@ -34,7 +34,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.Logger;
 
 public class DriveCommands {
@@ -243,6 +242,26 @@ public class DriveCommands {
                       var rotation = drive.getRotation();
                       state.gyroDelta += Math.abs(rotation.minus(state.lastAngle).getRadians());
                       state.lastAngle = rotation;
+
+                      double[] positions = drive.getWheelRadiusCharacterizationPositions();
+                      double wheelDelta = 0.0;
+                      for (int i = 0; i < 4; i++) {
+                        wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
+                      }
+                      double wheelRadius =
+                          (state.gyroDelta * DriveConstants.driveBaseRadius) / wheelDelta;
+
+                      Logger.recordOutput(
+                          "Commands/WheelRadiusCharacterization/GyroDeltaRad", state.gyroDelta);
+                      Logger.recordOutput(
+                          "Commands/WheelRadiusCharacterization/GyroDeltaDeg",
+                          Units.radiansToDegrees(state.gyroDelta));
+                      Logger.recordOutput(
+                          "Commands/WheelRadiusCharacterization/Radius", wheelRadius);
+                      Logger.recordOutput(
+                          "Commands/WheelRadiusCharacterization/RadiusIn",
+                          Units.metersToInches(wheelRadius));
+
                     })
 
                 // When cancelled, calculate and print results
@@ -255,11 +274,6 @@ public class DriveCommands {
                       }
                       double wheelRadius =
                           (state.gyroDelta * DriveConstants.driveBaseRadius) / wheelDelta;
-                      Logger.recordOutput("Commands/WheelRadiusCharacterization/WheelDeltaRad", wheelDelta);
-                      Logger.recordOutput("Commands/WheelRadiusCharacterization/GyroDeltaRad", state.gyroDelta);
-                      Logger.recordOutput("Commands/WheelRadiusCharacterization/GyroDeltaDeg", Units.radiansToDegrees(state.gyroDelta));
-                      Logger.recordOutput("Commands/WheelRadiusCharacterization/Radius", wheelRadius);
-                      Logger.recordOutput("Commands/WheelRadiusCharacterization/RadiusIn", Units.metersToInches(wheelRadius));
 
                       NumberFormat formatter = new DecimalFormat("#0.000");
                       System.out.println(
