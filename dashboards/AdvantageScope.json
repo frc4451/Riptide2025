@@ -1,10 +1,10 @@
 {
   "hubs": [
     {
-      "x": -8,
-      "y": -8,
-      "width": 1382,
-      "height": 744,
+      "x": 0,
+      "y": 0,
+      "width": 1366,
+      "height": 768,
       "state": {
         "sidebar": {
           "width": 500,
@@ -36,7 +36,6 @@
             "/RealOutputs/SwerveStates/Setpoints/3/angle",
             "/RealOutputs/SwerveStates/Measured/3",
             "/RealOutputs/SwerveStates/Measured/3/angle",
-            "/Drive/Gyro",
             "/Drive/Gyro/YawPosition",
             "/Oculus/RawPose/translation",
             "/RealOutputs/Superstructure/Setpoint",
@@ -48,18 +47,15 @@
             "/Oculus/QuestPose/translation",
             "/Oculus/RobotPose/translation",
             "/RealOutputs/Commands/DrivePerpendicularToPoseCommand",
-            "/RealOutputs/Commands/DrivePerpendicularToPoseCommand/targetPose",
             "/RealOutputs/Commands/DriveToPoseCommand",
             "/RealOutputs/Commands/DriveToPoseCommand/Error",
             "/RealOutputs/Commands/DriveToPoseCommand/Error/rotation",
             "/RealOutputs/Commands/DriveToPoseCommand/Error/translation",
             "/RealOutputs/Superstructure/Algae/Pivot",
-            "/RealOutputs/Superstructure/Coral/Pivot/Profile",
             "/Superstructure/Shooter/CoralSensor",
             "/RealOutputs/Superstructure/Shooter",
             "/RealOutputs/Superstructure/Shooter/CoralSensor",
             "/RealOutputs/Superstructure/CoralSensor",
-            "/RealOutputs/Superstructure/Elevator",
             "/RealOutputs/Faces",
             "/RealOutputs/Faces/AB/Left/translation",
             "/RealOutputs/Faces/AB/Right",
@@ -102,13 +98,28 @@
             "/AprilTagCamera/SillyCam/ValidPoseObservations/0",
             "/RealOutputs/Odometry/TrigSolution",
             "/RealOutputs",
-            "/RealOutputs/Odometry",
             "/RealOutputs/Odometry/Choreo",
-            "/RealOutputs/Odometry/Choreo/Sample"
+            "/RealOutputs/Odometry/Choreo/Sample",
+            "/RealOutputs/Superstructure/Elevator/Profile/SetpointInches",
+            "/RealOutputs/Superstructure/Elevator/Profile/GoalInches",
+            "/RealOutputs/Superstructure/Coral/Pivot/Profile/Goal/Deg",
+            "/RealOutputs/Superstructure/Coral/Pivot/Profile/Setpoint/Deg",
+            "/RealOutputs/Superstructure/Coral/Pivot",
+            "/RealOutputs/Superstructure/Coral/Pivot/Profile",
+            "/RealOutputs/Superstructure/Coral/Pivot/Profile/Setpoint",
+            "/RealOutputs/Superstructure/Coral/Pivot/Profile/Goal",
+            "/Oculus/QuestPose",
+            "/Oculus/RobotPose",
+            "/Oculus/RawPose",
+            "/RealOutputs/Commands/WheelRadiusCharacterization",
+            "/AprilTagCamera/FrontLeft/ValidAprilTagPoses/0",
+            "/AprilTagCamera/RearLeft/ValidAprilTagPoses/0",
+            "/AprilTagCamera/RearLeft/ValidPoseObservations/1",
+            "/RealOutputs/Odometry"
           ]
         },
         "tabs": {
-          "selected": 3,
+          "selected": 4,
           "tabs": [
             {
               "type": 0,
@@ -167,6 +178,21 @@
               "controllerUUID": "5htsme8qnype0olkojei4ggjq216a8tr",
               "renderer": null,
               "controlsHeight": 205
+            },
+            {
+              "type": 8,
+              "title": "Joysticks",
+              "controller": [
+                "Xbox Controller (Blue)",
+                "Xbox Controller (White)",
+                "None",
+                "None",
+                "None",
+                "None"
+              ],
+              "controllerUUID": "pdbfigw17d6psjtrqrnxr4mdyt842hjv",
+              "renderer": null,
+              "controlsHeight": 85
             },
             {
               "type": 9,
@@ -234,6 +260,15 @@
               "controller": {
                 "sources": [
                   {
+                    "type": "heatmap",
+                    "logKey": "/RealOutputs/Odometry/Robot",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "timeRange": "enabled"
+                    }
+                  },
+                  {
                     "type": "robot",
                     "logKey": "/RealOutputs/Odometry/Robot",
                     "logType": "Pose2d",
@@ -241,10 +276,50 @@
                     "options": {}
                   },
                   {
+                    "type": "vision",
+                    "logKey": "/AprilTagCamera/FrontLeft/ValidAprilTagPoses",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "vision",
+                    "logKey": "/AprilTagCamera/FrontRight/ValidAprilTagPoses",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "vision",
+                    "logKey": "/AprilTagCamera/RearLeft/ValidAprilTagPoses",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "vision",
+                    "logKey": "/AprilTagCamera/RearRight/ValidAprilTagPoses",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  },
+                  {
                     "type": "ghost",
                     "logKey": "/RealOutputs/Odometry/Constrained",
                     "logType": "Pose2d",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#ff00ff"
                     }
@@ -253,7 +328,7 @@
                     "type": "ghost",
                     "logKey": "/RealOutputs/Odometry/Choreo/Sample/Pose",
                     "logType": "Pose2d",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#ffff00"
                     }
@@ -262,10 +337,19 @@
                     "type": "trajectory",
                     "logKey": "/RealOutputs/Odometry/Choreo/Trajectory",
                     "logType": "Pose2d[]",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#00ff00",
                       "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/Oculus/QuestPose",
+                    "logType": "Pose2d",
+                    "visible": false,
+                    "options": {
+                      "color": "#00ffff"
                     }
                   }
                 ],
@@ -277,7 +361,149 @@
               },
               "controllerUUID": "mjyz650skeqo2f2dik2aa5t9deaiiwov",
               "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 178
+            },
+            {
+              "type": 1,
+              "title": "Elevator",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Superstructure/Elevator/VelocityInchesPerSec",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Superstructure/Elevator/Profile/SetpointInches/velocity",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Superstructure/Elevator/HeightInches",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Superstructure/Elevator/Profile/SetpointInches/position",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Superstructure/Mode",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "iuwq3g6af4s24bpzalaltdqhf0bb61mr",
+              "renderer": null,
+              "controlsHeight": 205
+            },
+            {
+              "type": 1,
+              "title": "Pivot",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Superstructure/Coral/Pivot/VelocityDegreesPerSecond",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Superstructure/Coral/Pivot/Profile/Setpoint/Deg/velocity",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Superstructure/Coral/Pivot/PositionDegrees",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Superstructure/Coral/Pivot/Profile/Setpoint/Deg/position",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "kv5wd6t411pm1i8efo40l2v3g0v95un7",
+              "renderer": null,
+              "controlsHeight": 409
             },
             {
               "type": 1,
@@ -319,29 +545,6 @@
                 "rightFilter": 0
               },
               "controllerUUID": "ppyc8riq8gtzhqnhpy9mdjo6ti8v44wd",
-              "renderer": null,
-              "controlsHeight": 200
-            },
-            {
-              "type": 10,
-              "title": "Mechanism",
-              "controller": [
-                {
-                  "type": "mechanism",
-                  "logKey": "/RealOutputs/Superstructure/Measured/Mechanism2d",
-                  "logType": "Mechanism2d",
-                  "visible": true,
-                  "options": {}
-                },
-                {
-                  "type": "mechanism",
-                  "logKey": "/RealOutputs/Superstructure/Goal/Mechanism2d",
-                  "logType": "Mechanism2d",
-                  "visible": true,
-                  "options": {}
-                }
-              ],
-              "controllerUUID": "vlwvlm9wxgdspw2l3i0kyux1047whtn7",
               "renderer": null,
               "controlsHeight": 200
             },
