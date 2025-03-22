@@ -319,7 +319,7 @@ public class RobotContainer {
                 () ->
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
-                            .leftPole
+                            .rightPole
                             .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
                         Rotation2d.kPi)));
 
