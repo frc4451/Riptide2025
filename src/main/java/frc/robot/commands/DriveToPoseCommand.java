@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.drive.Drive;
 import java.util.function.Supplier;
@@ -29,6 +30,18 @@ public class DriveToPoseCommand extends Command {
     this.drive = drive;
     this.useConstrainedPose = useConstrainedPose;
     this.targetPoseSupplier = targetPoseSupplier;
+  }
+
+  public static DriveToPoseCommand withJoystickRumble(
+      Drive drive,
+      boolean useConstrainedPose,
+      Supplier<Pose2d> targetPoseSupplier,
+      Command rumbleCommand) {
+    DriveToPoseCommand command = new DriveToPoseCommand(drive, useConstrainedPose, targetPoseSupplier);
+
+    command.atSetpoint().onTrue(Commands.deferredProxy(() -> rumbleCommand));
+
+    return command;
   }
 
   @Override

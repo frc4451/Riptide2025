@@ -282,7 +282,7 @@ public class RobotContainer {
         .leftBumper()
         .and(driverController.a())
         .whileTrue(
-            new DriveToPoseCommand(
+            DriveToPoseCommand.withJoystickRumble(
                 drive,
                 AutoConstants.useConstrainedPoseForReef,
                 () ->
@@ -290,7 +290,11 @@ public class RobotContainer {
                         FieldUtils.getClosestReef()
                             .leftPole
                             .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
-                        Rotation2d.kPi)));
+                        Rotation2d.kPi),
+                        Commands.parallel(
+                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
+                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))
+                        ));
 
     driverController
         .rightBumper()
@@ -313,7 +317,7 @@ public class RobotContainer {
         .rightBumper()
         .and(driverController.a())
         .whileTrue(
-            new DriveToPoseCommand(
+            DriveToPoseCommand.withJoystickRumble(
                 drive,
                 AutoConstants.useConstrainedPoseForReef,
                 () ->
@@ -321,7 +325,11 @@ public class RobotContainer {
                         FieldUtils.getClosestReef()
                             .rightPole
                             .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
-                        Rotation2d.kPi)));
+                        Rotation2d.kPi),
+                        Commands.parallel(
+                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
+                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))
+                        ));
 
     // -- Algae --
     driverController
