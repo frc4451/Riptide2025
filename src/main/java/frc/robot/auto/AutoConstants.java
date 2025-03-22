@@ -10,5 +10,5 @@ public class AutoConstants {
   public static final double l2RumbleDistanceMters = l2ReefOffsetMeters + Units.inchesToMeters(1);
   public static final double l4RumbleDistanceMters = l4ReefOffsetMeters + Units.inchesToMeters(1);
 
-  public static final boolean useConstrainedPoseForReef = false;
+  public static final boolean useConstrainedPoseForReef = true;
 }

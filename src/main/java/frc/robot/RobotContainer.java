@@ -291,10 +291,9 @@ public class RobotContainer {
                             .leftPole
                             .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
                         Rotation2d.kPi),
-                        Commands.parallel(
+                Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
-                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))
-                        ));
+                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
 
     driverController
         .rightBumper()
@@ -326,10 +325,9 @@ public class RobotContainer {
                             .rightPole
                             .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
                         Rotation2d.kPi),
-                        Commands.parallel(
+                Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
-                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))
-                        ));
+                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
 
     // -- Algae --
     driverController

@@ -37,7 +37,8 @@ public class DriveToPoseCommand extends Command {
       boolean useConstrainedPose,
       Supplier<Pose2d> targetPoseSupplier,
       Command rumbleCommand) {
-    DriveToPoseCommand command = new DriveToPoseCommand(drive, useConstrainedPose, targetPoseSupplier);
+    DriveToPoseCommand command =
+        new DriveToPoseCommand(drive, useConstrainedPose, targetPoseSupplier);
 
     command.atSetpoint().onTrue(Commands.deferredProxy(() -> rumbleCommand));
 
