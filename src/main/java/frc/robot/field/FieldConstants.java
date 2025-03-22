@@ -11,6 +11,7 @@ public class FieldConstants {
 
   /** Distance from the center of the April Tag on the Face to the center of the Pole */
   public static final double tagToReefLeft = Units.inchesToMeters(-7.0);
+
   public static final double tagToReefRight = Units.inchesToMeters(8.0);
 
   public static final double distanceToTag = Units.inchesToMeters(10);
