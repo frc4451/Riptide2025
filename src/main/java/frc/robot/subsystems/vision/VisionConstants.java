@@ -101,7 +101,7 @@ public class VisionConstants {
       Constants.isGuido ? guidoConfigs : riptideConfigs;
 
   public static final double ambiguityCutoff = 0.05;
-  public static final double singleTagPoseCutoffMeters = 6;
+  public static final double singleTagPoseCutoffMeters = 4.0;
 
   public static final int noAmbiguity = -100;
 
