@@ -177,9 +177,9 @@ public class RobotContainer {
     configurePoleBindings();
     configureSuperBindings();
 
-    if (Constants.currentMode == Constants.Mode.SIM) {
-      debugSetup();
-    }
+    // if (Constants.currentMode == Constants.Mode.SIM) {
+    debugSetup();
+    // }
   }
 
   private void configureRotationModes() {
@@ -263,6 +263,7 @@ public class RobotContainer {
     // -- Coral --
     driverController
         .leftBumper()
+        .and(driverController.a().negate())
         .whileTrue(
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
@@ -278,7 +279,22 @@ public class RobotContainer {
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
 
     driverController
+        .leftBumper()
+        .and(driverController.a())
+        .whileTrue(
+            new DriveToPoseCommand(
+                drive,
+                AutoConstants.useConstrainedPoseForReef,
+                () ->
+                    PoseUtils.plusRotation(
+                        FieldUtils.getClosestReef()
+                            .leftPole
+                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
+                        Rotation2d.kPi)));
+
+    driverController
         .rightBumper()
+        .and(driverController.a().negate())
         .whileTrue(
             DrivePerpendicularToPoseCommand.withJoystickRumble(
                 drive,
@@ -292,6 +308,20 @@ public class RobotContainer {
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
+
+    driverController
+        .rightBumper()
+        .and(driverController.a())
+        .whileTrue(
+            new DriveToPoseCommand(
+                drive,
+                AutoConstants.useConstrainedPoseForReef,
+                () ->
+                    PoseUtils.plusRotation(
+                        FieldUtils.getClosestReef()
+                            .leftPole
+                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
+                        Rotation2d.kPi)));
 
     // -- Algae --
     driverController
@@ -377,32 +407,6 @@ public class RobotContainer {
         logRoot + "/HPS/Right",
         PoseUtils.getPerpendicularOffsetPose(
             FieldConstants.blueHPSDriverRight.pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
-
-    driverController
-        .back()
-        .whileTrue(
-            new DriveToPoseCommand(
-                drive,
-                true,
-                () ->
-                    PoseUtils.plusRotation(
-                        FieldUtils.getClosestReef()
-                            .leftPole
-                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
-                        Rotation2d.kPi)));
-
-    driverController
-        .start()
-        .whileTrue(
-            new DriveToPoseCommand(
-                drive,
-                true,
-                () ->
-                    PoseUtils.plusRotation(
-                        FieldUtils.getClosestReef()
-                            .leftPole
-                            .getPerpendicularOffsetPose(AutoConstants.elevatorDownOffsetMeters),
-                        Rotation2d.kPi)));
   }
 
   /**
