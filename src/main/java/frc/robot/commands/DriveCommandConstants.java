@@ -11,7 +11,7 @@ public class DriveCommandConstants {
         new ProfiledPIDController(5.0, 0.0, 0.4, new TrapezoidProfile.Constraints(8.0, 20.0));
 
     angleController.enableContinuousInput(-Math.PI, Math.PI);
-    angleController.setTolerance(Units.degreesToRadians(1));
+    angleController.setTolerance(Units.degreesToRadians(0.5));
 
     return angleController;
   }
