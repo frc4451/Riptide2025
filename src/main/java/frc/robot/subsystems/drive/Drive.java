@@ -178,20 +178,34 @@ public class Drive extends SubsystemBase {
       // AprilTag Cameras (Global)
       PoseObservation globalObservation;
       while ((globalObservation = BobotState.getGlobalVisionObservations().poll()) != null) {
+        // Don't use vision gyro when enabled
+        Pose2d observedPose = globalObservation.robotPose().toPose2d();
+        if (DriverStation.isEnabled()) {
+          observedPose =
+              new Pose2d(
+                  observedPose.getTranslation(),
+                  globalPoseEstimator.getEstimatedPosition().getRotation());
+        }
+
         globalPoseEstimator.addVisionMeasurement(
-            globalObservation.robotPose().toPose2d(), globalObservation.timestampSeconds()
-            // ,globalObservation.stdDevs()
-            );
+            observedPose, globalObservation.timestampSeconds());
       }
 
       // AprilTag Cameras (Constrained)
       PoseObservation constrainedObservation;
       while ((constrainedObservation = BobotState.getConstrainedVisionObservations().poll())
           != null) {
-        constrainedPoseEstimator.addVisionMeasurement(
-            constrainedObservation.robotPose().toPose2d(), constrainedObservation.timestampSeconds()
-            // ,constrainedObservation.stdDevs()
-            );
+        // Don't use vision gyro when enabled
+        Pose2d observedPose = constrainedObservation.robotPose().toPose2d();
+        if (DriverStation.isEnabled()) {
+          observedPose =
+              new Pose2d(
+                  observedPose.getTranslation(),
+                  constrainedPoseEstimator.getEstimatedPosition().getRotation());
+        }
+
+        globalPoseEstimator.addVisionMeasurement(
+            observedPose, constrainedObservation.timestampSeconds());
       }
 
       // Quest
