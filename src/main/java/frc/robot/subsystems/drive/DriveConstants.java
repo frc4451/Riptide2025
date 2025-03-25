@@ -46,7 +46,7 @@ public class DriveConstants {
   public static final Rotation2d backRightZeroRotation =
       new Rotation2d(Constants.isGuido ? 1.5813666582107544 : 3.353 + Math.PI);
 
-  public static final double gyroTrimScalar = Constants.isGuido ? 1.501 : 0;
+  public static final double gyroTrimScalar = Constants.isGuido ? 1.501 : 0.738;
 
   // Device CAN IDs
   public static final int pigeonCanId = 1;
@@ -66,7 +66,7 @@ public class DriveConstants {
 
   // Drive motor configuration
   public static final int driveMotorCurrentLimit = 40;
-  public static final double wheelRadiusMeters = Units.inchesToMeters(1.4792190309261872);
+  public static final double wheelRadiusMeters = Units.inchesToMeters(1.4817374230791667);
   public static final double driveMotorReduction =
       (45.0 * 22.0)
           / ((Constants.isGuido ? 12.0 : 13.0)

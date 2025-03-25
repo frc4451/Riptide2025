@@ -1,10 +1,10 @@
 {
   "hubs": [
     {
-      "x": 0,
-      "y": 0,
-      "width": 1366,
-      "height": 768,
+      "x": -8,
+      "y": -8,
+      "width": 1382,
+      "height": 744,
       "state": {
         "sidebar": {
           "width": 500,
@@ -97,7 +97,6 @@
             "/AprilTagCamera/SillyCam/ValidLocaPoseObservations",
             "/AprilTagCamera/SillyCam/ValidPoseObservations/0",
             "/RealOutputs/Odometry/TrigSolution",
-            "/RealOutputs",
             "/RealOutputs/Odometry/Choreo",
             "/RealOutputs/Odometry/Choreo/Sample",
             "/RealOutputs/Superstructure/Elevator/Profile/SetpointInches",
@@ -115,11 +114,17 @@
             "/AprilTagCamera/FrontLeft/ValidAprilTagPoses/0",
             "/AprilTagCamera/RearLeft/ValidAprilTagPoses/0",
             "/AprilTagCamera/RearLeft/ValidPoseObservations/1",
-            "/RealOutputs/Odometry"
+            "/Oculus/QuestPose/rotation",
+            "/RealOutputs/Odometry/Robot",
+            "/Drive/Gyro",
+            "/RealOutputs/Odometry/Choreo/Sample/Pose",
+            "/RealOutputs/Odometry/Choreo/Sample/PoseError",
+            "/RealOutputs",
+            "/RealOutputs/Commands"
           ]
         },
         "tabs": {
-          "selected": 4,
+          "selected": 5,
           "tabs": [
             {
               "type": 0,
@@ -127,6 +132,14 @@
               "controller": null,
               "controllerUUID": "grimvlgu9aluj8btvwotco2wpj0pto2h",
               "renderer": "#/",
+              "controlsHeight": 0
+            },
+            {
+              "type": 12,
+              "title": "Metadata",
+              "controller": null,
+              "controllerUUID": "mztau4i5zh9b3s0sxkhtvqahfqo2nb5m",
+              "renderer": null,
               "controlsHeight": 0
             },
             {
@@ -263,7 +276,7 @@
                     "type": "heatmap",
                     "logKey": "/RealOutputs/Odometry/Robot",
                     "logType": "Pose2d",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "timeRange": "enabled"
                     }
@@ -279,7 +292,7 @@
                     "type": "vision",
                     "logKey": "/AprilTagCamera/FrontLeft/ValidAprilTagPoses",
                     "logType": "Pose3d[]",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#00ff00",
                       "size": "normal"
@@ -289,7 +302,7 @@
                     "type": "vision",
                     "logKey": "/AprilTagCamera/FrontRight/ValidAprilTagPoses",
                     "logType": "Pose3d[]",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#00ff00",
                       "size": "normal"
@@ -299,7 +312,7 @@
                     "type": "vision",
                     "logKey": "/AprilTagCamera/RearLeft/ValidAprilTagPoses",
                     "logType": "Pose3d[]",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#00ff00",
                       "size": "normal"
@@ -309,7 +322,7 @@
                     "type": "vision",
                     "logKey": "/AprilTagCamera/RearRight/ValidAprilTagPoses",
                     "logType": "Pose3d[]",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#00ff00",
                       "size": "normal"
@@ -328,7 +341,7 @@
                     "type": "ghost",
                     "logKey": "/RealOutputs/Odometry/Choreo/Sample/Pose",
                     "logType": "Pose2d",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#ffff00"
                     }
@@ -337,7 +350,7 @@
                     "type": "trajectory",
                     "logKey": "/RealOutputs/Odometry/Choreo/Trajectory",
                     "logType": "Pose2d[]",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#00ff00",
                       "size": "normal"
@@ -362,6 +375,156 @@
               "controllerUUID": "mjyz650skeqo2f2dik2aa5t9deaiiwov",
               "renderer": null,
               "controlsHeight": 178
+            },
+            {
+              "type": 1,
+              "title": "Pose Error",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Odometry/Choreo/Sample/Pose/translation/x",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Odometry/Robot/translation/x",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/Drive/Gyro/YawPosition/value",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Commands/WheelRadiusCharacterization/GyroDeltaRad",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": "angle",
+                  "factor": 1,
+                  "from": "radians",
+                  "to": "degrees"
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "47y823kyi3m9c1w8au1ekb2ja2dstzvk",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [],
+                "game": "2025 Field (Welded)",
+                "origin": "blue"
+              },
+              "controllerUUID": "2o2bfnoao6lm5jb9zgzaosvphiodkmoq",
+              "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  1.4695761589768238e-15,
+                  5.999999999999999,
+                  -12
+                ],
+                "cameraTarget": [
+                  0,
+                  0.5,
+                  0
+                ]
+              },
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/Drive/Gyro/YawPosition/value",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/Oculus/QuestPose/rotation/value",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Odometry/Robot/rotation/value",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": "angle",
+                  "factor": 1,
+                  "from": "radians",
+                  "to": "degrees"
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "yod1t6uk7ublyd9qnhh34rpwnk2125h9",
+              "renderer": null,
+              "controlsHeight": 200
             },
             {
               "type": 1,

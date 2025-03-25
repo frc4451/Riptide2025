@@ -153,7 +153,7 @@ public class RobotContainer {
 
     // autoChooser.addRoutine("2 Meters", autos::twoMeters);
     // autoChooser.addRoutine("3 Meters", autos::threeMeters);
-    // autoChooser.addRoutine("5 Meters", autos::fiveMeters);
+    autoChooser.addRoutine("5 Meters", autos::fiveMeters);
     // autoChooser.addRoutine("Curvy", autos::curvy);
     // autoChooser.addRoutine("Magikarp", autos::magikarp);
     // autoChooser.addRoutine("Binacle", autos::binacle);
@@ -184,12 +184,20 @@ public class RobotContainer {
 
   private void configureRotationModes() {
     // Default, auto-align to closest tracker
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driverController.getLeftYSquared(),
+    //             () -> -driverController.getLeftXSquared(),
+    //             () -> BobotState.getClosestAlignmentTracker().getRotationTarget())
+    //         .unless(DriverStation::isAutonomous));
+
     drive.setDefaultCommand(
-        DriveCommands.joystickDriveAtAngle(
+        DriveCommands.joystickDrive(
             drive,
             () -> -driverController.getLeftYSquared(),
             () -> -driverController.getLeftXSquared(),
-            () -> BobotState.getClosestAlignmentTracker().getRotationTarget()));
+            () -> -driverController.getRightXSquared()));
 
     // Normal field-relative drive when overridden via a button
     driverController
