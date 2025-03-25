@@ -36,9 +36,9 @@ public class BobotState extends VirtualSubsystem {
   private static Pose2d globalPose = new Pose2d();
   private static Pose2d constrainedPose = new Pose2d();
 
-  private static ReefTagTracker reefTracker = new ReefTagTracker();
-  private static HPSTagTracker hpsTracker = new HPSTagTracker();
-  private static BargeTagTracker bargeTracker = new BargeTagTracker();
+  public static final ReefTagTracker reefTracker = new ReefTagTracker();
+  public static final HPSTagTracker hpsTracker = new HPSTagTracker();
+  public static final BargeTagTracker bargeTracker = new BargeTagTracker();
 
   private static List<TargetAngleTracker> autoAlignmentTrackers =
       List.of(BobotState.hpsTracker, BobotState.reefTracker);
