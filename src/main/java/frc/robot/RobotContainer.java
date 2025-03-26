@@ -192,6 +192,7 @@ public class RobotContainer {
     //             () -> BobotState.getClosestAlignmentTracker().getRotationTarget())
     //         .unless(DriverStation::isAutonomous));
 
+    // No auto-align, manual
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
