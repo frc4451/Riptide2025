@@ -12,6 +12,7 @@ public interface QuestIO extends AutoCloseable {
     // These are with relative with offsets applied (probably what you want)
     public Pose2d questPose = new Pose2d();
     public Pose2d robotPose = new Pose2d();
+    public Pose2d resetRobotPose = new Pose2d();
     public Translation2d questTranslation = new Translation2d();
 
     public Pose2d rawPose = new Pose2d();
