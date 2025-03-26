@@ -42,7 +42,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.quest.QuestIO;
-import frc.robot.subsystems.quest.QuestIORealV2;
+import frc.robot.subsystems.quest.QuestIOReal;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.subsystems.superstructure.shooter.ShooterModes;
@@ -89,7 +89,7 @@ public class RobotContainer {
                 new ModuleIOSpark(1),
                 new ModuleIOSpark(2),
                 new ModuleIOSpark(3));
-        quest = new Quest(new QuestIORealV2());
+        quest = new Quest(new QuestIOReal());
 
         // not attached to the robot yet
         blinkin = new Blinkin(new BlinkinIO() {});
@@ -124,7 +124,7 @@ public class RobotContainer {
     }
 
     autoChooser = new AutoChooser();
-    autos = new Autos(drive, superStructure, quest);
+    autos = new Autos(drive, superStructure);
 
     configureAutos();
     configureHumanPlayerStation();

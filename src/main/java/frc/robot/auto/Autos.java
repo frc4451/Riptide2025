@@ -14,7 +14,6 @@ import frc.robot.field.HumanPlayerStations;
 import frc.robot.field.ReefFaces;
 import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.quest.Quest;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
 import frc.robot.util.PoseUtils;
@@ -24,12 +23,10 @@ import org.littletonrobotics.junction.Logger;
 public class Autos {
   private final Drive drive;
   private final SuperStructure superStructure;
-  private final Quest quest;
 
-  public Autos(Drive drive, SuperStructure superStructure, Quest quest) {
+  public Autos(Drive drive, SuperStructure superStructure) {
     this.drive = drive;
     this.superStructure = superStructure;
-    this.quest = quest;
   }
 
   // Routines
@@ -236,12 +233,8 @@ public class Autos {
         Commands.runOnce(() -> drive.runVelocity(new ChassisSpeeds()), drive));
   }
 
-  private Command resetQuest() {
-    return Commands.runOnce(() -> quest.resetPose(drive.getGlobalPose()));
-  }
-
   private Command resetOdometry(AutoTrajectory trajectory) {
-    return trajectory.resetOdometry().andThen(resetQuest());
+    return trajectory.resetOdometry();
   }
 
   private Command resetAndFollowTrajectory(AutoTrajectory trajectory) {
