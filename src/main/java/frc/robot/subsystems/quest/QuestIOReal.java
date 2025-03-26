@@ -12,6 +12,7 @@ public class QuestIOReal implements QuestIO {
   /** Update inputs supplied */
   public void updateInputs(QuestIOInputs inputs) {
     inputs.rawPose = questNav.getRawPose();
+    inputs.pose = questNav.getPose();
     inputs.questPose = questNav.getQuestNavPose();
     inputs.resetRobotPose = questNav.getResetPose();
     inputs.connected = questNav.connected();

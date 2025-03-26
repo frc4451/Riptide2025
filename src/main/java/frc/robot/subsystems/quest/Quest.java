@@ -45,6 +45,6 @@ public class Quest extends VirtualSubsystem {
 
   public Command calibrateCommand(Drive drive) {
     return calibration.determineOffsetToRobotCenter(
-        drive, () -> inputs.robotPose, () -> inputs.questPose);
+        drive, () -> inputs.pose, () -> inputs.questPose);
   }
 }
