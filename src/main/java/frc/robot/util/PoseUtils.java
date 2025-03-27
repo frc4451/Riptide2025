@@ -77,4 +77,8 @@ public class PoseUtils {
     return new Pose2d(
         a.getTranslation().plus(b.getTranslation()), a.getRotation().plus(b.getRotation()));
   }
+
+  public static Pose2d withRotation(Pose2d pose, Rotation2d rotation) {
+    return new Pose2d(pose.getTranslation(), rotation);
+  }
 }
