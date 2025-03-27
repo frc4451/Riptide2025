@@ -56,9 +56,9 @@ public class VisionConstants {
                   "RearLeft",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(-6.094), // forward+
-                          Units.inchesToMeters(12.728), // left+
-                          Units.inchesToMeters(8.010)), // up+
+                          Units.inchesToMeters(-5.671), // forward+
+                          Units.inchesToMeters(11.237), // left+
+                          Units.inchesToMeters(7.991)), // up+
                       new Rotation3d(
                           0, Units.degreesToRadians(-20.0), Units.degreesToRadians(30)))),
               SimCameraConfig.THRIFTY_CAM_80),
@@ -68,10 +68,11 @@ public class VisionConstants {
                   "FrontLeft",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(6.915), // forward+
-                          Units.inchesToMeters(12.421), // left+
-                          Units.inchesToMeters(8.141)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-25), Units.degreesToRadians(-10)))),
+                          Units.inchesToMeters(6.354), // forward+
+                          Units.inchesToMeters(11.143), // left+
+                          Units.inchesToMeters(8.058)), // up+
+                      new Rotation3d(
+                          0, Units.degreesToRadians(-27.5), Units.degreesToRadians(-10)))),
               SimCameraConfig.THRIFTY_CAM_90),
           // FRI
           new AprilTagCameraConfig(
@@ -79,10 +80,11 @@ public class VisionConstants {
                   "FrontRight",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(6.915), // forward+
-                          Units.inchesToMeters(-12.421), // left+
-                          Units.inchesToMeters(8.141)), // up+
-                      new Rotation3d(0, Units.degreesToRadians(-25), Units.degreesToRadians(10)))),
+                          Units.inchesToMeters(6.354), // forward+
+                          Units.inchesToMeters(-11.143), // left+
+                          Units.inchesToMeters(8.058)), // up+
+                      new Rotation3d(
+                          0, Units.degreesToRadians(-27.5), Units.degreesToRadians(10)))),
               SimCameraConfig.THRIFTY_CAM_90),
           // FRO
           new AprilTagCameraConfig(
@@ -90,9 +92,9 @@ public class VisionConstants {
                   "RearRight",
                   new Transform3d(
                       new Translation3d(
-                          Units.inchesToMeters(-6.094), // forward+
-                          Units.inchesToMeters(-12.728), // left+
-                          Units.inchesToMeters(8.010)), // up+
+                          Units.inchesToMeters(-5.671), // forward+
+                          Units.inchesToMeters(-11.237), // left+
+                          Units.inchesToMeters(7.991)), // up+
                       new Rotation3d(
                           0, Units.degreesToRadians(-20.0), Units.degreesToRadians(-30)))),
               SimCameraConfig.THRIFTY_CAM_80));
@@ -113,4 +115,6 @@ public class VisionConstants {
   public static final Matrix<N3, N1> noStdDevs = VecBuilder.fill(0, 0, 0);
   public static final Matrix<N3, N1> singleTagStdDevs = VecBuilder.fill(4, 4, Double.MAX_VALUE);
   public static final Matrix<N3, N1> multiTagStdDevs = VecBuilder.fill(0.5, 0.5, Double.MAX_VALUE);
+
+  public static final Matrix<N3, N1> tagStdDevs = VecBuilder.fill(0, 0, Double.MAX_VALUE);
 }
