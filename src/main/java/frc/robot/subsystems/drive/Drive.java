@@ -180,15 +180,20 @@ public class Drive extends SubsystemBase {
       // AprilTag Cameras (Global)
       PoseObservation globalObservation;
       while ((globalObservation = BobotState.getGlobalVisionObservations().poll()) != null) {
-        Pose2d globalPose =
-            PoseUtils.withRotation(
-                globalObservation.robotPose().toPose2d(),
-                new Rotation2d(
-                    MathUtil.inputModulus(rawGyroRotation.getRadians(), 0, 2 * Math.PI)));
         globalPoseEstimator.addVisionMeasurement(
-            globalPose, globalObservation.timestampSeconds()
+          globalObservation.robotPose().toPose2d(), globalObservation.timestampSeconds()
             // ,globalObservation.stdDevs()
             );
+
+            
+        //     PoseUtils.withRotation(
+        //         globalObservation.robotPose().toPose2d(),
+        //         new Rotation2d(
+        //             MathUtil.inputModulus(rawGyroRotation.getRadians(), 0, 2 * Math.PI)));
+        // globalPoseEstimator.addVisionMeasurement(
+        //     globalPose, globalObservation.timestampSeconds()
+        //     // ,globalObservation.stdDevs()
+        //     );
       }
 
       // AprilTag Cameras (Constrained)
