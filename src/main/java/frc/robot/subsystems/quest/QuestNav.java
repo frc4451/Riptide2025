@@ -29,7 +29,7 @@ public class QuestNav {
   private FloatArraySubscriber questEulerAngles =
       nt4Table.getFloatArrayTopic("eulerAngles").subscribe(new float[] {0.0f, 0.0f, 0.0f});
   private DoubleSubscriber questBatteryPercent =
-      nt4Table.getDoubleTopic("batteryPercent").subscribe(0.0f);
+      nt4Table.getDoubleTopic("device/batteryPercent").subscribe(0.0f);
 
   /** Subscriber for heartbeat requests */
   private final DoubleSubscriber heartbeatRequestSub =
