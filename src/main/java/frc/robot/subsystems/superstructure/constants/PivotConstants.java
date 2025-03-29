@@ -6,7 +6,6 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.pivot.PivotConstraints;
 
 public class PivotConstants {
   public static final int canId = 5;
@@ -19,9 +18,6 @@ public class PivotConstants {
   public static final double currentLimitAmps = 30;
 
   public static final boolean isBrakeMode = true;
-
-  public static final PivotConstraints constraints =
-      new PivotConstraints(Units.degreesToRotations(-90.0), Units.degreesToRotations(93.0));
 
   public static final Rotation2d intialPosition = Rotation2d.fromDegrees(-90);
 

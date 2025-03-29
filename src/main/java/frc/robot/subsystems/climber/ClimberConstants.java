@@ -4,7 +4,6 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import frc.robot.subsystems.pivot.PivotConstraints;
 
 public class ClimberConstants {
   public static final int canId = 5;
@@ -17,8 +16,6 @@ public class ClimberConstants {
   public static final double currentLimitAmps = 30;
 
   public static final boolean isBrakeMode = true;
-
-  public static final PivotConstraints constraints = new PivotConstraints(0, 0);
 
   public static final Rotation2d intialPosition = Rotation2d.fromDegrees(-90);
 

@@ -41,7 +41,7 @@ public class Climber extends SubsystemBase {
         io = new SingleRollerIO() {};
     }
 
-    pivot = new Pivot("Climber", io, ClimberConstants.constraints);
+    pivot = new Pivot("Climber", io);
   }
 
   @Override
