@@ -12,7 +12,6 @@ import org.littletonrobotics.junction.Logger;
 public class Pivot extends SingleRoller {
   public static final double isNearToleranceRotations = Units.degreesToRotations(5);
 
-
   public Pivot(String name, SingleRollerIO io) {
     super(name, io);
     setPosition(PivotConstants.intialPosition);

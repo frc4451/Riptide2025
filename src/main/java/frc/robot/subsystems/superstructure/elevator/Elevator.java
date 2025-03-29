@@ -10,16 +10,10 @@ public class Elevator extends FollowRollers {
   public static final double isNearToleranceInches = 1;
 
   private final double inchesPerRotation;
-  private final ElevatorConstraints elevatorConstraints;
 
-  public Elevator(
-      String name,
-      FollowRollersIO io,
-      double inchesPerRad,
-      ElevatorConstraints elevatorConstraints) {
+  public Elevator(String name, FollowRollersIO io, double inchesPerRad) {
     super(name, io);
     this.inchesPerRotation = inchesPerRad;
-    this.elevatorConstraints = elevatorConstraints;
   }
 
   public void periodic() {
@@ -51,12 +45,7 @@ public class Elevator extends FollowRollers {
   }
 
   public void setGoalHeightInches(double positionInches) {
-    double clampedPositionIn =
-        MathUtil.clamp(
-            positionInches,
-            elevatorConstraints.minHeightInches(),
-            elevatorConstraints.maxHeightInches());
-    io.setGoal(clampedPositionIn / inchesPerRotation);
+    io.setGoal(positionInches / inchesPerRotation);
   }
 
   public double getGoalHeightInches() {

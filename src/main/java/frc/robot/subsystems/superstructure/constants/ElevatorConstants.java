@@ -5,7 +5,6 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import frc.robot.subsystems.superstructure.elevator.ElevatorConstraints;
 
 public class ElevatorConstants {
   public static final int heightSensorId = 0;
@@ -28,8 +27,6 @@ public class ElevatorConstants {
   public static final boolean isBrake = true;
 
   public static final double resetFromHeightSensorThresholdInches = 5;
-  public static final ElevatorConstraints elevatorConstraints =
-      new ElevatorConstraints(1.0 / 2.0, 50 / 2.0);
   public static final double startHeightInches = -0.5 / 2.0;
 
   public static final TrapezoidProfile.Constraints trapezoidConstraints =

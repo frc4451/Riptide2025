@@ -134,12 +134,7 @@ public class SuperStructure extends SubsystemBase {
         break;
     }
 
-    elevator =
-        new Elevator(
-            name + "/Elevator",
-            elevatorIO,
-            ElevatorConstants.inchesPerRotation,
-            ElevatorConstants.elevatorConstraints);
+    elevator = new Elevator(name + "/Elevator", elevatorIO, ElevatorConstants.inchesPerRotation);
     elevator.setHeightInches(ElevatorConstants.startHeightInches);
 
     pivot = new Pivot(name + "/Coral/Pivot", pivotIO);
