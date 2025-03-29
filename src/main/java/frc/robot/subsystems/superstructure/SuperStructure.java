@@ -254,6 +254,7 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public boolean isL4Coral() {
-    return currentMode == SuperStructureModes.L4Coral;
+    return currentMode == SuperStructureModes.L4Coral
+        || currentMode == SuperStructureModes.TUCKED_L4;
   }
 }

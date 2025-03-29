@@ -1,0 +1,48 @@
+package frc.robot.field;
+
+import edu.wpi.first.math.util.Units;
+
+public enum EventConstants {
+  HOME(
+      Units.inchesToMeters(-6.5),
+      Units.inchesToMeters(6.5),
+      Units.inchesToMeters(17.0),
+      Units.inchesToMeters(21.5),
+      Units.inchesToMeters(25.0)),
+  NORTH_CHARLESTON(
+      Units.inchesToMeters(-7.0),
+      Units.inchesToMeters(8.0),
+      Units.inchesToMeters(16.0),
+      Units.inchesToMeters(19.0),
+      Units.inchesToMeters(25.0)),
+  ;
+
+  /** Distance from the center of the April Tag on the Face to the center of the Pole */
+  public final double tagToReefLeft;
+
+  /** Distance from the center of the April Tag on the Face to the center of the Pole */
+  public final double tagToReefRight;
+
+  public final double l2ReefOffset;
+  public final double l2RumbleDistance;
+
+  public final double l4ReefOffset;
+  public final double l4RumbleDistance;
+
+  public final double elevatorDownOffset;
+
+  private EventConstants(
+      double tagToReefLeft,
+      double tagToReefRight,
+      double l2ReefOffsetMeters,
+      double l4ReefOffsetMeters,
+      double elevatorDownOffsetMeters) {
+    this.tagToReefLeft = tagToReefLeft;
+    this.tagToReefRight = tagToReefRight;
+    this.l2ReefOffset = l2ReefOffsetMeters;
+    this.l2RumbleDistance = l2ReefOffsetMeters + Units.inchesToMeters(1);
+    this.l4ReefOffset = l4ReefOffsetMeters;
+    this.l4RumbleDistance = l4ReefOffsetMeters + Units.inchesToMeters(1);
+    this.elevatorDownOffset = elevatorDownOffsetMeters;
+  }
+}

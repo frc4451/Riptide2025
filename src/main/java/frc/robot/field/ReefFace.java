@@ -11,8 +11,8 @@ public class ReefFace {
 
   public ReefFace(AprilTagStruct tag) {
     this.tag = tag;
-    this.leftPole = new ReefPole(tag, FieldConstants.tagToReefLeft);
-    this.rightPole = new ReefPole(tag, FieldConstants.tagToReefRight);
+    this.leftPole = new ReefPole(tag, FieldConstants.eventConstants.tagToReefLeft);
+    this.rightPole = new ReefPole(tag, FieldConstants.eventConstants.tagToReefRight);
   }
 
   public double getPerpendicularError(Pose2d robotPose) {

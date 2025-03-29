@@ -9,12 +9,7 @@ public class FieldConstants {
   /** AdvantageKit-safe loggable version of `AprilTag` that contains data we want without lookups */
   public static record AprilTagStruct(int fiducialId, Pose3d pose) {}
 
-  /** Distance from the center of the April Tag on the Face to the center of the Pole */
-  public static final double tagToReefLeft = Units.inchesToMeters(-7.0);
-
-  public static final double tagToReefRight = Units.inchesToMeters(8.0);
-
-  public static final double distanceToTag = Units.inchesToMeters(10);
+  public static final EventConstants eventConstants = EventConstants.HOME;
 
   public static final double fieldLength = Units.inchesToMeters(690.876);
   public static final double fieldWidth = Units.inchesToMeters(317);

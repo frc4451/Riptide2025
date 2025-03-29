@@ -282,8 +282,8 @@ public class RobotContainer {
                 () -> -driverController.getLeftYSquared(),
                 () ->
                     superStructure.isL4Coral()
-                        ? AutoConstants.l4RumbleDistanceMters
-                        : AutoConstants.l2RumbleDistanceMters,
+                        ? FieldConstants.eventConstants.l4RumbleDistance
+                        : FieldConstants.eventConstants.l2RumbleDistance,
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
@@ -299,7 +299,10 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .leftPole
-                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
+                            .getPerpendicularOffsetPose(
+                                superStructure.isL4Coral()
+                                    ? FieldConstants.eventConstants.l4ReefOffset
+                                    : FieldConstants.eventConstants.l2ReefOffset),
                         Rotation2d.kPi),
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
@@ -316,8 +319,8 @@ public class RobotContainer {
                 () -> -driverController.getLeftYSquared(),
                 () ->
                     superStructure.isL4Coral()
-                        ? AutoConstants.l4RumbleDistanceMters
-                        : AutoConstants.l2RumbleDistanceMters,
+                        ? FieldConstants.eventConstants.l4RumbleDistance
+                        : FieldConstants.eventConstants.l2RumbleDistance,
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                     operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
@@ -333,7 +336,10 @@ public class RobotContainer {
                     PoseUtils.plusRotation(
                         FieldUtils.getClosestReef()
                             .rightPole
-                            .getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
+                            .getPerpendicularOffsetPose(
+                                superStructure.isL4Coral()
+                                    ? FieldConstants.eventConstants.l4ReefOffset
+                                    : FieldConstants.eventConstants.l2ReefOffset),
                         Rotation2d.kPi),
                 Commands.parallel(
                     driverController.rumbleOnOff(1, 0.25, 0.25, 2),
@@ -396,33 +402,39 @@ public class RobotContainer {
       Logger.recordOutput(
           logRoot + "/Faces/" + face.name() + "/Left/L2",
           PoseUtils.plusRotation(
-              face.blue.leftPole.getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
+              face.blue.leftPole.getPerpendicularOffsetPose(
+                  FieldConstants.eventConstants.l2ReefOffset),
               Rotation2d.kPi));
       Logger.recordOutput(
           logRoot + "/Faces/" + face.name() + "/Left/L4",
           PoseUtils.plusRotation(
-              face.blue.leftPole.getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
+              face.blue.leftPole.getPerpendicularOffsetPose(
+                  FieldConstants.eventConstants.l4ReefOffset),
               Rotation2d.kPi));
       Logger.recordOutput(
           logRoot + "/Faces/" + face.name() + "/Right/L2",
           PoseUtils.plusRotation(
-              face.blue.rightPole.getPerpendicularOffsetPose(AutoConstants.l2ReefOffsetMeters),
+              face.blue.rightPole.getPerpendicularOffsetPose(
+                  FieldConstants.eventConstants.l2ReefOffset),
               Rotation2d.kPi));
       Logger.recordOutput(
           logRoot + "/Faces/" + face.name() + "/Right/L4",
           PoseUtils.plusRotation(
-              face.blue.rightPole.getPerpendicularOffsetPose(AutoConstants.l4ReefOffsetMeters),
+              face.blue.rightPole.getPerpendicularOffsetPose(
+                  FieldConstants.eventConstants.l4ReefOffset),
               Rotation2d.kPi));
     }
 
     Logger.recordOutput(
         logRoot + "/HPS/Left",
         PoseUtils.getPerpendicularOffsetPose(
-            FieldConstants.blueHPSDriverLeft.pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
+            FieldConstants.blueHPSDriverLeft.pose().toPose2d(),
+            FieldConstants.eventConstants.l2ReefOffset));
     Logger.recordOutput(
         logRoot + "/HPS/Right",
         PoseUtils.getPerpendicularOffsetPose(
-            FieldConstants.blueHPSDriverRight.pose().toPose2d(), AutoConstants.l2ReefOffsetMeters));
+            FieldConstants.blueHPSDriverRight.pose().toPose2d(),
+            FieldConstants.eventConstants.l2ReefOffset));
   }
 
   /**
