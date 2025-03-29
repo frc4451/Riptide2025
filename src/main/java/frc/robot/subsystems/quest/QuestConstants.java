@@ -10,11 +10,9 @@ import edu.wpi.first.math.util.Units;
 
 public class QuestConstants {
   public static final Transform2d robotToQuestTransform =
-      // new Transform2d(Units.inchesToMeters(-2), Units.inchesToMeters(10.25),
-      // Rotation2d.kCCW_90deg);
       new Transform2d(
-          Units.inchesToMeters(-2.4278906344503333),
-          Units.inchesToMeters(8.287896116235327),
+          Units.inchesToMeters(-2.274634152842048),
+          Units.inchesToMeters(7.481121673003204),
           Rotation2d.kCCW_90deg);
 
   public static final Matrix<N3, N1> stdDevs = VecBuilder.fill(0, 0, 0);

@@ -32,8 +32,8 @@ public class QuestCalibration {
   }
 
   /**
-   * When calibrating make sure the rotation in your quest transform is right. (Reality check)
-   * If it is non-zero, you may have to swap the x/y and their signs.
+   * When calibrating make sure the rotation in your quest transform is right. (Reality check) If it
+   * is non-zero, you may have to swap the x/y and their signs.
    */
   public Command determineOffsetToRobotCenter(Drive drive, Supplier<Pose2d> questPoseSupplier) {
     return Commands.repeatingSequence(
