@@ -1,3 +1,3 @@
-package frc.robot.subsystems.superstructure.pivot;
+package frc.robot.subsystems.pivot;
 
 public record PivotConstraints(double minRotations, double maxRotations) {}

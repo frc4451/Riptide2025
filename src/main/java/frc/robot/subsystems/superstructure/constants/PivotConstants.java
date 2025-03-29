@@ -6,7 +6,7 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.superstructure.pivot.PivotConstraints;
+import frc.robot.subsystems.pivot.PivotConstraints;
 
 public class PivotConstants {
   public static final int canId = 5;

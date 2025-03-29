@@ -1,4 +1,4 @@
-package frc.robot.subsystems.superstructure.pivot;
+package frc.robot.subsystems.pivot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
