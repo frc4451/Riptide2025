@@ -88,7 +88,6 @@ public class Quest extends VirtualSubsystem {
   public Command calibrateCommand(Drive drive) {
     return calibration.determineOffsetToRobotCenter(
         drive,
-        () -> drive.getGlobalPose(),
         () ->
             new Pose2d(
                 inputs.uncorrectedResetToQuest.getTranslation(),

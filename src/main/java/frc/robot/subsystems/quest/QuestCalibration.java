@@ -14,12 +14,12 @@ public class QuestCalibration {
   // -- Calculate Quest Offset (copied from
   // https://github.com/FRC5010/Reefscape2025/blob/main/TigerShark2025/src/main/java/org/frc5010/common/sensors/camera/QuestNav.java#L65) --
 
-  private Translation2d calculatedOffsetToRobot = new Translation2d();
+  private Translation2d calculatedOffsetToRobot = Translation2d.kZero;
   private double calculateOffsetCount = 1;
 
-  private Translation2d calculateOffsetToRobot(Pose2d robotPose) {
-    Rotation2d angle = robotPose.getRotation();
-    Translation2d displacement = robotPose.getTranslation();
+  private Translation2d calculateOffsetToRobot(Pose2d questRobotPose) {
+    Rotation2d angle = questRobotPose.getRotation();
+    Translation2d displacement = questRobotPose.getTranslation();
 
     double x =
         ((angle.getCos() - 1) * displacement.getX() + angle.getSin() * displacement.getY())
@@ -31,8 +31,11 @@ public class QuestCalibration {
     return new Translation2d(x, y);
   }
 
-  public Command determineOffsetToRobotCenter(
-      Drive drive, Supplier<Pose2d> robotPose, Supplier<Pose2d> questPoseSupplier) {
+  /**
+   * When calibrating make sure the rotation in your quest transform is right. (Reality check)
+   * If it is non-zero, you may have to swap the x/y and their signs.
+   */
+  public Command determineOffsetToRobotCenter(Drive drive, Supplier<Pose2d> questPoseSupplier) {
     return Commands.repeatingSequence(
             Commands.run(
                     () -> {
@@ -43,7 +46,7 @@ public class QuestCalibration {
             Commands.runOnce(
                     () -> {
                       // Update current offset
-                      Translation2d offset = calculateOffsetToRobot(robotPose.get());
+                      Translation2d offset = calculateOffsetToRobot(questPoseSupplier.get());
 
                       calculatedOffsetToRobot =
                           calculatedOffsetToRobot
@@ -57,7 +60,7 @@ public class QuestCalibration {
         .finallyDo(
             () -> {
               // Update current offset
-              Translation2d offset = calculateOffsetToRobot(robotPose.get());
+              Translation2d offset = calculateOffsetToRobot(questPoseSupplier.get());
 
               calculatedOffsetToRobot =
                   calculatedOffsetToRobot
