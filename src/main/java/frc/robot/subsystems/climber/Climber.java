@@ -1,17 +1,24 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.climber.mechanism.Mechanism;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.rollers.feedforward_controller.EmptyFeedforwardController;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
-  private ClimberModes mode;
+  private ClimberModes mode = ClimberModes.TUCK;
   private Pivot pivot;
+
+  private Mechanism goalMechanism = new Mechanism(getName() + "/Goal", Color.kLightGreen, 10.0);
+  private Mechanism measuredMechanism =
+      new Mechanism(getName() + "/Measured", Color.kDarkGreen, 3.0);
 
   public Climber() {
     SingleRollerIO io;
@@ -46,7 +53,12 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Logger.recordOutput(getName() + "/Mode", mode);
+
     pivot.periodic();
+
+    goalMechanism.update(pivot.getGoalPosition());
+    measuredMechanism.update(pivot.getPosition());
   }
 
   public void setMode(ClimberModes mode) {
