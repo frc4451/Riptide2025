@@ -3,9 +3,9 @@ package frc.robot.subsystems.climber;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public enum ClimberModes {
-  TUCKED(Rotation2d.kZero),
-  EXTENDED(Rotation2d.kZero),
-  GRABBED(Rotation2d.kZero);
+  TUCK(Rotation2d.fromDegrees(0)),
+  EXTEND(Rotation2d.fromDegrees(200.0)),
+  GRAB(Rotation2d.fromDegrees(70.0));
 
   public Rotation2d rotation;
 
