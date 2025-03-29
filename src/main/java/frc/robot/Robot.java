@@ -123,6 +123,12 @@ public class Robot extends LoggedRobot {
       robotContainer.drive.setPose(Pose2d.kZero);
       robotContainer.quest.setRobotResetPose(Pose2d.kZero);
     }
+
+    // Troubleshooting only. Set the headset-to-field pose so we can track
+    // the transforms without turning on the robot.
+    if (robotContainer.driverController.start().getAsBoolean()) {
+      robotContainer.quest.setRobotResetPose(BobotState.getGlobalPose());
+    }
   }
 
   @Override
