@@ -43,8 +43,12 @@ public class QuestNav {
   /** Pose of quest when pose was reset */
   private Pose2d uncorrectedResetPose = Pose2d.kZero;
 
+  /** Heading of quest when pose was reset */
+  private Rotation2d resetHeading = Rotation2d.kZero;
+
   public QuestNav() {
     zeroPosition();
+    zeroHeading();
   }
 
   /** Process heartbeat requests from Quest and respond with the same ID */
@@ -86,6 +90,12 @@ public class QuestNav {
     }
   }
 
+  // Zero the relativerobot heading
+  public void zeroHeading() {
+    float[] eulerAngles = questEulerAngles.get();
+    resetHeading = Rotation2d.fromDegrees(-Math.IEEEremainder(eulerAngles[1], 360.0));
+  }
+
   // Clean up questnav subroutine messages after processing on the headset
   public void cleanUpQuestNavMessages() {
     if (questMiso.get() == 99) {
@@ -96,7 +106,7 @@ public class QuestNav {
   // Get the yaw Euler angle of the headset
   private Rotation2d getUncorrectedYaw() {
     float[] eulerAngles = questEulerAngles.get();
-    return Rotation2d.fromDegrees(-Math.IEEEremainder(eulerAngles[1], 360.0));
+    return Rotation2d.fromDegrees(-Math.IEEEremainder(eulerAngles[1], 360.0)).minus(resetHeading);
   }
 
   private Translation2d getUncorrectedTranslation() {

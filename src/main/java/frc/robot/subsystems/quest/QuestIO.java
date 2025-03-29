@@ -23,6 +23,10 @@ public interface QuestIO extends AutoCloseable {
 
   public default void updateInputs(QuestIOInputs inputs) {}
 
+  public default void zeroPosition() {}
+
+  public default void zeroHeading() {}
+
   @Override
   public default void close() {}
 }

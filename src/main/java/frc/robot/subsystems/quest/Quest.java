@@ -59,6 +59,8 @@ public class Quest extends VirtualSubsystem {
    */
   public void resetRobotPose(Pose2d robotResetPose) {
     this.fieldToRobotOrigin = robotResetPose;
+    io.zeroPosition();
+    io.zeroHeading();
   }
 
   /**

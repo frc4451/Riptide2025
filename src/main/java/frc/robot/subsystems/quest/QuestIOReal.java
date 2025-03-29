@@ -21,6 +21,16 @@ public class QuestIOReal implements QuestIO {
   }
 
   @Override
+  public void zeroPosition() {
+    questNav.zeroPosition();
+  }
+
+  @Override
+  public void zeroHeading() {
+    questNav.zeroHeading();
+  }
+
+  @Override
   public void close() {
     questNav.close();
   }
