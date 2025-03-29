@@ -129,13 +129,15 @@ public class QuestNav {
 
   public Pose2d getQuestNavPose() {
     Translation2d oculousPositionCompensated =
-        getQuestNavTranslation().minus(robotToQuestSupplier.get().getTranslation()); // 6.5
+        getQuestNavTranslation().minus(robotToQuestSupplier.get().getTranslation());
     return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getOculusYaw()));
   }
 
   /*
    * Original from 4451
    */
+
+  /** Gets raw pose of headset on the field */
   public Pose2d getRawPose() {
     return new Pose2d(getQuestNavTranslation(), Rotation2d.fromDegrees(getOculusYaw()));
   }

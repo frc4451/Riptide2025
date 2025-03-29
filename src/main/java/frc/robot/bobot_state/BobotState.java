@@ -35,6 +35,7 @@ public class BobotState extends VirtualSubsystem {
 
   private static Pose2d globalPose = new Pose2d();
   private static Pose2d constrainedPose = new Pose2d();
+  private static Pose2d questPose = new Pose2d();
 
   public static final ReefTagTracker reefTracker = new ReefTagTracker();
   public static final HPSTagTracker hpsTracker = new HPSTagTracker();
@@ -75,12 +76,20 @@ public class BobotState extends VirtualSubsystem {
     BobotState.constrainedPose = pose;
   }
 
+  public static void updateQuestPose(Pose2d pose) {
+    BobotState.questPose = pose;
+  }
+
   public static Pose2d getGlobalPose() {
     return BobotState.globalPose;
   }
 
   public static Pose2d getConstrainedPose() {
     return BobotState.constrainedPose;
+  }
+
+  public static Pose2d getQuestPose() {
+    return BobotState.questPose;
   }
 
   public static Trigger onTeamSide() {
