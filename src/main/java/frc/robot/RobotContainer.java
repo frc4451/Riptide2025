@@ -36,6 +36,7 @@ import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
 import frc.robot.subsystems.blinkin.BlinkinState;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberModes;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -179,6 +180,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configureRotationModes();
     configurePoleBindings();
+    configureCageBindings();
     configureSuperBindings();
 
     // if (Constants.currentMode == Constants.Mode.SIM) {
@@ -351,6 +353,12 @@ public class RobotContainer {
                 AutoConstants.useConstrainedPoseForReef,
                 () -> FieldUtils.getClosestReef().tag.pose().toPose2d(),
                 () -> -driverController.getLeftYSquared()));
+  }
+
+  public void configureCageBindings() {
+    driverController.x().onTrue(climber.setModeCommand(ClimberModes.TUCK));
+    driverController.y().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
+    driverController.b().onTrue(climber.setModeCommand(ClimberModes.GRAB));
   }
 
   private void configureSuperBindings() {
