@@ -18,7 +18,6 @@ import choreo.trajectory.SwerveSample;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -40,7 +39,6 @@ import frc.robot.Constants.Mode;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.quest.TimestampedPose;
 import frc.robot.subsystems.vision.PoseObservation;
-import frc.robot.util.PoseUtils;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -181,11 +179,10 @@ public class Drive extends SubsystemBase {
       PoseObservation globalObservation;
       while ((globalObservation = BobotState.getGlobalVisionObservations().poll()) != null) {
         globalPoseEstimator.addVisionMeasurement(
-          globalObservation.robotPose().toPose2d(), globalObservation.timestampSeconds()
+            globalObservation.robotPose().toPose2d(), globalObservation.timestampSeconds()
             // ,globalObservation.stdDevs()
             );
 
-            
         //     PoseUtils.withRotation(
         //         globalObservation.robotPose().toPose2d(),
         //         new Rotation2d(
