@@ -35,6 +35,7 @@ import frc.robot.subsystems.blinkin.Blinkin;
 import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
 import frc.robot.subsystems.blinkin.BlinkinState;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -63,6 +64,7 @@ public class RobotContainer {
   public final Drive drive;
   private final Vision vision = new Vision();
   private final SuperStructure superStructure = new SuperStructure();
+  private final Climber climber = new Climber();
 
   public final Blinkin blinkin;
 
@@ -107,6 +109,7 @@ public class RobotContainer {
                 new ModuleIOSim());
         quest = new Quest(new QuestIO() {});
         blinkin = new Blinkin(new BlinkinIOSim());
+
         break;
 
       case REPLAY:
