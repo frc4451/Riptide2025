@@ -1,7 +1,7 @@
 package frc.robot.subsystems.quest;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface QuestIO extends AutoCloseable {
@@ -9,13 +9,12 @@ public interface QuestIO extends AutoCloseable {
   public static class QuestIOInputs {
     public boolean connected = false;
 
-    // These are with relative with offsets applied (probably what you want)
-    public Pose2d questPose = new Pose2d();
-    public Pose2d pose = new Pose2d();
-    public Pose2d resetRobotPose = new Pose2d();
-    public Translation2d questTranslation = new Translation2d();
-
-    public Pose2d rawPose = new Pose2d();
+    /** Current QuestNav pose */
+    public Pose2d uncorrectedPose = Pose2d.kZero;
+    /** QuestNav pose when robot code started */
+    public Pose2d uncorrectedResetPose = Pose2d.kZero;
+    /** Transform between QuestNav current and starting pose */
+    public Transform2d uncorrectedResetToQuest = Transform2d.kZero;
 
     public double timestamp = 0;
     public double timestampDelta = 0;
@@ -23,9 +22,6 @@ public interface QuestIO extends AutoCloseable {
   }
 
   public default void updateInputs(QuestIOInputs inputs) {}
-
-  /** Sets supplied pose as origin of all calculations */
-  public default void resetPose(Pose2d pose) {}
 
   @Override
   public default void close() {}

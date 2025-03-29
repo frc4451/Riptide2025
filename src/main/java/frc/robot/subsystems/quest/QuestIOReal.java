@@ -1,23 +1,20 @@
 package frc.robot.subsystems.quest;
 
 public class QuestIOReal implements QuestIO {
-  private final QuestNav questNav;
+  private final QuestNav questNav = new QuestNav();
 
-  public QuestIOReal() {
-    questNav = new QuestNav(() -> QuestConstants.robotToQuestTransform);
-    questNav.zeroPosition();
-    questNav.zeroHeading();
-  }
-
-  /** Update inputs supplied */
+  @Override
   public void updateInputs(QuestIOInputs inputs) {
-    inputs.rawPose = questNav.getRawPose();
-    inputs.pose = questNav.getPose();
-    inputs.questPose = questNav.getQuestNavPose();
-    inputs.resetRobotPose = questNav.getResetPose();
     inputs.connected = questNav.connected();
-    inputs.batteryLevel = questNav.getBatteryPercent();
+
+    inputs.uncorrectedPose = questNav.getUncorrectedPose();
+    inputs.uncorrectedResetPose = questNav.getUncorrectedResetPose();
+    inputs.uncorrectedResetToQuest = inputs.uncorrectedPose.minus(inputs.uncorrectedResetPose);
+
+    double timestamp = inputs.timestamp;
     inputs.timestamp = questNav.timestamp();
+    inputs.timestampDelta = timestamp - inputs.timestamp;
+    inputs.batteryLevel = questNav.getBatteryPercent();
 
     questNav.processHeartbeat();
     questNav.cleanUpQuestNavMessages();

@@ -3,7 +3,6 @@ package frc.robot.subsystems.quest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -13,7 +12,6 @@ import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
-import java.util.function.Supplier;
 
 public class QuestNav {
   // Configure Network Tables topics (questnav/...) to communicate with the Quest HMD
@@ -42,14 +40,11 @@ public class QuestNav {
   /** Last processed heartbeat request ID */
   private double lastProcessedHeartbeatId = 0;
 
-  // Local heading helper variables
-  private float yaw_offset = 0.0f;
-  private Pose2d resetPosition = new Pose2d();
+  /** Pose of quest when pose was reset */
+  private Pose2d uncorrectedResetPose = Pose2d.kZero;
 
-  private final Supplier<Transform2d> robotToQuestSupplier;
-
-  public QuestNav(Supplier<Transform2d> robotToQuestSupplier) {
-    this.robotToQuestSupplier = robotToQuestSupplier;
+  public QuestNav() {
+    zeroPosition();
   }
 
   /** Process heartbeat requests from Quest and respond with the same ID */
@@ -60,13 +55,6 @@ public class QuestNav {
       heartbeatResponsePub.set(requestId);
       lastProcessedHeartbeatId = requestId;
     }
-  }
-
-  // Gets the Quest's measured position.
-  public Pose2d getPose() {
-    return new Pose2d(
-        getQuestNavPose().minus(resetPosition).getTranslation(),
-        Rotation2d.fromDegrees(getOculusYaw()));
   }
 
   // Gets the battery percent of the Quest.
@@ -90,15 +78,9 @@ public class QuestNav {
     return questTimestamp.getAtomic().serverTime;
   }
 
-  // Zero the relativerobot heading
-  public void zeroHeading() {
-    float[] eulerAngles = questEulerAngles.get();
-    yaw_offset = eulerAngles[1];
-  }
-
-  // Zero the absolute 3D position of the robot (similar to long-pressing the quest logo)
+  // Zero the absolute 3D position of the quest (similar to long-pressing the quest logo)
   public void zeroPosition() {
-    resetPosition = getPose();
+    uncorrectedResetPose = getUncorrectedPose();
     if (questMiso.get() != 99) {
       questMosi.set(1);
     }
@@ -112,38 +94,22 @@ public class QuestNav {
   }
 
   // Get the yaw Euler angle of the headset
-  private float getOculusYaw() {
+  private Rotation2d getUncorrectedYaw() {
     float[] eulerAngles = questEulerAngles.get();
-    var ret = eulerAngles[1] - yaw_offset;
-    ret %= 360;
-    if (ret < 0) {
-      ret += 360;
-    }
-    return ret;
+    return Rotation2d.fromDegrees(-Math.IEEEremainder(eulerAngles[1], 360.0));
   }
 
-  private Translation2d getQuestNavTranslation() {
-    float[] questnavPosition = questPosition.get();
-    return new Translation2d(questnavPosition[2], -questnavPosition[0]);
+  private Translation2d getUncorrectedTranslation() {
+    float[] position = questPosition.get();
+    return new Translation2d(position[2], -position[0]);
   }
 
-  public Pose2d getQuestNavPose() {
-    Translation2d oculousPositionCompensated =
-        getQuestNavTranslation().minus(robotToQuestSupplier.get().getTranslation());
-    return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getOculusYaw()));
+  public Pose2d getUncorrectedPose() {
+    return new Pose2d(getUncorrectedTranslation(), getUncorrectedYaw());
   }
 
-  /*
-   * Original from 4451
-   */
-
-  /** Gets raw pose of headset on the field */
-  public Pose2d getRawPose() {
-    return new Pose2d(getQuestNavTranslation(), Rotation2d.fromDegrees(getOculusYaw()));
-  }
-
-  public Pose2d getResetPose() {
-    return this.resetPosition;
+  public Pose2d getUncorrectedResetPose() {
+    return this.uncorrectedResetPose;
   }
 
   public void close() {

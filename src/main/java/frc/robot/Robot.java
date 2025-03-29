@@ -121,24 +121,23 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     if (robotContainer.driverController.b().getAsBoolean()) {
       robotContainer.drive.setPose(Pose2d.kZero);
-      robotContainer.quest.setRobotResetPose(Pose2d.kZero);
+      robotContainer.quest.resetRobotPose(Pose2d.kZero);
     }
 
     // Troubleshooting only. Set the headset-to-field pose so we can track
     // the transforms without turning on the robot.
-    if (robotContainer.driverController.start().getAsBoolean()) {
-      robotContainer.quest.setRobotResetPose(BobotState.getGlobalPose());
-    }
+    // if (robotContainer.driverController.start().getAsBoolean()) {
+    //   robotContainer.quest.resetRobotPose(BobotState.getGlobalPose());
+    // }
   }
 
   @Override
-  public void disabledExit() {
-    robotContainer.quest.setRobotResetPose(BobotState.getGlobalPose());
-  }
+  public void disabledExit() {}
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    robotContainer.quest.resetRobotPose(BobotState.getGlobalPose());
 
     autonomousCommand = robotContainer.getAutonomousCommand();
 
@@ -155,6 +154,11 @@ public class Robot extends LoggedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    // Don't reset on real field because we already did at the start of auto
+    if (!DriverStation.isFMSAttached()) {
+      robotContainer.quest.resetRobotPose(BobotState.getGlobalPose());
+    }
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

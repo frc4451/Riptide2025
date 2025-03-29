@@ -1,7 +1,6 @@
 package frc.robot.subsystems.quest;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,11 +20,11 @@ public class Quest extends VirtualSubsystem {
 
   private final QuestCalibration calibration = new QuestCalibration();
 
-  private Pose2d robotResetPose = new Pose2d();
+  private Pose2d fieldToRobotOrigin = Pose2d.kZero;
 
   public Quest(QuestIO io) {
     this.io = io;
-    setRobotResetPose(Pose2d.kZero);
+    resetRobotPose(Pose2d.kZero);
   }
 
   @Override
@@ -34,9 +33,9 @@ public class Quest extends VirtualSubsystem {
     Logger.processInputs("Oculus", inputs);
 
     disconnectedAlert.set(!inputs.connected);
-    lowBatteryAlert.set(inputs.batteryLevel < 25 && inputs.connected);
+    lowBatteryAlert.set(inputs.connected && inputs.batteryLevel < 25);
 
-    Pose2d robotPoseFromQuest = this.getRobotToField();
+    Pose2d fieldToRobot = getFieldToRobot();
 
     // Only enable this when we know we're ready
     // if (DriverStation.isEnabled() && Constants.currentMode == Constants.Mode.REAL) {
@@ -46,31 +45,33 @@ public class Quest extends VirtualSubsystem {
 
     // Do this always for now just to confirm our transforms are correct.
     // Or, you may want to always track rotation. Do science.
-    BobotState.updateQuestPose(robotPoseFromQuest);
+    BobotState.updateQuestPose(fieldToRobot);
   }
+
+  @Override
+  public void simulationPeriodic() {}
 
   /**
    * The Oculus tracks relative to where it started, so we need to tell the Quest where the robot
    * started on the field.
    *
-   * @param newRobotResetPose
+   * @param robotResetPose
    */
-  public void setRobotResetPose(Pose2d newRobotResetPose) {
-    this.robotResetPose = newRobotResetPose;
+  public void resetRobotPose(Pose2d robotResetPose) {
+    this.fieldToRobotOrigin = robotResetPose;
   }
 
   /**
    * Compares the current position of the headset to where it was last reset, then transforms that
    * by robot-to-quest and the known reset point on the field.
    *
-   * @return Quest to Field
+   * @return Field to Quest
    */
   @AutoLogOutput
-  public Pose2d getQuestToField() {
-    Transform2d poseRelativeToReset = inputs.rawPose.minus(inputs.resetRobotPose);
-    return this.robotResetPose
+  public Pose2d getFieldToQuest() {
+    return fieldToRobotOrigin
         .transformBy(QuestConstants.robotToQuestTransform)
-        .transformBy(poseRelativeToReset);
+        .transformBy(inputs.uncorrectedResetToQuest);
   }
 
   /**
@@ -80,15 +81,17 @@ public class Quest extends VirtualSubsystem {
    * @return Robot to Field
    */
   @AutoLogOutput
-  public Pose2d getRobotToField() {
-    return this.getQuestToField().transformBy(QuestConstants.robotToQuestTransform.inverse());
+  public Pose2d getFieldToRobot() {
+    return getFieldToQuest().transformBy(QuestConstants.robotToQuestTransform.inverse());
   }
-
-  @Override
-  public void simulationPeriodic() {}
 
   public Command calibrateCommand(Drive drive) {
     return calibration.determineOffsetToRobotCenter(
-        drive, () -> inputs.pose, () -> inputs.questPose);
+        drive,
+        () -> drive.getGlobalPose(),
+        () ->
+            new Pose2d(
+                inputs.uncorrectedResetToQuest.getTranslation(),
+                inputs.uncorrectedResetToQuest.getRotation()));
   }
 }
