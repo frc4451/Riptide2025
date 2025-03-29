@@ -4,9 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.VirtualSubsystem;
@@ -38,15 +36,17 @@ public class Quest extends VirtualSubsystem {
     disconnectedAlert.set(!inputs.connected);
     lowBatteryAlert.set(inputs.batteryLevel < 25 && inputs.connected);
 
-    if (DriverStation.isEnabled() && Constants.currentMode == Constants.Mode.REAL) {
-      Pose2d robotPoseFromQuest = this.getRobotToField();
-      
-      // Only enable this when we know we're ready
-      // BobotState.offerQuestMeasurement(
-      //     new TimestampedPose(robotPoseFromQuest, inputs.timestamp));
+    Pose2d robotPoseFromQuest = this.getRobotToField();
 
-      BobotState.updateQuestPose(robotPoseFromQuest);
-    }
+    // Only enable this when we know we're ready
+    // if (DriverStation.isEnabled() && Constants.currentMode == Constants.Mode.REAL) {
+    //   BobotState.offerQuestMeasurement(
+    //       new TimestampedPose(robotPoseFromQuest, inputs.timestamp));
+    // }
+
+    // Do this always for now just to confirm our transforms are correct.
+    // Or, you may want to always track rotation. Do science.
+    BobotState.updateQuestPose(robotPoseFromQuest);
   }
 
   /**
@@ -60,9 +60,8 @@ public class Quest extends VirtualSubsystem {
   }
 
   /**
-   * Compares the current position of the headset to where it was last reset,
-   * then transforms that by robot-to-quest and the known reset point on
-   * the field.
+   * Compares the current position of the headset to where it was last reset, then transforms that
+   * by robot-to-quest and the known reset point on the field.
    *
    * @return Quest to Field
    */
