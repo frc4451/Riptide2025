@@ -39,20 +39,11 @@ public class DrivePerpendicularToPoseCommand extends Command {
     this.perpendicularInput = perpendicularInput;
   }
 
-  public static DrivePerpendicularToPoseCommand withJoystickRumble(
-      Drive drive,
-      boolean useConstrainedPose,
-      Supplier<Pose2d> targetPoseSupplier,
-      DoubleSupplier perpendicularInput,
-      DoubleSupplier rumbleDistance,
-      Command rumbleCommand) {
-    DrivePerpendicularToPoseCommand command =
-        new DrivePerpendicularToPoseCommand(
-            drive, useConstrainedPose, targetPoseSupplier, perpendicularInput);
+  public DrivePerpendicularToPoseCommand withJoystickRumble(
+      DoubleSupplier rumbleDistance, Command rumbleCommand) {
+    atSetpoint(rumbleDistance).onTrue(Commands.deferredProxy(() -> rumbleCommand));
 
-    command.atSetpoint(rumbleDistance).onTrue(Commands.deferredProxy(() -> rumbleCommand));
-
-    return command;
+    return this;
   }
 
   @Override

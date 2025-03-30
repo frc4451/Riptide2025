@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.field.FieldConstants;
 import frc.robot.subsystems.rollers.feedforward_controller.EmptyFeedforwardController;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOSim;
@@ -256,5 +257,17 @@ public class SuperStructure extends SubsystemBase {
   public boolean isL4Coral() {
     return currentMode == SuperStructureModes.L4Coral
         || currentMode == SuperStructureModes.TUCKED_L4;
+  }
+
+  public double getReefOffset() {
+    return isL4Coral()
+        ? FieldConstants.eventConstants.l4ReefOffset
+        : FieldConstants.eventConstants.l2ReefOffset;
+  }
+
+  public double getRumbleDistance() {
+    return isL4Coral()
+        ? FieldConstants.eventConstants.l4RumbleDistance
+        : FieldConstants.eventConstants.l2RumbleDistance;
   }
 }

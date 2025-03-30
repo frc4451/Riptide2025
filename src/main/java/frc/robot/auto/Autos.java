@@ -2,11 +2,11 @@ package frc.robot.auto;
 
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.commands.AlignRoutines;
 import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldConstants.AprilTagStruct;
@@ -56,9 +56,10 @@ public class Autos {
             Commands.sequence(
                 resetAndFollowTrajectory(trajectory),
                 Commands.parallel(
-                    positionToPole(
+                    AlignRoutines.positionToPole(
+                        drive,
                         () -> ReefFaces.GH.get().leftPole,
-                        FieldConstants.eventConstants.l4ReefOffset),
+                        () -> FieldConstants.eventConstants.l4ReefOffset),
                     superStructure.score(SuperStructureModes.L4Coral))));
 
     return routine;
@@ -74,9 +75,10 @@ public class Autos {
                 resetAndFollowTrajectory(routine.trajectory(ChoreoPaths.START_MID_TO_CL4.name)),
                 Commands.deadline(
                     superStructure.score(SuperStructureModes.L4Coral),
-                    positionToPole(
+                    AlignRoutines.positionToPole(
+                        drive,
                         () -> ReefFaces.GH.get().leftPole,
-                        FieldConstants.eventConstants.l4ReefOffset)),
+                        () -> FieldConstants.eventConstants.l4ReefOffset)),
                 followTrajectory(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name)),
                 Commands.deadline(
                     superStructure.intake().andThen(Commands.waitSeconds(1.0)),
@@ -84,9 +86,10 @@ public class Autos {
                 followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
                 Commands.deadline(
                     superStructure.score(SuperStructureModes.L4Coral),
-                    positionToPole(
+                    AlignRoutines.positionToPole(
+                        drive,
                         () -> ReefFaces.CD.get().leftPole,
-                        FieldConstants.eventConstants.l4ReefOffset))));
+                        () -> FieldConstants.eventConstants.l4ReefOffset))));
 
     return routine;
   }
@@ -101,9 +104,10 @@ public class Autos {
                 resetAndFollowTrajectory(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_EL4.name)),
                 Commands.deadline(
                     superStructure.score(SuperStructureModes.L4Coral),
-                    positionToPole(
+                    AlignRoutines.positionToPole(
+                        drive,
                         () -> ReefFaces.EF.get().leftPole,
-                        FieldConstants.eventConstants.l4ReefOffset)),
+                        () -> FieldConstants.eventConstants.l4ReefOffset)),
                 followTrajectory(routine.trajectory(ChoreoPaths.EL4_TO_HPS_RIGHT.name)),
                 Commands.deadline(
                     superStructure.intake().andThen(Commands.waitSeconds(1.0)),
@@ -111,9 +115,10 @@ public class Autos {
                 followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
                 Commands.deadline(
                     superStructure.score(SuperStructureModes.L4Coral),
-                    positionToPole(
+                    AlignRoutines.positionToPole(
+                        drive,
                         () -> ReefFaces.CD.get().leftPole,
-                        FieldConstants.eventConstants.l4ReefOffset))));
+                        () -> FieldConstants.eventConstants.l4ReefOffset))));
 
     return routine;
   }
@@ -153,9 +158,12 @@ public class Autos {
             Commands.sequence(
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_TOP_TO_IL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                alignAndScoreNew(
-                    () -> ReefFaces.IJ.get().leftPole, FieldConstants.eventConstants.l4ReefOffset),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    SuperStructureModes.L4Coral,
+                    () -> ReefFaces.IJ.get().leftPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.IJ.get().leftPole),
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT.name)),
@@ -163,9 +171,12 @@ public class Autos {
                     superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                alignAndScoreNew(
-                    () -> ReefFaces.KL.get().rightPole, FieldConstants.eventConstants.l4ReefOffset),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    SuperStructureModes.L4Coral,
+                    () -> ReefFaces.KL.get().rightPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.KL.get().rightPole),
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.LL4_TO_HPS_LEFT.name)),
@@ -185,9 +196,12 @@ public class Autos {
             Commands.sequence(
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                alignAndScoreNew(
-                    () -> ReefFaces.EF.get().rightPole, FieldConstants.eventConstants.l4ReefOffset),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    SuperStructureModes.L4Coral,
+                    () -> ReefFaces.EF.get().rightPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.EF.get().rightPole),
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name)),
@@ -195,9 +209,12 @@ public class Autos {
                     superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                alignAndScoreNew(
-                    () -> ReefFaces.CD.get().leftPole, FieldConstants.eventConstants.l4ReefOffset),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    SuperStructureModes.L4Coral,
+                    () -> ReefFaces.CD.get().leftPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.CD.get().leftPole),
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name)),
@@ -218,9 +235,10 @@ public class Autos {
                 resetAndFollowTrajectory(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_EL4.name)),
                 Commands.deadline(
                     superStructure.score(SuperStructureModes.L4Coral),
-                    positionToPole(
+                    AlignRoutines.positionToPole(
+                        drive,
                         () -> ReefFaces.EF.get().leftPole,
-                        FieldConstants.eventConstants.l4ReefOffset))
+                        () -> FieldConstants.eventConstants.l4ReefOffset))
                 // followTrajectory(routine.trajectory(ChoreoPaths.E_TO_HPS_RIGHT.name)),
                 // followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_D.name)),
                 // followTrajectory(routine.trajectory(ChoreoPaths.D_TO_HPS_RIGHT.name)),
@@ -249,15 +267,6 @@ public class Autos {
     return Commands.sequence(resetOdometry(trajectory), followTrajectory(trajectory));
   }
 
-  private Command positionToPole(Supplier<ReefPole> pole, double reefOffsetMeters) {
-    return new DriveToPoseCommand(
-        drive,
-        AutoConstants.useConstrainedPoseForReef,
-        () ->
-            PoseUtils.plusRotation(
-                pole.get().getPerpendicularOffsetPose(reefOffsetMeters), Rotation2d.kPi));
-  }
-
   private Command positionToHPS(Supplier<AprilTagStruct> hps) {
     return new DriveToPoseCommand(
         drive,
@@ -272,13 +281,23 @@ public class Autos {
   }
 
   // Classic sequencing
+  /**
+   * @deprecated
+   * Use {@link AlignRoutines#positionToPoleAndScore(Drive, SuperStructure, SuperStructureModes, Supplier, java.util.function.DoubleSupplier) instead
+   */
+  @Deprecated
   private Command alignAndScore(Supplier<ReefPole> poleSupplier, double reefOffsetMeters) {
     return Commands.deadline(
         Commands.waitSeconds(1),
         Commands.sequence(Commands.waitSeconds(0.5), superStructure.shootCoral()),
-        positionToPole(poleSupplier, reefOffsetMeters));
+        AlignRoutines.positionToPole(drive, poleSupplier, () -> reefOffsetMeters));
   }
 
+  /**
+   * @deprecated
+   * Use {@link #backupFromReef(Supplier) instead
+   */
+  @Deprecated
   private Command awayFromReef(AutoTrajectory trajectory, SuperStructureModes mode) {
     return Commands.deadline(
         followTrajectory(trajectory),
@@ -286,28 +305,10 @@ public class Autos {
   }
 
   // New Sequencing
-  private Command positionToPoleAndWait(Supplier<ReefPole> pole, double reefOffsetMeters) {
-    DriveToPoseCommand cmd =
-        new DriveToPoseCommand(
-            drive,
-            AutoConstants.useConstrainedPoseForReef,
-            () ->
-                PoseUtils.plusRotation(
-                    pole.get().getPerpendicularOffsetPose(reefOffsetMeters), Rotation2d.kPi));
-
-    return cmd.until(cmd.atSetpoint()).unless(cmd.atSetpoint());
-  }
-
-  private Command alignAndScoreNew(Supplier<ReefPole> poleSupplier, double reefOffsetMeters) {
-    return Commands.sequence(
-        positionToPoleAndWait(poleSupplier, reefOffsetMeters),
-        Commands.waitUntil(superStructure.isAtMode()),
-        superStructure.shootCoral());
-  }
-
   private Command backupFromReef(Supplier<ReefPole> pole) {
     return Commands.sequence(
-        positionToPoleAndWait(() -> pole.get(), FieldConstants.eventConstants.elevatorDownOffset),
+        AlignRoutines.positionToPoleUntilDone(
+            drive, () -> pole.get(), () -> FieldConstants.eventConstants.elevatorDownOffset),
         superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
   }
 

@@ -31,17 +31,10 @@ public class DriveToPoseCommand extends Command {
     this.targetPoseSupplier = targetPoseSupplier;
   }
 
-  public static DriveToPoseCommand withJoystickRumble(
-      Drive drive,
-      boolean useConstrainedPose,
-      Supplier<Pose2d> targetPoseSupplier,
-      Command rumbleCommand) {
-    DriveToPoseCommand command =
-        new DriveToPoseCommand(drive, useConstrainedPose, targetPoseSupplier);
+  public DriveToPoseCommand withJoystickRumble(Command rumbleCommand) {
+    atSetpoint().onTrue(Commands.deferredProxy(() -> rumbleCommand));
 
-    command.atSetpoint().onTrue(Commands.deferredProxy(() -> rumbleCommand));
-
-    return command;
+    return this;
   }
 
   @Override

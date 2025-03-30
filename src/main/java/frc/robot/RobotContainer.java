@@ -22,12 +22,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.auto.AutoConstants;
 import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
+import frc.robot.commands.AlignRoutines;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.DrivePerpendicularToPoseCommand;
-import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
 import frc.robot.field.ReefFaces;
@@ -269,89 +267,61 @@ public class RobotContainer {
     }
   }
 
+  private final Command alignmentRumble =
+      Commands.deferredProxy(
+          () ->
+              Commands.parallel(
+                  driverController.rumbleOnOff(1, 0.25, 0.25, 2),
+                  operatorController.rumbleOnOff(1, 0.25, 0.25, 2)));
+
   private void configurePoleBindings() {
     // -- Coral --
     driverController
         .leftBumper()
         .and(driverController.a().negate())
         .whileTrue(
-            DrivePerpendicularToPoseCommand.withJoystickRumble(
-                drive,
-                AutoConstants.useConstrainedPoseForReef,
-                () -> FieldUtils.getClosestReef().leftPole.getPose(),
-                () -> -driverController.getLeftYSquared(),
-                () ->
-                    superStructure.isL4Coral()
-                        ? FieldConstants.eventConstants.l4RumbleDistance
-                        : FieldConstants.eventConstants.l2RumbleDistance,
-                Commands.parallel(
-                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
-                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
+            AlignRoutines.alignToPose(
+                    drive,
+                    () -> FieldUtils.getClosestReef().leftPole.getPose(),
+                    () -> -driverController.getLeftYSquared())
+                .withJoystickRumble(superStructure::getRumbleDistance, alignmentRumble));
 
     driverController
         .leftBumper()
         .and(driverController.a())
         .whileTrue(
-            DriveToPoseCommand.withJoystickRumble(
-                drive,
-                AutoConstants.useConstrainedPoseForReef,
-                () ->
-                    PoseUtils.plusRotation(
-                        FieldUtils.getClosestReef()
-                            .leftPole
-                            .getPerpendicularOffsetPose(
-                                superStructure.isL4Coral()
-                                    ? FieldConstants.eventConstants.l4ReefOffset
-                                    : FieldConstants.eventConstants.l2ReefOffset),
-                        Rotation2d.kPi),
-                Commands.parallel(
-                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
-                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
+            AlignRoutines.positionToPole(
+                    drive,
+                    () -> FieldUtils.getClosestReef().leftPole,
+                    superStructure::getReefOffset)
+                .withJoystickRumble(alignmentRumble));
 
     driverController
         .rightBumper()
         .and(driverController.a().negate())
         .whileTrue(
-            DrivePerpendicularToPoseCommand.withJoystickRumble(
-                drive,
-                AutoConstants.useConstrainedPoseForReef,
-                () -> FieldUtils.getClosestReef().rightPole.getPose(),
-                () -> -driverController.getLeftYSquared(),
-                () ->
-                    superStructure.isL4Coral()
-                        ? FieldConstants.eventConstants.l4RumbleDistance
-                        : FieldConstants.eventConstants.l2RumbleDistance,
-                Commands.parallel(
-                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
-                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
+            AlignRoutines.alignToPose(
+                    drive,
+                    () -> FieldUtils.getClosestReef().rightPole.getPose(),
+                    () -> -driverController.getLeftYSquared())
+                .withJoystickRumble(superStructure::getRumbleDistance, alignmentRumble));
 
     driverController
         .rightBumper()
         .and(driverController.a())
         .whileTrue(
-            DriveToPoseCommand.withJoystickRumble(
-                drive,
-                AutoConstants.useConstrainedPoseForReef,
-                () ->
-                    PoseUtils.plusRotation(
-                        FieldUtils.getClosestReef()
-                            .rightPole
-                            .getPerpendicularOffsetPose(
-                                superStructure.isL4Coral()
-                                    ? FieldConstants.eventConstants.l4ReefOffset
-                                    : FieldConstants.eventConstants.l2ReefOffset),
-                        Rotation2d.kPi),
-                Commands.parallel(
-                    driverController.rumbleOnOff(1, 0.25, 0.25, 2),
-                    operatorController.rumbleOnOff(1, 0.25, 0.25, 2))));
+            AlignRoutines.positionToPole(
+                    drive,
+                    () -> FieldUtils.getClosestReef().rightPole,
+                    superStructure::getReefOffset)
+                .withJoystickRumble(alignmentRumble));
 
     // -- Algae --
     driverController
         .rightTrigger()
         .whileTrue(
-            new DrivePerpendicularToPoseCommand(
+            AlignRoutines.alignToPose(
                 drive,
-                AutoConstants.useConstrainedPoseForReef,
                 () -> FieldUtils.getClosestReef().tag.pose().toPose2d(),
                 () -> -driverController.getLeftYSquared()));
   }
