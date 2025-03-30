@@ -1,9 +1,9 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.drive.DriveConstants;
 
 public class DriveCommandConstants {
   public static ProfiledPIDController makeAngleController() {
@@ -16,8 +16,14 @@ public class DriveCommandConstants {
     return angleController;
   }
 
-  public static PIDController makeTranslationController() {
-    PIDController translationController = new PIDController(5.0, 0.0, 0.1);
+  public static ProfiledPIDController makeTranslationController() {
+    ProfiledPIDController translationController =
+        new ProfiledPIDController(
+            5.0,
+            0.0,
+            0.1,
+            new TrapezoidProfile.Constraints(
+                DriveConstants.maxSpeedMetersPerSec, DriveConstants.maxSpeedMetersPerSec));
     translationController.setTolerance(Units.inchesToMeters(0.25));
 
     return translationController;

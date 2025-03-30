@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,7 +14,7 @@ import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class DrivePerpendicularToPoseCommand extends Command {
-  private final PIDController parallelController =
+  private final ProfiledPIDController parallelController =
       DriveCommandConstants.makeTranslationController();
 
   private final ProfiledPIDController angleController = DriveCommandConstants.makeAngleController();
@@ -90,7 +89,7 @@ public class DrivePerpendicularToPoseCommand extends Command {
 
   @Override
   public void end(boolean interrupt) {
-    parallelController.reset();
+    parallelController.reset(0);
     angleController.reset(0);
   }
 
