@@ -8,14 +8,17 @@ public enum EventConstants {
       Units.inchesToMeters(6.5),
       Units.inchesToMeters(17.0),
       Units.inchesToMeters(21.5),
+      Units.inchesToMeters(25.0),
+      Units.inchesToMeters(17.0),
       Units.inchesToMeters(25.0)),
   NORTH_CHARLESTON(
       Units.inchesToMeters(-7.0),
       Units.inchesToMeters(8.0),
       Units.inchesToMeters(16.0),
       Units.inchesToMeters(19.0),
-      Units.inchesToMeters(25.0)),
-  ;
+      Units.inchesToMeters(25.0),
+      Units.inchesToMeters(17.0),
+      Units.inchesToMeters(25.0));
 
   /** Distance from the center of the April Tag on the Face to the center of the Pole */
   public final double tagToReefLeft;
@@ -31,12 +34,17 @@ public enum EventConstants {
 
   public final double elevatorDownOffset;
 
+  public final double hpsOffset;
+  public final double hpsSideOffset;
+
   private EventConstants(
       double tagToReefLeft,
       double tagToReefRight,
       double l2ReefOffsetMeters,
       double l4ReefOffsetMeters,
-      double elevatorDownOffsetMeters) {
+      double elevatorDownOffsetMeters,
+      double hpsOffsetMeters,
+      double hpsSideOffsetMeters) {
     this.tagToReefLeft = tagToReefLeft;
     this.tagToReefRight = tagToReefRight;
     this.l2ReefOffset = l2ReefOffsetMeters;
@@ -44,5 +52,7 @@ public enum EventConstants {
     this.l4ReefOffset = l4ReefOffsetMeters;
     this.l4RumbleDistance = l4ReefOffsetMeters + Units.inchesToMeters(1);
     this.elevatorDownOffset = elevatorDownOffsetMeters;
+    this.hpsOffset = hpsOffsetMeters;
+    this.hpsSideOffset = hpsSideOffsetMeters;
   }
 }

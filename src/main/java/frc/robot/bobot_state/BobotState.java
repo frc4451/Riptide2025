@@ -120,7 +120,7 @@ public class BobotState extends VirtualSubsystem {
     return new Trigger(
         () ->
             PoseUtils.getPerpendicularError(
-                    BobotState.getGlobalPose(), FieldUtils.getClosestHPSTag().pose().toPose2d())
+                    BobotState.getGlobalPose(), FieldUtils.getClosestHPS().center)
                 < 0.5);
   }
 
@@ -154,7 +154,7 @@ public class BobotState extends VirtualSubsystem {
       hpsTracker.update();
 
       String calcLogRoot = logRoot + "HPS/";
-      Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPSTag());
+      Logger.recordOutput(calcLogRoot + "Closest Tag", FieldUtils.getClosestHPS().tag);
       Logger.recordOutput(calcLogRoot + "Distance", BobotState.hpsTracker.getDistanceMeters());
       Logger.recordOutput(
           calcLogRoot + "TargetAngleDeg", hpsTracker.getRotationTarget().getDegrees());

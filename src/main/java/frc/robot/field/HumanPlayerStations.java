@@ -6,15 +6,15 @@ public enum HumanPlayerStations {
   LEFT(FieldConstants.blueHPSDriverLeft, FieldConstants.redHPSDriverLeft),
   RIGHT(FieldConstants.blueHPSDriverRight, FieldConstants.redHPSDriverRight);
 
-  public final AprilTagStruct blue;
-  public final AprilTagStruct red;
+  public final HumanPlayerStation blue;
+  public final HumanPlayerStation red;
 
   private HumanPlayerStations(AprilTagStruct blue, AprilTagStruct red) {
-    this.blue = blue;
-    this.red = red;
+    this.blue = new HumanPlayerStation(blue);
+    this.red = new HumanPlayerStation(red);
   }
 
-  public AprilTagStruct get() {
+  public HumanPlayerStation get() {
     return FieldUtils.isBlueAlliance() ? blue : red;
   }
 }

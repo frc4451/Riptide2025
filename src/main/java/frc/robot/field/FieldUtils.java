@@ -44,7 +44,7 @@ public class FieldUtils {
     return closestReef;
   }
 
-  public static AprilTagStruct getClosestHPSTag() {
+  public static HumanPlayerStation getClosestHPS() {
     List<AprilTagStruct> hpsTags =
         FieldUtils.isBlueAlliance() ? FieldConstants.blueHPSTags : FieldConstants.redHPSTags;
 
@@ -61,7 +61,7 @@ public class FieldUtils {
                         : tag2)
             .get();
 
-    return closestTag;
+    return new HumanPlayerStation(closestTag);
   }
 
   public static AprilTagStruct getBargeTag() {

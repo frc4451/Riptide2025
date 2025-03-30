@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.auto.AutoConstants;
+import frc.robot.field.FieldConstants.AprilTagStruct;
+import frc.robot.field.HumanPlayerStation;
 import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.superstructure.SuperStructure;
@@ -32,9 +34,7 @@ public class AlignRoutines {
     return cmd.until(cmd.atSetpoint()).unless(cmd.atSetpoint());
   }
 
-  /**
-    * {@link SuperStructureModes} for {@link SuperStructure} must be set beforehand
-    */
+  /** {@link SuperStructureModes} for {@link SuperStructure} must be set beforehand */
   public static Command positionToPoleAndScore(
       Drive drive,
       SuperStructure superStructure,
@@ -52,5 +52,32 @@ public class AlignRoutines {
       Drive drive, Supplier<Pose2d> targetSupplier, DoubleSupplier perpendicularInput) {
     return new DrivePerpendicularToPoseCommand(
         drive, AutoConstants.useConstrainedPoseForReef, targetSupplier, perpendicularInput);
+  }
+
+  public static Command positionToTag(
+      Drive drive,
+      Supplier<AprilTagStruct> tag,
+      DoubleSupplier perpendicularDistance,
+      DoubleSupplier parallelDistance) {
+    return new DriveToPoseCommand(
+        drive,
+        false,
+        () ->
+            tag.get()
+                .pose()
+                .toPose2d()
+                .transformBy(
+                    new Transform2d(
+                        perpendicularDistance.getAsDouble(),
+                        parallelDistance.getAsDouble(),
+                        Rotation2d.kZero)));
+  }
+
+  public static Command positionToHPSCenter(Drive drive, Supplier<HumanPlayerStation> hps) {
+    return new DriveToPoseCommand(drive, false, () -> hps.get().center);
+  }
+
+  public static Command positionToHPSClosest(Drive drive, Supplier<HumanPlayerStation> hps) {
+    return new DriveToPoseCommand(drive, false, () -> hps.get().getClosest(drive.getGlobalPose()));
   }
 }

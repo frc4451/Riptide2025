@@ -7,16 +7,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.AlignRoutines;
-import frc.robot.commands.DriveToPoseCommand;
 import frc.robot.field.FieldConstants;
-import frc.robot.field.FieldConstants.AprilTagStruct;
 import frc.robot.field.HumanPlayerStations;
 import frc.robot.field.ReefFaces;
 import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
-import frc.robot.util.PoseUtils;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -82,7 +79,8 @@ public class Autos {
                 followTrajectory(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name)),
                 Commands.deadline(
                     superStructure.intake().andThen(Commands.waitSeconds(1.0)),
-                    positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
+                    AlignRoutines.positionToHPSCenter(
+                        drive, () -> HumanPlayerStations.RIGHT.get())),
                 followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
                 Commands.deadline(
                     superStructure.score(SuperStructureModes.L4Coral),
@@ -111,7 +109,7 @@ public class Autos {
                 followTrajectory(routine.trajectory(ChoreoPaths.EL4_TO_HPS_RIGHT.name)),
                 Commands.deadline(
                     superStructure.intake().andThen(Commands.waitSeconds(1.0)),
-                    positionToHPS(() -> FieldConstants.blueHPSDriverRight)),
+                    AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get())),
                 followTrajectory(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
                 Commands.deadline(
                     superStructure.score(SuperStructureModes.L4Coral),
@@ -168,7 +166,9 @@ public class Autos {
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT.name)),
                 Commands.deadline(
-                    superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
+                    superStructure.intake(),
+                    AlignRoutines.positionToHPSCenter(
+                        drive, () -> HumanPlayerStations.RIGHT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -182,7 +182,8 @@ public class Autos {
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.LL4_TO_HPS_LEFT.name)),
                 Commands.parallel(
                     superStructure.intake(),
-                    positionToHPS(() -> HumanPlayerStations.RIGHT.get()))));
+                    AlignRoutines.positionToHPSCenter(
+                        drive, () -> HumanPlayerStations.RIGHT.get()))));
 
     return routine;
   }
@@ -206,7 +207,9 @@ public class Autos {
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name)),
                 Commands.deadline(
-                    superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
+                    superStructure.intake(),
+                    AlignRoutines.positionToHPSCenter(
+                        drive, () -> HumanPlayerStations.RIGHT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -220,7 +223,8 @@ public class Autos {
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name)),
                 Commands.parallel(
                     superStructure.intake(),
-                    positionToHPS(() -> HumanPlayerStations.RIGHT.get()))));
+                    AlignRoutines.positionToHPSCenter(
+                        drive, () -> HumanPlayerStations.RIGHT.get()))));
 
     return routine;
   }
@@ -265,15 +269,6 @@ public class Autos {
 
   private Command resetAndFollowTrajectory(AutoTrajectory trajectory) {
     return Commands.sequence(resetOdometry(trajectory), followTrajectory(trajectory));
-  }
-
-  private Command positionToHPS(Supplier<AprilTagStruct> hps) {
-    return new DriveToPoseCommand(
-        drive,
-        false,
-        () ->
-            PoseUtils.getPerpendicularOffsetPose(
-                hps.get().pose().toPose2d(), FieldConstants.eventConstants.l2ReefOffset));
   }
 
   private Command pathAndMode(AutoTrajectory trajectory, SuperStructureModes mode) {

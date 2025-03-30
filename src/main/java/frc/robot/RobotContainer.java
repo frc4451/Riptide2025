@@ -324,6 +324,15 @@ public class RobotContainer {
                 drive,
                 () -> FieldUtils.getClosestReef().tag.pose().toPose2d(),
                 () -> -driverController.getLeftYSquared()));
+
+    // -- Human Player Station --
+    driverController
+        .x()
+        .whileTrue(AlignRoutines.positionToHPSClosest(drive, () -> FieldUtils.getClosestHPS()));
+
+    driverController
+        .y()
+        .whileTrue(AlignRoutines.positionToHPSCenter(drive, () -> FieldUtils.getClosestHPS()));
   }
 
   private void configureSuperBindings() {
