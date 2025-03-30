@@ -32,14 +32,15 @@ public class AlignRoutines {
     return cmd.until(cmd.atSetpoint()).unless(cmd.atSetpoint());
   }
 
+  /**
+    * {@link SuperStructureModes} for {@link SuperStructure} must be set beforehand
+    */
   public static Command positionToPoleAndScore(
       Drive drive,
       SuperStructure superStructure,
-      SuperStructureModes mode,
       Supplier<ReefPole> poleSupplier,
       DoubleSupplier reefOffsetMeters) {
     return Commands.sequence(
-        superStructure.setModeCommand(mode),
         positionToPoleUntilDone(drive, poleSupplier, reefOffsetMeters),
         Commands.deadline(
             Commands.sequence(

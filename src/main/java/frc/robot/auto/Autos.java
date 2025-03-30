@@ -158,10 +158,10 @@ public class Autos {
             Commands.sequence(
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_TOP_TO_IL4.name)),
+                superStructure.setModeCommand(SuperStructureModes.L4Coral),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
-                    SuperStructureModes.L4Coral,
                     () -> ReefFaces.IJ.get().leftPole,
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.IJ.get().leftPole),
@@ -171,10 +171,10 @@ public class Autos {
                     superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4.name)),
+                superStructure.setModeCommand(SuperStructureModes.L4Coral),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
-                    SuperStructureModes.L4Coral,
                     () -> ReefFaces.KL.get().rightPole,
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.KL.get().rightPole),
@@ -196,10 +196,10 @@ public class Autos {
             Commands.sequence(
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
+                superStructure.setModeCommand(SuperStructureModes.L4Coral),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
-                    SuperStructureModes.L4Coral,
                     () -> ReefFaces.EF.get().rightPole,
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.EF.get().rightPole),
@@ -209,10 +209,10 @@ public class Autos {
                     superStructure.intake(), positionToHPS(() -> HumanPlayerStations.RIGHT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
+                superStructure.setModeCommand(SuperStructureModes.L4Coral),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
-                    SuperStructureModes.L4Coral,
                     () -> ReefFaces.CD.get().leftPole,
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.CD.get().leftPole),
