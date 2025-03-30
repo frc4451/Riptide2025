@@ -259,6 +259,14 @@ public class SuperStructure extends SubsystemBase {
         || currentMode == SuperStructureModes.TUCKED_L4;
   }
 
+  public boolean shouldShootCoral() {
+    return isAtMode
+        && switch (currentMode) {
+          case L2Coral, L3Coral, L4Coral -> true;
+          default -> false;
+        };
+  }
+
   public double getReefOffset() {
     return isL4Coral()
         ? FieldConstants.eventConstants.l4ReefOffset

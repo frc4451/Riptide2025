@@ -44,7 +44,8 @@ public class AlignRoutines {
         positionToPoleUntilDone(drive, poleSupplier, reefOffsetMeters),
         Commands.deadline(
             Commands.sequence(
-                Commands.waitUntil(superStructure.isAtMode()), superStructure.shootCoral()),
+                Commands.waitUntil(() -> superStructure.shouldShootCoral()),
+                superStructure.shootCoral()),
             positionToPole(drive, poleSupplier, reefOffsetMeters)));
   }
 
