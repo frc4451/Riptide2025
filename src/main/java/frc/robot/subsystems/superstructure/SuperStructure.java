@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.field.FieldConstants;
+import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.rollers.feedforward_controller.EmptyFeedforwardController;
 import frc.robot.subsystems.rollers.follow.FollowRollersIO;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOSim;
@@ -26,7 +27,6 @@ import frc.robot.subsystems.superstructure.constants.SuperStructureConstants;
 import frc.robot.subsystems.superstructure.elevator.Elevator;
 import frc.robot.subsystems.superstructure.mechanism.SuperStructureMechanism;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
-import frc.robot.subsystems.superstructure.pivot.Pivot;
 import frc.robot.subsystems.superstructure.shooter.Shooter;
 import frc.robot.subsystems.superstructure.shooter.ShooterModes;
 import org.littletonrobotics.junction.Logger;
@@ -135,15 +135,10 @@ public class SuperStructure extends SubsystemBase {
         break;
     }
 
-    elevator =
-        new Elevator(
-            name + "/Elevator",
-            elevatorIO,
-            ElevatorConstants.inchesPerRotation,
-            ElevatorConstants.elevatorConstraints);
+    elevator = new Elevator(name + "/Elevator", elevatorIO, ElevatorConstants.inchesPerRotation);
     elevator.setHeightInches(ElevatorConstants.startHeightInches);
 
-    pivot = new Pivot(name + "/Coral/Pivot", pivotIO, PivotConstants.constraints);
+    pivot = new Pivot(name + "/Coral/Pivot", pivotIO);
 
     shooter = new Shooter(name + "/Shooter", shooterIO, coralSensorIO);
   }

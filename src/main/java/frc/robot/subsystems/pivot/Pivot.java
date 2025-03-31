@@ -1,4 +1,4 @@
-package frc.robot.subsystems.superstructure.pivot;
+package frc.robot.subsystems.pivot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -12,11 +12,8 @@ import org.littletonrobotics.junction.Logger;
 public class Pivot extends SingleRoller {
   public static final double isNearToleranceRotations = Units.degreesToRotations(5);
 
-  private final PivotConstraints pivotConstraints;
-
-  public Pivot(String name, SingleRollerIO io, PivotConstraints pivotConstraints) {
+  public Pivot(String name, SingleRollerIO io) {
     super(name, io);
-    this.pivotConstraints = pivotConstraints;
     setPosition(PivotConstants.intialPosition);
   }
 
@@ -50,11 +47,7 @@ public class Pivot extends SingleRoller {
   }
 
   public void setGoal(Rotation2d angle) {
-    // double clampedPosition =
-    //     MathUtil.clamp(
-    //         angle.getRotations(), pivotConstraints.minRotations(),
-    // pivotConstraints.maxRotations());
-    io.setGoal(angle.getRotations());
+    // io.setGoal(angle.getRotations());
   }
 
   public Rotation2d getGoalPosition() {

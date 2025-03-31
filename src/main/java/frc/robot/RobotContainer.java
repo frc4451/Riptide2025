@@ -33,6 +33,8 @@ import frc.robot.subsystems.blinkin.Blinkin;
 import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
 import frc.robot.subsystems.blinkin.BlinkinState;
+import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberModes;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -61,6 +63,7 @@ public class RobotContainer {
   public final Drive drive;
   private final Vision vision = new Vision();
   private final SuperStructure superStructure = new SuperStructure();
+  private final Climber climber = new Climber();
 
   public final Blinkin blinkin;
 
@@ -105,6 +108,7 @@ public class RobotContainer {
                 new ModuleIOSim());
         quest = new Quest(new QuestIO() {});
         blinkin = new Blinkin(new BlinkinIOSim());
+
         break;
 
       case REPLAY:
@@ -174,6 +178,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     configureRotationModes();
     configurePoleBindings();
+    configureCageBindings();
     configureSuperBindings();
 
     // if (Constants.currentMode == Constants.Mode.SIM) {
@@ -329,6 +334,13 @@ public class RobotContainer {
     driverController
         .x()
         .whileTrue(AlignRoutines.positionToHPSCenter(drive, () -> FieldUtils.getClosestHPS()));
+  }
+
+  public void configureCageBindings() {
+    driverController.a().onTrue(climber.setModeCommand(ClimberModes.TUCK));
+    driverController.b().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
+    driverController.y().onTrue(climber.setModeCommand(ClimberModes.GRAB));
+    operatorController.rightY().whileTrue(climber.runVoltsCommand(() -> -operatorController.getRightY() * 12.0 / 4.0));
   }
 
   private void configureSuperBindings() {

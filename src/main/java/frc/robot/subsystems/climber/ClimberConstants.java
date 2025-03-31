@@ -1,4 +1,4 @@
-package frc.robot.subsystems.superstructure.constants;
+package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -6,15 +6,15 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 
-public class PivotConstants {
-  public static final int canId = 5;
+public class ClimberConstants {
+  public static final int canId = 0;
 
   public static final DCMotor gearbox = DCMotor.getFalcon500Foc(1);
-  public static final double reduction = 25.0 * (60.0 / 24.0);
+  public static final double reduction = 36.0;
   public static final double moi = 1.0;
 
   public static final boolean invert = true;
-  public static final double currentLimitAmps = 30;
+  public static final double currentLimitAmps = 30.0;
 
   public static final boolean isBrakeMode = true;
 
