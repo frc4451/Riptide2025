@@ -34,6 +34,7 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.foc,
                 ClimberConstants.gains,
                 ClimberConstants.mmConfig);
+        break;
       case SIM:
         io =
             new SingleRollerIOSim(
@@ -43,9 +44,11 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.gains,
                 ClimberConstants.mmConfig,
                 new EmptyFeedforwardController());
+        break;
       case REPLAY:
       default:
         io = new SingleRollerIO() {};
+        break;
     }
 
     pivot = new Pivot("Climber", io);
