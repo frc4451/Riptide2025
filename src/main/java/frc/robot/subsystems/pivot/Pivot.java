@@ -47,7 +47,7 @@ public class Pivot extends SingleRoller {
   }
 
   public void setGoal(Rotation2d angle) {
-    // io.setGoal(angle.getRotations());
+    io.setGoal(angle.getRotations());
   }
 
   public Rotation2d getGoalPosition() {

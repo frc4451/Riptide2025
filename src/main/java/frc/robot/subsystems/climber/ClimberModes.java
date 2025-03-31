@@ -6,6 +6,8 @@ public enum ClimberModes {
   TUCK(Rotation2d.fromDegrees(0)),
   EXTEND(Rotation2d.fromDegrees(200.0)),
   GRAB(Rotation2d.fromDegrees(70.0));
+  // 90
+  //
 
   public final Rotation2d rotation;
 

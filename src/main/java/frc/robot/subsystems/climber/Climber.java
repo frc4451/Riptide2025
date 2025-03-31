@@ -53,6 +53,7 @@ public class Climber extends SubsystemBase {
     }
 
     pivot = new Pivot("Climber", io);
+    pivot.setPosition(ClimberConstants.intialPosition);
   }
 
   @Override
@@ -71,7 +72,7 @@ public class Climber extends SubsystemBase {
 
   public void setMode(ClimberModes mode) {
     this.mode = mode;
-    pivot.setGoal(mode.rotation);
+    // pivot.setGoal(mode.rotation);
   }
 
   public Command setModeCommand(ClimberModes mode) {

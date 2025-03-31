@@ -15,7 +15,6 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,7 +33,6 @@ import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
 import frc.robot.subsystems.blinkin.BlinkinState;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberModes;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -160,6 +158,7 @@ public class RobotContainer {
     autoChooser.addRoutine("Allred L2", autos::allredL2);
     autoChooser.addRoutine("AllRight L4", autos::allRightL4);
     autoChooser.addRoutine("AllLeft L4", autos::allLeftL4);
+    autoChooser.addRoutine("Callahan", autos::callahan);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -183,21 +182,21 @@ public class RobotContainer {
 
   private void configureRotationModes() {
     // Default, auto-align to closest tracker
-    drive.setDefaultCommand(
-        DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -driverController.getLeftYSquared(),
-                () -> -driverController.getLeftXSquared(),
-                () -> BobotState.getClosestAlignmentTracker().getRotationTarget())
-            .unless(DriverStation::isAutonomous));
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -driverController.getLeftYSquared(),
+    //             () -> -driverController.getLeftXSquared(),
+    //             () -> BobotState.getClosestAlignmentTracker().getRotationTarget())
+    //         .unless(DriverStation::isAutonomous));
 
     // No auto-align, manual
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -driverController.getLeftYSquared(),
-    //         () -> -driverController.getLeftXSquared(),
-    //         () -> -driverController.getRightXSquared()));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive,
+            () -> -driverController.getLeftYSquared(),
+            () -> -driverController.getLeftXSquared(),
+            () -> -driverController.getRightXSquared()));
 
     // Normal field-relative drive when overridden via a button
     driverController
@@ -332,12 +331,12 @@ public class RobotContainer {
   }
 
   public void configureCageBindings() {
-    driverController.a().onTrue(climber.setModeCommand(ClimberModes.TUCK));
-    driverController.b().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
-    driverController.y().onTrue(climber.setModeCommand(ClimberModes.GRAB));
+    // driverController.a().onTrue(climber.setModeCommand(ClimberModes.TUCK));
+    // driverController.b().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
+    // driverController.y().onTrue(climber.setModeCommand(ClimberModes.GRAB));
     operatorController
         .rightY()
-        .whileTrue(climber.runVoltsCommand(() -> -operatorController.getRightY() * 12.0 / 4.0));
+        .whileTrue(climber.runVoltsCommand(() -> -operatorController.getRightY() * 12.0 / 3.0));
   }
 
   private void configureSuperBindings() {
