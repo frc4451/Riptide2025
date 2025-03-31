@@ -328,10 +328,6 @@ public class RobotContainer {
     // -- Human Player Station --
     driverController
         .x()
-        .whileTrue(AlignRoutines.positionToHPSClosest(drive, () -> FieldUtils.getClosestHPS()));
-
-    driverController
-        .y()
         .whileTrue(AlignRoutines.positionToHPSCenter(drive, () -> FieldUtils.getClosestHPS()));
   }
 
