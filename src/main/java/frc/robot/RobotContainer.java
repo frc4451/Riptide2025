@@ -157,11 +157,6 @@ public class RobotContainer {
     // autoChooser.addRoutine("2 Meters", autos::twoMeters);
     // autoChooser.addRoutine("3 Meters", autos::threeMeters);
     autoChooser.addRoutine("5 Meters", autos::fiveMeters);
-    // autoChooser.addRoutine("Curvy", autos::curvy);
-    // autoChooser.addRoutine("Magikarp", autos::magikarp);
-    // autoChooser.addRoutine("Binacle", autos::binacle);
-    // autoChooser.addRoutine("Triple Threat", autos::tripleThreat);
-    // autoChooser.addRoutine("Barbaracle", autos::barbaracle);
     autoChooser.addRoutine("Allred L2", autos::allredL2);
     autoChooser.addRoutine("AllRight L4", autos::allRightL4);
     autoChooser.addRoutine("AllLeft L4", autos::allLeftL4);
