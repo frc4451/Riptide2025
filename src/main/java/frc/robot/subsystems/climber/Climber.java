@@ -10,9 +10,7 @@ import frc.robot.subsystems.rollers.feedforward_controller.EmptyFeedforwardContr
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
-
 import java.util.function.DoubleSupplier;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {

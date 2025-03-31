@@ -340,7 +340,9 @@ public class RobotContainer {
     driverController.a().onTrue(climber.setModeCommand(ClimberModes.TUCK));
     driverController.b().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
     driverController.y().onTrue(climber.setModeCommand(ClimberModes.GRAB));
-    operatorController.rightY().whileTrue(climber.runVoltsCommand(() -> -operatorController.getRightY() * 12.0 / 4.0));
+    operatorController
+        .rightY()
+        .whileTrue(climber.runVoltsCommand(() -> -operatorController.getRightY() * 12.0 / 4.0));
   }
 
   private void configureSuperBindings() {
