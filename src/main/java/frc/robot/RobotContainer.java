@@ -356,9 +356,10 @@ public class RobotContainer {
   }
 
   public void configureCageBindings() {
-    driverController.x().onTrue(climber.setModeCommand(ClimberModes.TUCK));
-    driverController.y().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
-    driverController.b().onTrue(climber.setModeCommand(ClimberModes.GRAB));
+    driverController.a().onTrue(climber.setModeCommand(ClimberModes.TUCK));
+    driverController.b().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
+    driverController.y().onTrue(climber.setModeCommand(ClimberModes.GRAB));
+    operatorController.rightY().whileTrue(climber.runVoltsCommand(() -> -operatorController.getRightY() * 12.0 / 4.0));
   }
 
   private void configureSuperBindings() {
