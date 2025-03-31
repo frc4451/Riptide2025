@@ -7,7 +7,7 @@ public enum ClimberModes {
   EXTEND(Rotation2d.fromDegrees(200.0)),
   GRAB(Rotation2d.fromDegrees(70.0));
 
-  public Rotation2d rotation;
+  public final Rotation2d rotation;
 
   private ClimberModes(Rotation2d rotation) {
     this.rotation = rotation;
