@@ -331,7 +331,7 @@ public class Autos {
 
   // New Sequencing
   private Command backupFromReef(Supplier<ReefPole> pole) {
-    return Commands.sequence(
+    return Commands.deadline(
         AlignRoutines.positionToPoleUntilDone(
             drive, () -> pole.get(), () -> FieldConstants.eventConstants.elevatorDownOffset),
         superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
