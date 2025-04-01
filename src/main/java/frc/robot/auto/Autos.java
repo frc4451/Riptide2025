@@ -89,8 +89,7 @@ public class Autos {
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT.name)),
                 Commands.deadline(
                     superStructure.intake(),
-                    AlignRoutines.positionToHPSCenter(
-                        drive, () -> HumanPlayerStations.RIGHT.get())),
+                    AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -102,10 +101,24 @@ public class Autos {
                 backupFromReef(() -> ReefFaces.KL.get().rightPole),
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.LL4_TO_HPS_LEFT.name)),
-                Commands.parallel(
+                Commands.deadline(
+                    superStructure.intake(),
+                    AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get())),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_KL4.name)),
+                superStructure.setModeCommand(SuperStructureModes.L4Coral),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    () -> ReefFaces.KL.get().leftPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
+                backupFromReef(() -> ReefFaces.KL.get().leftPole),
+                // HPS
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.KL4_TO_HPS_LEFT.name)),
+                Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(
-                        drive, () -> HumanPlayerStations.RIGHT.get()))));
+                        drive, () -> HumanPlayerStations.LEFT.get()))));
 
     return routine;
   }
@@ -130,8 +143,7 @@ public class Autos {
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT.name)),
                 Commands.deadline(
                     superStructure.intake(),
-                    AlignRoutines.positionToHPSCenter(
-                        drive, () -> HumanPlayerStations.RIGHT.get())),
+                    AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get())),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -146,7 +158,7 @@ public class Autos {
                 Commands.parallel(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(
-                        drive, () -> HumanPlayerStations.RIGHT.get()))));
+                        drive, () -> HumanPlayerStations.LEFT.get()))));
 
     return routine;
   }

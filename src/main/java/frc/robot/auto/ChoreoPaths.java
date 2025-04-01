@@ -50,6 +50,7 @@ public enum ChoreoPaths {
   LL4_TO_HPS_LEFT("LL4-HPSLeft"),
 
   // HPS Left to ___
+  HPS_LEFT_TO_KL4("HPSLeft-KL4"),
   HPS_LEFT_TO_LL4("HPSLeft-LL4"),
 //
 ;
