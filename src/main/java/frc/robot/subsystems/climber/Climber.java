@@ -1,25 +1,23 @@
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.climber.mechanism.Mechanism;
-import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.rollers.feedforward_controller.EmptyFeedforwardController;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
+import frc.robot.subsystems.superstructure.elevator.ElevatorSingle;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
-  private ClimberModes mode = ClimberModes.TUCK;
-  private Pivot pivot;
+  private final ElevatorSingle roller;
 
-  private Mechanism goalMechanism = new Mechanism(getName() + "/Goal", Color.kLightGreen, 10.0);
-  private Mechanism measuredMechanism =
-      new Mechanism(getName() + "/Measured", Color.kDarkGreen, 3.0);
+  private boolean manual = false;
+
+  private ClimberModes mode = ClimberModes.TUCK;
 
   public Climber() {
     SingleRollerIO io;
@@ -52,27 +50,44 @@ public class Climber extends SubsystemBase {
         break;
     }
 
-    pivot = new Pivot("Climber", io);
-    pivot.setPosition(ClimberConstants.intialPosition);
+    roller = new ElevatorSingle("Climber/Winch", io, ClimberConstants.circumferenceOfSpool);
+    roller.setHeightInches(0);
   }
 
   @Override
   public void periodic() {
+    roller.periodic();
+
+    if (!manual) {
+      roller.setGoalHeightInches(mode.positionInches);
+    }
+
     Logger.recordOutput(getName() + "/Mode", mode);
-
-    pivot.periodic();
-
-    goalMechanism.update(pivot.getGoalPosition());
-    measuredMechanism.update(pivot.getPosition());
+    Logger.recordOutput(getName() + "/Manual", manual);
   }
 
-  public Command runVoltsCommand(DoubleSupplier volts) {
-    return run(() -> pivot.runVolts(volts.getAsDouble()));
+  public Command manualCommand(DoubleSupplier volts) {
+    return Commands.sequence(
+        runOnce(() -> manual = true),
+        run(
+            () -> {
+              if (Math.signum(volts.getAsDouble()) == 1
+                  && roller.getHeightInches() > ClimberConstants.maxPositionInches) {
+                roller.stop();
+              } else {
+                roller.runVolts(volts.getAsDouble());
+              }
+            }),
+        runOnce(
+            () -> {
+              roller.setGoalHeightInches(roller.getHeightInches());
+              manual = false;
+            }));
   }
 
   public void setMode(ClimberModes mode) {
     this.mode = mode;
-    // pivot.setGoal(mode.rotation);
+    manual = false;
   }
 
   public Command setModeCommand(ClimberModes mode) {

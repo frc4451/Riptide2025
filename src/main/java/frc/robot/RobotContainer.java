@@ -33,6 +33,7 @@ import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
 import frc.robot.subsystems.blinkin.BlinkinState;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberModes;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -332,12 +333,12 @@ public class RobotContainer {
   }
 
   public void configureCageBindings() {
-    // driverController.a().onTrue(climber.setModeCommand(ClimberModes.TUCK));
-    // driverController.b().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
-    // driverController.y().onTrue(climber.setModeCommand(ClimberModes.GRAB));
-    operatorController
+    driverController.a().onTrue(climber.setModeCommand(ClimberModes.TUCK));
+    driverController.b().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
+    driverController.y().onTrue(climber.setModeCommand(ClimberModes.GRAB));
+    driverController
         .rightY()
-        .whileTrue(climber.runVoltsCommand(() -> -operatorController.getRightY() * 12.0 / 3.0));
+        .whileTrue(climber.manualCommand(() -> -driverController.getRightY() * 10.0));
   }
 
   private void configureSuperBindings() {
