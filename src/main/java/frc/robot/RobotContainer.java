@@ -33,6 +33,7 @@ import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
 import frc.robot.subsystems.blinkin.BlinkinState;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberModes;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -327,14 +328,32 @@ public class RobotContainer {
 
     // -- Human Player Station --
     driverController
-        .x()
+        .a()
         .whileTrue(AlignRoutines.positionToHPSCenter(drive, () -> FieldUtils.getClosestHPS()));
   }
 
   public void configureCageBindings() {
-    driverController.a().onTrue(climber.toggle());
+    // Toggle Climber Mode
+    driverController
+        .back()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  BobotState.climbMode = !BobotState.climbMode;
+                  // Just in case so our climber isn't whipped out
+                  if (!BobotState.climbMode) {
+                    climber.setMode(ClimberModes.TUCK);
+                  }
+                }));
+
+    driverController
+        .x()
+        .and(() -> BobotState.climbMode)
+        .onTrue(Commands.parallel(climber.toggleExtend(), climber.deployServos()));
+
     driverController
         .rightY()
+        .and(() -> BobotState.climbMode)
         .whileTrue(climber.manualCommand(() -> -driverController.getRightY() * 10.0));
   }
 

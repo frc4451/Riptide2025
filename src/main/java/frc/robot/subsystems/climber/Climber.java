@@ -107,8 +107,6 @@ public class Climber extends SubsystemBase {
 
   public void setMode(ClimberModes mode) {
     this.mode = mode;
-    hookServo.set(mode.hookPosition);
-    trayServo.set(mode.trayPosition);
     manual = false;
   }
 
@@ -116,8 +114,16 @@ public class Climber extends SubsystemBase {
     return runOnce(() -> setMode(mode));
   }
 
-  public Command toggle() {
+  public Command toggleExtend() {
     return Commands.deferredProxy(
         () -> setModeCommand(mode == ClimberModes.TUCK ? ClimberModes.EXTEND : ClimberModes.TUCK));
+  }
+
+  public Command deployServos() {
+    return runOnce(
+        () -> {
+          hookServo.set(0.1);
+          trayServo.set(0.1);
+        });
   }
 }

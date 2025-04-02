@@ -41,6 +41,8 @@ public class BobotState extends VirtualSubsystem {
   public static final HPSTagTracker hpsTracker = new HPSTagTracker();
   public static final BargeTagTracker bargeTracker = new BargeTagTracker();
 
+  public static boolean climbMode = false;
+
   private static List<TargetAngleTracker> autoAlignmentTrackers =
       List.of(BobotState.hpsTracker, BobotState.reefTracker);
 
@@ -132,6 +134,8 @@ public class BobotState extends VirtualSubsystem {
 
   @Override
   public void periodic() {
+    Logger.recordOutput(logRoot + "ClimberMode", climbMode);
+
     {
       TimestampedPose[] questPoses = getQuestMeasurments().stream().toArray(TimestampedPose[]::new);
       Logger.recordOutput(logRoot + "Quest/Measurements", questPoses);
