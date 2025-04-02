@@ -360,7 +360,7 @@ public class RobotContainer {
     driverController
         .x()
         .and(() -> BobotState.climbMode)
-        .onTrue(Commands.parallel(climber.deployServos()));
+        .onTrue(Commands.parallel(climber.toggleExtend(), climber.deployServos()));
 
     driverController
         .rightY()
