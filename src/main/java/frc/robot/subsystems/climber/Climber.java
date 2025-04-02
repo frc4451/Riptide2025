@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.climber.servo.Servo;
+import frc.robot.subsystems.climber.servo.ServoIO;
+import frc.robot.subsystems.climber.servo.ServoIORev;
+import frc.robot.subsystems.climber.servo.ServoIOSim;
 import frc.robot.subsystems.rollers.feedforward_controller.EmptyFeedforwardController;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
@@ -14,16 +18,20 @@ import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
   private final ElevatorSingle roller;
+  private final Servo hookServo;
+  private final Servo trayServo;
 
   private boolean manual = false;
 
   private ClimberModes mode = ClimberModes.TUCK;
 
   public Climber() {
-    SingleRollerIO io;
+    SingleRollerIO rollerIO;
+    ServoIO trayServoIO;
+    ServoIO hookServerIO;
     switch (Constants.currentMode) {
       case REAL:
-        io =
+        rollerIO =
             new SingleRollerIOTalonFX(
                 ClimberConstants.canId,
                 ClimberConstants.reduction,
@@ -33,9 +41,11 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.foc,
                 ClimberConstants.gains,
                 ClimberConstants.mmConfig);
+        hookServerIO = new ServoIORev(ClimberConstants.hookServoChannel);
+        trayServoIO = new ServoIORev(ClimberConstants.trayServoChannel);
         break;
       case SIM:
-        io =
+        rollerIO =
             new SingleRollerIOSim(
                 ClimberConstants.gearbox,
                 ClimberConstants.reduction,
@@ -43,20 +53,30 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.gains,
                 ClimberConstants.mmConfig,
                 new EmptyFeedforwardController());
+        hookServerIO = new ServoIOSim();
+        trayServoIO = new ServoIOSim();
         break;
       case REPLAY:
       default:
-        io = new SingleRollerIO() {};
+        rollerIO = new SingleRollerIO() {};
+        hookServerIO = new ServoIO() {};
+        trayServoIO = new ServoIO() {};
         break;
     }
 
-    roller = new ElevatorSingle("Climber/Winch", io, ClimberConstants.circumferenceOfSpool);
+    roller =
+        new ElevatorSingle(getName() + "/Winch", rollerIO, ClimberConstants.circumferenceOfSpool);
     roller.setHeightInches(0);
+
+    hookServo = new Servo(getName() + "/Hook", hookServerIO);
+    trayServo = new Servo(getName() + "/Tray", trayServoIO);
   }
 
   @Override
   public void periodic() {
     roller.periodic();
+    hookServo.periodic();
+    trayServo.periodic();
 
     if (!manual) {
       roller.setGoalHeightInches(mode.positionInches);
@@ -87,10 +107,17 @@ public class Climber extends SubsystemBase {
 
   public void setMode(ClimberModes mode) {
     this.mode = mode;
+    hookServo.set(mode.hookPosition);
+    trayServo.set(mode.trayPosition);
     manual = false;
   }
 
   public Command setModeCommand(ClimberModes mode) {
     return runOnce(() -> setMode(mode));
+  }
+
+  public Command toggle() {
+    return Commands.deferredProxy(
+        () -> setModeCommand(mode == ClimberModes.TUCK ? ClimberModes.EXTEND : ClimberModes.TUCK));
   }
 }

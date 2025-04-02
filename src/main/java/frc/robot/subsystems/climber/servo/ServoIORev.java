@@ -3,7 +3,7 @@ package frc.robot.subsystems.climber.servo;
 import edu.wpi.first.wpilibj.Servo;
 
 public class ServoIORev implements ServoIO {
-  public Servo servo;
+  private final Servo servo;
 
   public ServoIORev(int channel) {
     servo = new Servo(channel);
@@ -11,11 +11,11 @@ public class ServoIORev implements ServoIO {
 
   @Override
   public void updateInputs(ServoIOInputs inputs) {
-    inputs.angle = servo.getAngle();
+    inputs.position = servo.get();
   }
 
   @Override
-  public void setAngle(double angle) {
-    servo.setAngle(angle);
+  public void set(double position) {
+    servo.set(position);
   }
 }

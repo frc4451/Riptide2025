@@ -1,7 +1,24 @@
 package frc.robot.subsystems.climber.servo;
 
-public class Servo {
-//     private final ServoIO io;
+import org.littletonrobotics.junction.Logger;
 
-//   private final ServoIOInputsAutoLogged inputs = new ServoIOInputsAutoLogged();
+public class Servo {
+  protected final String name;
+  protected final ServoIO io;
+
+  protected final ServoIOInputsAutoLogged inputs = new ServoIOInputsAutoLogged();
+
+  public Servo(String name, ServoIO io) {
+    this.name = name;
+    this.io = io;
+  }
+
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs(name, inputs);
+  }
+
+  public void set(double position) {
+    io.set(position);
+  }
 }

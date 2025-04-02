@@ -43,4 +43,7 @@ public class ClimberConstants {
           .withMotionMagicAcceleration(25 / circumferenceOfSpool * reduction);
 
   public static final boolean foc = true;
+
+  public static final int hookServoChannel = 0;
+  public static final int trayServoChannel = 0;
 }
