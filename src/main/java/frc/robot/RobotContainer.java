@@ -289,6 +289,7 @@ public class RobotContainer {
     driverController
         .leftBumper()
         .and(driverController.a().negate())
+        .and(driverController.b().negate())
         .whileTrue(
             AlignRoutines.alignToPose(
                     drive,
@@ -306,9 +307,20 @@ public class RobotContainer {
                     superStructure::getReefOffset)
                 .withJoystickRumble(alignmentRumble));
 
+    // driverController
+    //     .leftBumper()
+    //     .and(driverController.b())
+    //     .whileTrue(
+    //         AlignRoutines.positionToPoleAndScore(
+    //             drive,
+    //             superStructure,
+    //             () -> FieldUtils.getClosestReef().leftPole,
+    //             superStructure::getReefOffset));
+
     driverController
         .rightBumper()
         .and(driverController.a().negate())
+        .and(driverController.b().negate())
         .whileTrue(
             AlignRoutines.alignToPose(
                     drive,
@@ -325,6 +337,16 @@ public class RobotContainer {
                     () -> FieldUtils.getClosestReef().rightPole,
                     superStructure::getReefOffset)
                 .withJoystickRumble(alignmentRumble));
+
+    // driverController
+    //     .rightBumper()
+    //     .and(driverController.b())
+    //     .whileTrue(
+    //         AlignRoutines.positionToPoleAndScore(
+    //             drive,
+    //             superStructure,
+    //             () -> FieldUtils.getClosestReef().rightPole,
+    //             superStructure::getReefOffset));
 
     // -- Algae --
     driverController
