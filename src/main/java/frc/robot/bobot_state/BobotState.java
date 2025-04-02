@@ -98,8 +98,10 @@ public class BobotState extends VirtualSubsystem {
     return new Trigger(
         () ->
             FieldUtils.getAlliance() == Alliance.Blue
-                ? getGlobalPose().getX() < FieldConstants.fieldLength / 2.0
-                : getGlobalPose().getX() > FieldConstants.fieldLength / 2.0);
+                ? getGlobalPose().getX()
+                    < (FieldConstants.fieldLength + FieldConstants.bargeLength) / 2.0
+                : getGlobalPose().getX()
+                    > (FieldConstants.fieldLength - FieldConstants.bargeLength) / 2.0);
   }
 
   public static Rotation2d getRotationToClosestReef() {
@@ -126,10 +128,12 @@ public class BobotState extends VirtualSubsystem {
                 < 0.5);
   }
 
-  public static TargetAngleTracker getClosestAlignmentTracker() {
-    return autoAlignmentTrackers.stream()
-        .reduce((a, b) -> a.getDistanceMeters() < b.getDistanceMeters() ? a : b)
-        .get();
+  public static TargetAngleTracker getCurrentAlignmentTracker() {
+    return climbMode
+        ? bargeTracker
+        : autoAlignmentTrackers.stream()
+            .reduce((a, b) -> a.getDistanceMeters() < b.getDistanceMeters() ? a : b)
+            .get();
   }
 
   @Override
@@ -177,9 +181,10 @@ public class BobotState extends VirtualSubsystem {
     }
 
     {
-      String calcLogRoot = logRoot + "ClosestAlignment/";
+      String calcLogRoot = logRoot + "CurrentAlignment/";
+      Logger.recordOutput(calcLogRoot + "Enabled", onTeamSide().getAsBoolean());
       Logger.recordOutput(
-          calcLogRoot + "Type", getClosestAlignmentTracker().getClass().getSimpleName());
+          calcLogRoot + "Type", getCurrentAlignmentTracker().getClass().getSimpleName());
     }
   }
 
