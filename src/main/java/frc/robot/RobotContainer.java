@@ -276,6 +276,14 @@ public class RobotContainer {
                   driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                   operatorController.rumbleOnOff(1, 0.25, 0.25, 2)));
 
+  // Three big booms
+  private final Command climbRumble =
+      Commands.deferredProxy(
+          () ->
+              Commands.parallel(
+                  driverController.rumbleOnOff(1, 0.50, 0.25, 3),
+                  operatorController.rumbleOnOff(1, 0.50, 0.25, 3)));
+
   private void configurePoleBindings() {
     // -- Coral --
     driverController
@@ -338,24 +346,26 @@ public class RobotContainer {
     driverController
         .back()
         .onTrue(
-            Commands.runOnce(
-                () -> {
-                  BobotState.climbMode = !BobotState.climbMode;
-                  // Just in case so our climber isn't whipped out
-                  if (!BobotState.climbMode) {
-                    climber.setMode(ClimberModes.TUCK);
-                  }
-                }));
+            Commands.parallel(
+                Commands.runOnce(
+                    () -> {
+                      BobotState.climbMode = !BobotState.climbMode;
+                      // Just in case so our climber isn't whipped out
+                      if (!BobotState.climbMode) {
+                        climber.setMode(ClimberModes.TUCK);
+                      }
+                    }),
+                climbRumble));
 
     driverController
         .x()
         .and(() -> BobotState.climbMode)
-        .onTrue(Commands.parallel(climber.toggleExtend(), climber.deployServos()));
+        .onTrue(Commands.parallel(climber.deployServos()));
 
     driverController
         .rightY()
         .and(() -> BobotState.climbMode)
-        .whileTrue(climber.manualCommand(() -> -driverController.getRightY() * 10.0));
+        .whileTrue(climber.manualCommand(() -> driverController.getRightY() * 10.0));
   }
 
   private void configureSuperBindings() {
