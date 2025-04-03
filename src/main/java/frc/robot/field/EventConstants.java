@@ -18,6 +18,14 @@ public enum EventConstants {
       Units.inchesToMeters(19.0),
       Units.inchesToMeters(25.0),
       Units.inchesToMeters(17.0),
+      Units.inchesToMeters(25.0)),
+  DCMP(
+      Units.inchesToMeters(-6.5),
+      Units.inchesToMeters(6.5),
+      Units.inchesToMeters(17.0),
+      Units.inchesToMeters(21.5),
+      Units.inchesToMeters(25.0),
+      Units.inchesToMeters(18.0),
       Units.inchesToMeters(25.0));
 
   /** Distance from the center of the April Tag on the Face to the center of the Pole */
