@@ -50,6 +50,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("Allred L2"),
                 pathAndMode(
                     routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL2.name),
                     SuperStructureModes.L2Coral),
@@ -76,6 +77,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("Ethan"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_TOP_TO_IL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -130,6 +132,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("AllLeft L4"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_TOP_TO_IL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -170,6 +173,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("Callahan"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -225,6 +229,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("AllRight L4"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -335,6 +340,11 @@ public class Autos {
         AlignRoutines.positionToPoleUntilDone(
             drive, () -> pole.get(), () -> FieldConstants.eventConstants.elevatorDownOffset),
         superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
+  }
+
+  private Command logRoutine(String name) {
+    // AutoRoutine.name should be public chat
+    return Commands.runOnce(() -> Logger.recordOutput("Choreo/Routine", name));
   }
 
   private Command prepAndGo(AutoTrajectory trajectory) {
