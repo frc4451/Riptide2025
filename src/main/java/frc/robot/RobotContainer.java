@@ -360,6 +360,8 @@ public class RobotContainer {
     // -- Human Player Station --
     driverController
         .a()
+        .and(driverController.leftBumper().negate())
+        .and(driverController.rightBumper().negate())
         .whileTrue(AlignRoutines.positionToHPSCenter(drive, () -> FieldUtils.getClosestHPS()));
   }
 
