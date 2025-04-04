@@ -13,7 +13,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -119,10 +118,10 @@ public class Robot extends LoggedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    if (robotContainer.driverController.b().getAsBoolean()) {
-      robotContainer.drive.setPose(Pose2d.kZero);
-      robotContainer.quest.resetRobotPose(Pose2d.kZero);
-    }
+    // if (robotContainer.driverController.b().getAsBoolean()) {
+    //   robotContainer.drive.setPose(Pose2d.kZero);
+    //   robotContainer.quest.resetRobotPose(Pose2d.kZero);
+    // }
 
     // Troubleshooting only. Set the headset-to-field pose so we can track
     // the transforms without turning on the robot.

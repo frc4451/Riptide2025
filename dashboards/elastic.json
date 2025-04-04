@@ -103,7 +103,7 @@
             "title": "Quest",
             "x": 0.0,
             "y": 256.0,
-            "width": 512.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -144,6 +144,23 @@
               "false_color": 4294967295,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Hamburgered",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Oculus/PoseReset",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "Exclamation Point"
             }
           }
         ]

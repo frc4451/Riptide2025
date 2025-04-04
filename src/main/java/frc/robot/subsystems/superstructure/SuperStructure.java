@@ -236,7 +236,8 @@ public class SuperStructure extends SubsystemBase {
   public Command shootCoral() {
     return Commands.sequence(
         setShooterModeCommand(ShooterModes.SHOOT),
-        Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.1)),
+        Commands.sequence(
+            Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.125)),
         setShooterModeCommand(ShooterModes.NONE));
   }
 

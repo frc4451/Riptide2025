@@ -15,5 +15,5 @@ public class ShooterConstants {
 
   public static final double algaeHoldingThresholdAmps = 25.0;
   public static final boolean isBrakeMode = true;
-  public static final boolean foc = false;
+  public static final boolean foc = true;
 }
