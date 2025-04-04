@@ -127,6 +127,7 @@ public class Robot extends LoggedRobot {
     // the transforms without turning on the robot.
     if (robotContainer.driverController.start().getAsBoolean()) {
       robotContainer.quest.resetRobotPose(BobotState.getGlobalPose());
+      robotContainer.quest.isPoseReset = true;
     }
   }
 

@@ -14,7 +14,7 @@ public class Quest extends VirtualSubsystem {
   private final QuestIO io;
   private final QuestIOInputsAutoLogged inputs = new QuestIOInputsAutoLogged();
 
-  private boolean poseReset = false;
+  public boolean isPoseReset = false;
 
   private final Alert disconnectedAlert = new Alert("Quest Disconnected!", AlertType.kWarning);
   private final Alert lowBatteryAlert =
@@ -34,14 +34,14 @@ public class Quest extends VirtualSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Oculus", inputs);
 
-    Logger.recordOutput("Oculus/PoseReset", poseReset);
+    Logger.recordOutput("Oculus/IsPoseReset", isPoseReset);
     disconnectedAlert.set(!inputs.connected);
     lowBatteryAlert.set(inputs.connected && inputs.batteryLevel < 25);
 
     Pose2d fieldToRobot = getFieldToRobot();
 
     // // Only enable this when we know we're ready
-    // if (DriverStation.isEnabled() && Constants.currentMode == Constants.Mode.REAL) {
+    // if (DriverStation.isEnabled() && isPoseReset && Constants.currentMode == Constants.Mode.REAL) {
     //   BobotState.offerQuestMeasurement(new TimestampedPose(fieldToRobot, inputs.timestamp));
     // }
 
@@ -63,7 +63,6 @@ public class Quest extends VirtualSubsystem {
     this.fieldToRobotOrigin = robotResetPose;
     io.zeroPosition();
     io.zeroHeading();
-    poseReset = true;
   }
 
   /**

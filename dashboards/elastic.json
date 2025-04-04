@@ -154,13 +154,13 @@
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Oculus/PoseReset",
+              "topic": "/AdvantageKit/RealOutputs/Oculus/IsPoseReset",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,
               "false_color": 4294198070,
               "true_icon": "None",
-              "false_icon": "Exclamation Point"
+              "false_icon": "X"
             }
           }
         ]
