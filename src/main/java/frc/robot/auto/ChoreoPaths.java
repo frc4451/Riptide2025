@@ -25,6 +25,7 @@ public enum ChoreoPaths {
   // ___ to HPS Right
   BL4_TO_HPS_RIGHT("BL4-HPSRight"),
   CL4_TO_HPS_RIGHT("CL4-HPSRight"),
+  CL4_TO_HPS_RIGHT_NO_STOP("CL4-HPSRight-NoStop"),
   DL4_TO_HPS_RIGHT("DL4-HPSRight"),
   EL2_TO_HPS_RIGHT("EL2-HPSRight"),
   EL4_TO_HPS_RIGHT("EL4-HPSRight"),

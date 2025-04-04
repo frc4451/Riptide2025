@@ -199,7 +199,7 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.CD.get().leftPole),
                 // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name)),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT_NO_STOP.name)),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(
@@ -358,11 +358,13 @@ public class Autos {
   private Command delayedTuckAndGo(AutoTrajectory trajectory) {
     return Commands.deadline(
         followTrajectory(trajectory),
-        Commands.waitUntil(
+        Commands.sequence(
+            Commands.waitUntil(
                 () ->
                     BobotState.reefTracker.getDistanceMeters()
-                        > AutoConstants.tuckReefOffsetThresholdMeters)
-            .andThen(superStructure.setModeCommand(SuperStructureModes.TUCKED)));
+                        > AutoConstants.tuckReefOffsetThresholdMeters),
+            superStructure.setModeCommand(SuperStructureModes.TUCKED),
+            superStructure.intake()));
   }
 
   // Routine Logic
