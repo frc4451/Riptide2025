@@ -11,6 +11,7 @@ public class Servo {
   public Servo(String name, ServoIO io) {
     this.name = name;
     this.io = io;
+    io.set(0.5); // 0 on REV Smart Servo
   }
 
   public void periodic() {
