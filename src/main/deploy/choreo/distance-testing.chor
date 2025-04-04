@@ -4,6 +4,13 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
+   "HPSAccel":{
+    "dimension":"LinAcc",
+    "var":{
+     "exp":"4 m / s ^ 2",
+     "val":4.0
+    }
+   },
    "HPSVel":{
     "dimension":"LinVel",
     "var":{
