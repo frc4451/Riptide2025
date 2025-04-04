@@ -1,6 +1,5 @@
 package frc.robot.subsystems.climber.servo;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.Logger;
 
 public class ServoS {
@@ -23,7 +22,7 @@ public class ServoS {
     io.set(position);
   }
 
-  public void setAngle(Rotation2d angle) {
-    io.set(angle.getDegrees());
+  public void setAngle(double angle) {
+    io.set(angle);
   }
 }
