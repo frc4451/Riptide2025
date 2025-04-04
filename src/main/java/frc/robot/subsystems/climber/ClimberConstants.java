@@ -48,5 +48,5 @@ public class ClimberConstants {
   public static final double hookServoDeployPosition = 0.1;
 
   public static final int trayServoChannel = 7;
-  public static final double trayServoDeployPosition = 0.1;
+  public static final double trayServoDeployPosition = 0.5;
 }

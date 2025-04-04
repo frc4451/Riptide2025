@@ -41,7 +41,8 @@ public class Quest extends VirtualSubsystem {
     Pose2d fieldToRobot = getFieldToRobot();
 
     // // Only enable this when we know we're ready
-    // if (DriverStation.isEnabled() && isPoseReset && Constants.currentMode == Constants.Mode.REAL) {
+    // if (DriverStation.isEnabled() && isPoseReset && Constants.currentMode == Constants.Mode.REAL)
+    // {
     //   BobotState.offerQuestMeasurement(new TimestampedPose(fieldToRobot, inputs.timestamp));
     // }
 
