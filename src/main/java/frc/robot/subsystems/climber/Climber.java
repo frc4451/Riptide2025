@@ -43,7 +43,7 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.mmConfig);
         // hookServerIO = new ServoIORev(ClimberConstants.hookServoChannel);
         trayServoIO = new ServoIORev(ClimberConstants.trayServoChannel);
-        // trayServoIO = new ServoIO() {};
+        hookServerIO = new ServoIO() {};
         // trayServoIO = new ServoIO() {};
         break;
       case SIM:
