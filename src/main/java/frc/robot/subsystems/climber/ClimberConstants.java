@@ -48,5 +48,6 @@ public class ClimberConstants {
   public static final Rotation2d hookServoDeployPosition = Rotation2d.fromDegrees(0.0);
 
   public static final int trayServoChannel = 7;
+  public static final Rotation2d trayServoInitialPosition = Rotation2d.fromDegrees(0.0);
   public static final Rotation2d trayServoDeployPosition = Rotation2d.fromDegrees(0.0);
 }
