@@ -3,6 +3,7 @@ package frc.robot.subsystems.climber;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants;
 import frc.robot.subsystems.climber.servo.ServoIO;
 import frc.robot.subsystems.climber.servo.ServoIORev;
@@ -72,6 +73,8 @@ public class Climber extends SubsystemBase {
 
     hookServo = new ServoS(getName() + "/Hook", hookServerIO);
     trayServo = new ServoS(getName() + "/Tray", trayServoIO);
+  
+    RobotModeTriggers.disabled().onFalse(Commands.runOnce(() -> trayServoIO.setAngle(45)));
   }
 
   @Override
