@@ -201,7 +201,7 @@ public class Autos {
                 // HPS
                 delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT_NO_STOP.name)),
                 Commands.deadline(
-                    superStructure.intake().withTimeout(0.5),
+                    superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(
                         drive, () -> HumanPlayerStations.RIGHT.get())),
                 // L4

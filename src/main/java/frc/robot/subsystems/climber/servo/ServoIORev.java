@@ -10,6 +10,7 @@ public class ServoIORev implements ServoIO {
   @Override
   public void updateInputs(ServoIOInputs inputs) {
     inputs.position = servo.get();
+    inputs.angle = servo.getAngle();
   }
 
   @Override
