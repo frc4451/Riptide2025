@@ -184,7 +184,7 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.EF.get().rightPole),
                 // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name)),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT_NO_STOP.name)),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(

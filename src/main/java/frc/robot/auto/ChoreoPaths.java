@@ -30,6 +30,7 @@ public enum ChoreoPaths {
   EL2_TO_HPS_RIGHT("EL2-HPSRight"),
   EL4_TO_HPS_RIGHT("EL4-HPSRight"),
   FL2_TO_HPS_RIGHT("FL2-HPSRight"),
+  FL4_TO_HPS_RIGHT_NO_STOP("FL4-HPSRight-NoStop"),
   FL4_TO_HPS_RIGHT("FL4-HPSRight"),
   GL4_TO_HPS_RIGHT("GL4-HPSRight"),
 
