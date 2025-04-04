@@ -4,6 +4,13 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
+   "HPSVel":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"0.7 m / s",
+     "val":0.7
+    }
+   },
    "MaxAccel":{
     "dimension":"LinAcc",
     "var":{
