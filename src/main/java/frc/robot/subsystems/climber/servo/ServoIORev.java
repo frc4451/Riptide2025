@@ -1,10 +1,14 @@
 package frc.robot.subsystems.climber.servo;
 
+import edu.wpi.first.wpilibj.Servo;
+
 public class ServoIORev implements ServoIO {
-  private final SmartServo servo;
+  // private final SmartServo servo;
+  private final Servo servo;
 
   public ServoIORev(int channel) {
-    servo = new SmartServo(channel);
+    // servo = new SmartServo(channel);
+    servo = new Servo(channel);
   }
 
   @Override

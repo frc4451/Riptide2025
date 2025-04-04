@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.climber.servo.Servo;
+import frc.robot.subsystems.climber.servo.ServoS;
 import frc.robot.subsystems.climber.servo.ServoIO;
 import frc.robot.subsystems.climber.servo.ServoIORev;
 import frc.robot.subsystems.climber.servo.ServoIOSim;
@@ -18,8 +18,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
   private final ElevatorSingle roller;
-  private final Servo hookServo;
-  private final Servo trayServo;
+  private final ServoS hookServo;
+  private final ServoS trayServo;
 
   private boolean manual = false;
 
@@ -41,8 +41,8 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.foc,
                 ClimberConstants.gains,
                 ClimberConstants.mmConfig);
-        // hookServerIO = new ServoIORev(ClimberConstants.hookServoChannel);
-        trayServoIO = new ServoIORev(ClimberConstants.trayServoChannel);
+        hookServerIO = new ServoIORev(ClimberConstants.hookServoChannel);
+        // trayServoIO = new ServoIORev(ClimberConstants.trayServoChannel);
         hookServerIO = new ServoIO() {};
         // trayServoIO = new ServoIO() {};
         break;
@@ -70,8 +70,8 @@ public class Climber extends SubsystemBase {
         new ElevatorSingle(getName() + "/Winch", rollerIO, ClimberConstants.circumferenceOfSpool);
     roller.setHeightInches(0);
 
-    hookServo = new Servo(getName() + "/Hook", hookServerIO);
-    trayServo = new Servo(getName() + "/Tray", trayServoIO);
+    hookServo = new ServoS(getName() + "/Hook", hookServerIO);
+    trayServo = new ServoS(getName() + "/Tray", trayServoIO);
   }
 
   @Override
@@ -122,10 +122,13 @@ public class Climber extends SubsystemBase {
   }
 
   public Command deployHookServo() {
-    return runOnce(() -> hookServo.setAngle(ClimberConstants.hookServoDeployPosition));
+    // return Commands.none();
+    // return runOnce(() -> hookServo.setAngle(ClimberConstants.hookServoDeployPosition));
+    return runOnce(() -> hookServo.set(0.1));
   }
 
   public Command deployTrayServo() {
-    return runOnce(() -> trayServo.setAngle(ClimberConstants.trayServoDeployPosition));
+    return Commands.none();
+    // return runOnce(() -> trayServo.setAngle(ClimberConstants.trayServoDeployPosition));
   }
 }

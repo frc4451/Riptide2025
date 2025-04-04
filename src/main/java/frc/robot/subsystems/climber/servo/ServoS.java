@@ -3,13 +3,13 @@ package frc.robot.subsystems.climber.servo;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.Logger;
 
-public class Servo {
+public class ServoS {
   protected final String name;
   protected final ServoIO io;
 
   protected final ServoIOInputsAutoLogged inputs = new ServoIOInputsAutoLogged();
 
-  public Servo(String name, ServoIO io) {
+  public ServoS(String name, ServoIO io) {
     this.name = name;
     this.io = io;
   }
