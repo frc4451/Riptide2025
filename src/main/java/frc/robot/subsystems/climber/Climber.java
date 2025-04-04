@@ -119,11 +119,11 @@ public class Climber extends SubsystemBase {
         () -> setModeCommand(mode == ClimberModes.TUCK ? ClimberModes.EXTEND : ClimberModes.TUCK));
   }
 
-  public Command deployServos() {
-    return runOnce(
-        () -> {
-          hookServo.set(ClimberConstants.hookServoDeployPosition);
-          trayServo.set(ClimberConstants.trayServoDeployPosition);
-        });
+  public Command deployHookServo() {
+    return runOnce(() -> hookServo.set(ClimberConstants.hookServoDeployPosition));
+  }
+
+  public Command deployTrayServo() {
+    return runOnce(() -> trayServo.set(ClimberConstants.trayServoDeployPosition));
   }
 }

@@ -34,7 +34,6 @@ import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
 import frc.robot.subsystems.blinkin.BlinkinState;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberModes;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -371,20 +370,14 @@ public class RobotContainer {
         .back()
         .onTrue(
             Commands.parallel(
-                Commands.runOnce(
-                    () -> {
-                      BobotState.climbMode = !BobotState.climbMode;
-                      // Just in case so our climber isn't whipped out
-                      if (!BobotState.climbMode) {
-                        climber.setMode(ClimberModes.TUCK);
-                      }
-                    }),
-                climbRumble));
+                Commands.runOnce(() -> BobotState.climbMode = !BobotState.climbMode), climbRumble));
 
     driverController
         .x()
         .and(() -> BobotState.climbMode)
-        .onTrue(Commands.parallel(climber.toggleExtend(), climber.deployServos()));
+        .onTrue(Commands.parallel(climber.toggleExtend(), climber.deployTrayServo()));
+
+    driverController.y().and(() -> BobotState.climbMode).onTrue(climber.deployHookServo());
 
     driverController
         .rightY()
