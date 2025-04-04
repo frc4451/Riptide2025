@@ -1,8 +1,7 @@
 package frc.robot.subsystems.climber.servo;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.littletonrobotics.junction.Logger;
 
 public class Servo {
   protected final String name;
