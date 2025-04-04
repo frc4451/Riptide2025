@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.climber.servo.ServoS;
 import frc.robot.subsystems.climber.servo.ServoIO;
 import frc.robot.subsystems.climber.servo.ServoIORev;
 import frc.robot.subsystems.climber.servo.ServoIOSim;
+import frc.robot.subsystems.climber.servo.ServoS;
 import frc.robot.subsystems.rollers.feedforward_controller.EmptyFeedforwardController;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
@@ -43,7 +43,7 @@ public class Climber extends SubsystemBase {
                 ClimberConstants.mmConfig);
         hookServerIO = new ServoIORev(ClimberConstants.hookServoChannel);
         // trayServoIO = new ServoIORev(ClimberConstants.trayServoChannel);
-        hookServerIO = new ServoIO() {};
+        trayServoIO = new ServoIO() {};
         // trayServoIO = new ServoIO() {};
         break;
       case SIM:
