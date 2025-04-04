@@ -2,6 +2,8 @@ package frc.robot.subsystems.climber.servo;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class Servo {
   protected final String name;
   protected final ServoIO io;
@@ -11,7 +13,6 @@ public class Servo {
   public Servo(String name, ServoIO io) {
     this.name = name;
     this.io = io;
-    // io.set(0.05);
   }
 
   public void periodic() {
@@ -21,5 +22,9 @@ public class Servo {
 
   public void set(double position) {
     io.set(position);
+  }
+
+  public void setAngle(Rotation2d angle) {
+    io.set(angle.getDegrees());
   }
 }

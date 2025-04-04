@@ -17,4 +17,9 @@ public class ServoIORev implements ServoIO {
   public void set(double position) {
     servo.set(position);
   }
+
+  @Override
+  public void setAngle(double angleDegrees) {
+    servo.setAngle(angleDegrees);
+  }
 }

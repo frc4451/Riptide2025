@@ -12,4 +12,6 @@ public interface ServoIO {
   public default void updateInputs(ServoIOInputs inputs) {}
 
   public default void set(double position) {}
+
+  public default void setAngle(double angleDegrees) {}
 }
