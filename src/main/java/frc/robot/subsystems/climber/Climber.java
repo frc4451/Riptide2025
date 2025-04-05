@@ -7,7 +7,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.climber.servo.ServoIO;
 import frc.robot.subsystems.climber.servo.ServoIORev;
 import frc.robot.subsystems.climber.servo.ServoIOSim;
-import frc.robot.subsystems.climber.servo.ServoS;
+import frc.robot.subsystems.climber.servo.ServoWrapper;
 import frc.robot.subsystems.rollers.feedforward_controller.EmptyFeedforwardController;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
 import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
@@ -18,8 +18,8 @@ import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
   private final ElevatorSingle roller;
-  private final ServoS hookServo;
-  private final ServoS trayServo;
+  private final ServoWrapper hookServo;
+  private final ServoWrapper trayServo;
 
   private boolean manual = false;
 
@@ -70,8 +70,8 @@ public class Climber extends SubsystemBase {
         new ElevatorSingle(getName() + "/Winch", rollerIO, ClimberConstants.circumferenceOfSpool);
     roller.setHeightInches(0);
 
-    hookServo = new ServoS(getName() + "/Hook", hookServerIO);
-    trayServo = new ServoS(getName() + "/Tray", trayServoIO);
+    hookServo = new ServoWrapper(getName() + "/Hook", hookServerIO);
+    trayServo = new ServoWrapper(getName() + "/Tray", trayServoIO);
 
     // RobotModeTriggers.disabled()
     //     .onFalse(
@@ -132,6 +132,6 @@ public class Climber extends SubsystemBase {
   }
 
   public Command deployTrayServo() {
-    return runOnce(() -> trayServo.setAngle(ClimberConstants.trayServoDeployPosition.getDegrees()));
+    return runOnce(() -> trayServo.set(ClimberConstants.trayServoDeployPosition));
   }
 }

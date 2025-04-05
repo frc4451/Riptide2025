@@ -2,13 +2,13 @@ package frc.robot.subsystems.climber.servo;
 
 import org.littletonrobotics.junction.Logger;
 
-public class ServoS {
+public class ServoWrapper {
   protected final String name;
   protected final ServoIO io;
 
   protected final ServoIOInputsAutoLogged inputs = new ServoIOInputsAutoLogged();
 
-  public ServoS(String name, ServoIO io) {
+  public ServoWrapper(String name, ServoIO io) {
     this.name = name;
     this.io = io;
   }
