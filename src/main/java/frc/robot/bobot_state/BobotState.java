@@ -1,8 +1,6 @@
 package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
@@ -94,30 +92,8 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.questPose;
   }
 
-  public static Trigger onTeamSide() {
-    return new Trigger(
-        () ->
-            FieldUtils.getAlliance() == Alliance.Blue
-                ? getGlobalPose().getX()
-                    < (FieldConstants.fieldLength + FieldConstants.bargeLength) / 2.0
-                : getGlobalPose().getX()
-                    > (FieldConstants.fieldLength - FieldConstants.bargeLength) / 2.0);
-  }
-
-  public static Rotation2d getRotationToClosestReef() {
-    return BobotState.reefTracker.getRotationTarget();
-  }
-
-  public static Rotation2d getRotationToClosestHPS() {
-    return BobotState.hpsTracker.getRotationTarget();
-  }
-
-  public static Rotation2d getRotationToClosestBarge() {
-    return BobotState.bargeTracker.getRotationTarget();
-  }
-
-  public static double getDistanceMetersFromClosestHPS() {
-    return BobotState.hpsTracker.getDistanceMeters();
+  public static Trigger autoAlignEnabled() {
+    return new Trigger(() -> FieldUtils.onAllianceSide(globalPose, FieldConstants.bargeLength));
   }
 
   public static Trigger humanPlayerShouldThrow() {
@@ -182,7 +158,7 @@ public class BobotState extends VirtualSubsystem {
 
     {
       String calcLogRoot = logRoot + "CurrentAlignment/";
-      Logger.recordOutput(calcLogRoot + "Enabled", onTeamSide().getAsBoolean());
+      Logger.recordOutput(calcLogRoot + "Enabled", autoAlignEnabled().getAsBoolean());
       Logger.recordOutput(
           calcLogRoot + "Type", getCurrentAlignmentTracker().getClass().getSimpleName());
     }

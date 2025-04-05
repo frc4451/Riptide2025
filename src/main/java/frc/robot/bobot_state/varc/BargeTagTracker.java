@@ -9,11 +9,17 @@ public class BargeTagTracker extends TargetAngleTracker {
   private Rotation2d rotationTarget = Rotation2d.kZero;
   private double distanceMeters = 0;
 
+  private boolean flipped = false;
+
   public void update() {
+    Pose2d robot = BobotState.getGlobalPose();
+    if (!BobotState.climbMode) {
+      flipped = !FieldUtils.onAllianceSide(robot, 0);
+    }
+
     Pose2d bargeTagPose = FieldUtils.getBargeTag().pose().toPose2d();
-    rotationTarget = bargeTagPose.getRotation();
-    distanceMeters =
-        bargeTagPose.getTranslation().getDistance(BobotState.getGlobalPose().getTranslation());
+    rotationTarget = bargeTagPose.getRotation().plus(flipped ? Rotation2d.kPi : Rotation2d.kZero);
+    distanceMeters = bargeTagPose.getTranslation().getDistance(robot.getTranslation());
   }
 
   public Rotation2d getRotationTarget() {

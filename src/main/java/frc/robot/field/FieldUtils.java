@@ -1,5 +1,6 @@
 package frc.robot.field;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -22,6 +23,12 @@ public class FieldUtils {
 
   public static double getFlipped() {
     return FieldUtils.isRedAlliance() ? -1 : 1;
+  }
+
+  public static boolean onAllianceSide(Pose2d pose, double bufferLength) {
+    return FieldUtils.getAlliance() == Alliance.Blue
+        ? pose.getX() < FieldConstants.fieldLength / 2.0 + bufferLength
+        : pose.getX() > FieldConstants.fieldLength / 2.0 - bufferLength;
   }
 
   public static ReefFace getClosestReef() {
