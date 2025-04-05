@@ -377,10 +377,7 @@ public class RobotContainer {
     //     .onTrue(Commands.parallel(climber.toggleExtend(), climber.deployTrayServo()));
 
     // test only
-    driverController
-        .x()
-        .and(() -> BobotState.climbMode)
-        .onTrue(climber.toggleExtend());
+    driverController.x().and(() -> BobotState.climbMode).onTrue(climber.toggleExtend());
 
     // driverController.y().and(() -> BobotState.climbMode).onTrue(climber.deployHookServo());
 
