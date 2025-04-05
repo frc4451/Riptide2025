@@ -15,6 +15,7 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -183,13 +184,13 @@ public class RobotContainer {
 
   private void configureRotationModes() {
     // Default, auto-align to closest tracker
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDriveAtAngle(
-    //             drive,
-    //             () -> -driverController.getLeftYSquared(),
-    //             () -> -driverController.getLeftXSquared(),
-    //             () -> BobotState.getCurrentAlignmentTracker().getRotationTarget())
-    //         .unless(DriverStation::isAutonomous));
+    drive.setDefaultCommand(
+        DriveCommands.joystickDriveAtAngle(
+                drive,
+                () -> -driverController.getLeftYSquared(),
+                () -> -driverController.getLeftXSquared(),
+                () -> BobotState.getCurrentAlignmentTracker().getRotationTarget())
+            .unless(DriverStation::isAutonomous));
 
     // No auto-align, manual
     // drive.setDefaultCommand(
