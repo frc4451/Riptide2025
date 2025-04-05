@@ -72,12 +72,6 @@ public class Climber extends SubsystemBase {
 
     hookServo = new ServoWrapper(getName() + "/Hook", hookServerIO);
     trayServo = new ServoWrapper(getName() + "/Tray", trayServoIO);
-
-    // RobotModeTriggers.disabled()
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () ->
-    // trayServoIO.setAngle(ClimberConstants.trayServoInitialPosition.getDegrees())));
   }
 
   @Override
