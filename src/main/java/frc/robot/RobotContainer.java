@@ -287,6 +287,7 @@ public class RobotContainer {
     // -- Coral --
     driverController
         .leftBumper()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.a().negate())
         .and(driverController.b().negate())
         .whileTrue(
@@ -298,6 +299,7 @@ public class RobotContainer {
 
     driverController
         .leftBumper()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.a())
         .whileTrue(
             AlignRoutines.positionToPole(
@@ -318,6 +320,7 @@ public class RobotContainer {
 
     driverController
         .rightBumper()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.a().negate())
         .and(driverController.b().negate())
         .whileTrue(
@@ -329,6 +332,7 @@ public class RobotContainer {
 
     driverController
         .rightBumper()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.a())
         .whileTrue(
             AlignRoutines.positionToPole(
@@ -350,6 +354,7 @@ public class RobotContainer {
     // -- Algae --
     driverController
         .rightTrigger()
+        .and(() -> !BobotState.climbMode)
         .whileTrue(
             AlignRoutines.alignToPose(
                 drive,
@@ -358,6 +363,7 @@ public class RobotContainer {
 
     driverController
         .rightTrigger()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.a())
         .and(superStructure::shouldGrabAlgae)
         .whileTrue(
@@ -369,6 +375,7 @@ public class RobotContainer {
     // -- Human Player Station --
     driverController
         .a()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.leftBumper().negate())
         .and(driverController.rightBumper().negate())
         .whileTrue(AlignRoutines.positionToHPSCenter(drive, () -> FieldUtils.getClosestHPS()));

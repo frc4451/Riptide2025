@@ -1,22 +1,22 @@
 package frc.robot.field;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import frc.robot.field.FieldConstants.AprilTagStruct;
 
-public enum Cages {
-  OUTSIDE(new Pose2d(), new Pose2d()),
-  MIDDLE(new Pose2d(), new Pose2d()),
-  INNER(new Pose2d(), new Pose2d()),
-  ;
+public class Cages {
+  public final AprilTagStruct tag;
 
-  public Pose2d blue;
-  public Pose2d red;
+  public final Pose2d left;
+  public final Pose2d center;
+  public final Pose2d right;
 
-  private Cages(Pose2d blue, Pose2d red) {
-    this.blue = blue;
-    this.red = red;
-  }
+  public Cages(AprilTagStruct tag) {
+    this.tag = tag;
 
-  public Pose2d get() {
-    return FieldUtils.isBlueAlliance() ? blue : red;
+    this.center = tag.pose().toPose2d().transformBy(new Transform2d(FieldConstants.eventConstants.cageBackOffset, 0, Rotation2d.kZero));
+    this.left = this.center.transformBy(new Transform2d(0, -FieldConstants.eventConstants.cageSideOffset, Rotation2d.kZero));
+    this.right = this.center.transformBy(new Transform2d(0, FieldConstants.eventConstants.cageSideOffset, Rotation2d.kZero));
   }
 }

@@ -9,8 +9,11 @@ public enum EventConstants {
       Units.inchesToMeters(17.0),
       Units.inchesToMeters(21.5),
       Units.inchesToMeters(25.0),
-      Units.inchesToMeters(18.0),
-      Units.inchesToMeters(25.0)),
+      Units.inchesToMeters(20.0),
+      Units.inchesToMeters(25.0),
+      Units.inchesToMeters(25.0),
+      Units.inchesToMeters(0),
+      Units.inchesToMeters(0)),
   NORTH_CHARLESTON(
       Units.inchesToMeters(-7.0),
       Units.inchesToMeters(8.0),
@@ -18,7 +21,10 @@ public enum EventConstants {
       Units.inchesToMeters(19.0),
       Units.inchesToMeters(25.0),
       Units.inchesToMeters(17.0),
-      Units.inchesToMeters(25.0)),
+      Units.inchesToMeters(25.0),
+      Double.NaN,
+      Double.NaN,
+      Double.NaN),
   DCMP(
       Units.inchesToMeters(-6.5),
       Units.inchesToMeters(6.5),
@@ -26,8 +32,10 @@ public enum EventConstants {
       Units.inchesToMeters(18.5),
       Units.inchesToMeters(25.0),
       Units.inchesToMeters(18.0),
-      Units.inchesToMeters(25.0));
-
+      Units.inchesToMeters(25.0),
+      Double.NaN,
+      Double.NaN,
+      Double.NaN);
   /** Distance from the center of the April Tag on the Face to the center of the Pole */
   public final double tagToReefLeft;
 
@@ -45,6 +53,11 @@ public enum EventConstants {
   public final double hpsOffset;
   public final double hpsSideOffset;
 
+  public final double algaeOffset;
+
+  public final double cageBackOffset;
+  public final double cageSideOffset;
+
   private EventConstants(
       double tagToReefLeft,
       double tagToReefRight,
@@ -52,7 +65,10 @@ public enum EventConstants {
       double l4ReefOffsetMeters,
       double elevatorDownOffsetMeters,
       double hpsOffsetMeters,
-      double hpsSideOffsetMeters) {
+      double hpsSideOffsetMeters,
+      double algaeOffsetMeters,
+      double cageBackOffset,
+      double cageSideOffset) {
     this.tagToReefLeft = tagToReefLeft;
     this.tagToReefRight = tagToReefRight;
     this.l2ReefOffset = l2ReefOffsetMeters;
@@ -62,5 +78,8 @@ public enum EventConstants {
     this.elevatorDownOffset = elevatorDownOffsetMeters;
     this.hpsOffset = hpsOffsetMeters;
     this.hpsSideOffset = hpsSideOffsetMeters;
+    this.algaeOffset = algaeOffsetMeters;
+    this.cageBackOffset = cageBackOffset;
+    this.cageSideOffset = cageSideOffset;
   }
 }
