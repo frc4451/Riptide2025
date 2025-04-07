@@ -9,7 +9,7 @@ public class FieldConstants {
   /** AdvantageKit-safe loggable version of `AprilTag` that contains data we want without lookups */
   public static record AprilTagStruct(int fiducialId, Pose3d pose) {}
 
-  public static final EventConstants eventConstants = EventConstants.DCMP;
+  public static final EventConstants eventConstants = EventConstants.HOME;
 
   public static final double fieldLength = Units.inchesToMeters(690.876);
   public static final double bargeLength = Units.feetToMeters(4);
