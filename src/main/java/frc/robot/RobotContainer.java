@@ -356,6 +356,16 @@ public class RobotContainer {
                 () -> FieldUtils.getClosestReef().tag.pose().toPose2d(),
                 () -> -driverController.getLeftYSquared()));
 
+    driverController
+        .rightTrigger()
+        .and(driverController.a())
+        .and(superStructure::shouldGrabAlgae)
+        .whileTrue(
+            AlignRoutines.positionToPole(
+                drive,
+                () -> FieldUtils.getClosestReef().center,
+                () -> FieldConstants.eventConstants.algaeOffset));
+
     // -- Human Player Station --
     driverController
         .a()
@@ -420,8 +430,15 @@ public class RobotContainer {
     operatorController
         .povRight()
         .onTrue(superStructure.setModeCommand(SuperStructureModes.FLOOR_ALGAE));
-    operatorController.povDown().onTrue(superStructure.setModeCommand(SuperStructureModes.L2Algae));
-    operatorController.povLeft().onTrue(superStructure.setModeCommand(SuperStructureModes.L3Algae));
+    operatorController
+        .povLeft()
+        .onTrue(
+            Commands.deferredProxy(
+                () ->
+                    superStructure.setModeCommand(
+                        FieldUtils.getClosestReef().isL2Algae
+                            ? SuperStructureModes.L2Algae
+                            : SuperStructureModes.L3Algae)));
     operatorController.povUp().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED_L4));
     operatorController.back().whileTrue(superStructure.scoreAlgae());
     // spotless: on

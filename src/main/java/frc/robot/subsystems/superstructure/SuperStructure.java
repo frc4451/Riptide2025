@@ -263,6 +263,14 @@ public class SuperStructure extends SubsystemBase {
         };
   }
 
+  public boolean shouldGrabAlgae() {
+    return isAtMode
+        && switch (currentMode) {
+          case L2Algae, L3Algae -> true;
+          default -> false;
+        };
+  }
+
   public double getReefOffset() {
     return isL4Coral()
         ? FieldConstants.eventConstants.l4ReefOffset

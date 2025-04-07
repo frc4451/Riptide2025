@@ -33,17 +33,17 @@ public class FieldConstants {
 
   // See Allred's sheet for why they're AB/CD/EF/etc
   public static final ReefFace blueReefAB =
-      new ReefFace(new AprilTagStruct(18, VisionConstants.fieldLayout.getTagPose(18).get()));
+      new ReefFace(new AprilTagStruct(18, VisionConstants.fieldLayout.getTagPose(18).get()), false);
   public static final ReefFace blueReefCD =
-      new ReefFace(new AprilTagStruct(17, VisionConstants.fieldLayout.getTagPose(17).get()));
+      new ReefFace(new AprilTagStruct(17, VisionConstants.fieldLayout.getTagPose(17).get()), true);
   public static final ReefFace blueReefEF =
-      new ReefFace(new AprilTagStruct(22, VisionConstants.fieldLayout.getTagPose(22).get()));
+      new ReefFace(new AprilTagStruct(22, VisionConstants.fieldLayout.getTagPose(22).get()), false);
   public static final ReefFace blueReefGH =
-      new ReefFace(new AprilTagStruct(21, VisionConstants.fieldLayout.getTagPose(21).get()));
+      new ReefFace(new AprilTagStruct(21, VisionConstants.fieldLayout.getTagPose(21).get()), true);
   public static final ReefFace blueReefIJ =
-      new ReefFace(new AprilTagStruct(20, VisionConstants.fieldLayout.getTagPose(20).get()));
+      new ReefFace(new AprilTagStruct(20, VisionConstants.fieldLayout.getTagPose(20).get()), false);
   public static final ReefFace blueReefKL =
-      new ReefFace(new AprilTagStruct(19, VisionConstants.fieldLayout.getTagPose(19).get()));
+      new ReefFace(new AprilTagStruct(19, VisionConstants.fieldLayout.getTagPose(19).get()), true);
 
   public static final AprilTagStruct redHPSDriverLeft =
       new AprilTagStruct(1, VisionConstants.fieldLayout.getTagPose(1).get());
@@ -55,17 +55,17 @@ public class FieldConstants {
       new AprilTagStruct(4, VisionConstants.fieldLayout.getTagPose(4).get());
 
   public static final ReefFace redReefAB =
-      new ReefFace(new AprilTagStruct(7, VisionConstants.fieldLayout.getTagPose(7).get()));
+      new ReefFace(new AprilTagStruct(7, VisionConstants.fieldLayout.getTagPose(7).get()), false);
   public static final ReefFace redReefCD =
-      new ReefFace(new AprilTagStruct(8, VisionConstants.fieldLayout.getTagPose(8).get()));
+      new ReefFace(new AprilTagStruct(8, VisionConstants.fieldLayout.getTagPose(8).get()), true);
   public static final ReefFace redReefEF =
-      new ReefFace(new AprilTagStruct(9, VisionConstants.fieldLayout.getTagPose(9).get()));
+      new ReefFace(new AprilTagStruct(9, VisionConstants.fieldLayout.getTagPose(9).get()), false);
   public static final ReefFace redReefGH =
-      new ReefFace(new AprilTagStruct(10, VisionConstants.fieldLayout.getTagPose(10).get()));
+      new ReefFace(new AprilTagStruct(10, VisionConstants.fieldLayout.getTagPose(10).get()), true);
   public static final ReefFace redReefIJ =
-      new ReefFace(new AprilTagStruct(11, VisionConstants.fieldLayout.getTagPose(11).get()));
+      new ReefFace(new AprilTagStruct(11, VisionConstants.fieldLayout.getTagPose(11).get()), false);
   public static final ReefFace redReefKL =
-      new ReefFace(new AprilTagStruct(6, VisionConstants.fieldLayout.getTagPose(6).get()));
+      new ReefFace(new AprilTagStruct(6, VisionConstants.fieldLayout.getTagPose(6).get()), true);
 
   public static final List<ReefFace> blueReefFaces =
       List.of(blueReefAB, blueReefCD, blueReefEF, blueReefGH, blueReefIJ, blueReefKL);
