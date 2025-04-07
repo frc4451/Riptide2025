@@ -11,11 +11,11 @@ public class ClimberConstants {
   public static final DCMotor gearbox = DCMotor.getFalcon500Foc(1);
 
   public static final double circumferenceOfSpool = 1.0 * Math.PI;
-  public static final double reduction = 25.0;
+  public static final double reduction = 27.0;
 
   public static final double moi = 1.0;
 
-  public static final double maxPositionInches = 3.5;
+  public static final double maxPositionInches = 2.8;
 
   public static final boolean invert = true;
   public static final double currentLimitAmps = 50.0;
