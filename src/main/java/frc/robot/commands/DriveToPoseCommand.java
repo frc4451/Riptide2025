@@ -59,11 +59,13 @@ public class DriveToPoseCommand extends Command {
 
     drive.runVelocity(speeds);
 
-    Logger.recordOutput("Commands/" + getName() + "/IsAtSetpoint", atSetpoint().getAsBoolean())
-    Logger.recordOutput("Commands/" + getName() + "/PerpendincularAtSetpoint", perpendicularController.atSetpoint());
-    Logger.recordOutput("Commands/" + getName() + "/ParallelAtSetpoint", parallelController.atSetpoint());
+    Logger.recordOutput("Commands/" + getName() + "/IsAtSetpoint", atSetpoint().getAsBoolean());
+    Logger.recordOutput(
+        "Commands/" + getName() + "/PerpendincularAtSetpoint",
+        perpendicularController.atSetpoint());
+    Logger.recordOutput(
+        "Commands/" + getName() + "/ParallelAtSetpoint", parallelController.atSetpoint());
     Logger.recordOutput("Commands/" + getName() + "/AngleAtSetpoint", angleController.atSetpoint());
-
   }
 
   @Override
