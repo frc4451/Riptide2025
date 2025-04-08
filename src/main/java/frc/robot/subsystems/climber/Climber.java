@@ -123,10 +123,10 @@ public class Climber extends SubsystemBase {
   }
 
   public Command deployHookServo() {
-    return runOnce(() -> hookServo.set(ClimberConstants.hookServoDeployPosition));
+    return Commands.runOnce(() -> hookServo.set(ClimberConstants.hookServoDeployPosition));
   }
 
   public Command deployTrayServo() {
-    return runOnce(() -> trayServo.set(ClimberConstants.trayServoDeployPosition));
+    return Commands.runOnce(() -> trayServo.set(ClimberConstants.trayServoDeployPosition));
   }
 }
