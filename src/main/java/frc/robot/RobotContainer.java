@@ -237,10 +237,10 @@ public class RobotContainer {
     {
       // This will automatically run the intake when the robot is close
       // to the human player station, taking some mental load off the drive team.
-      // BobotState.humanPlayerShouldThrow()
-      //     .and(superStructure.isCoralIntaked().negate())
-      //     .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
-      //     .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+      BobotState.humanPlayerShouldThrow()
+          .and(superStructure.isCoralIntaked().negate())
+          .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
+          .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
       // Automatically stop intake & signal to drive team once the coral is in the robot.
       // This will mean the drive team's coral pick up loop will look like:
