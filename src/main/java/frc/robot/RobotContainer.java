@@ -379,6 +379,7 @@ public class RobotContainer {
         .and(() -> !BobotState.climbMode)
         .and(driverController.leftBumper().negate())
         .and(driverController.rightBumper().negate())
+        .and(driverController.rightTrigger().negate())
         .whileTrue(AlignRoutines.positionToHPSCenter(drive, () -> FieldUtils.getClosestHPS()));
   }
 
