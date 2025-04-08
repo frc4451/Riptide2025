@@ -49,10 +49,13 @@ public class AlignRoutines {
             positionToPole(drive, poleSupplier, reefOffsetMeters)));
   }
 
+  public static DriveToPoseCommand positionToPose(Drive drive, Supplier<Pose2d> targetSupplier) {
+    return new DriveToPoseCommand(drive, false, targetSupplier);
+  }
+
   public static DrivePerpendicularToPoseCommand alignToPose(
       Drive drive, Supplier<Pose2d> targetSupplier, DoubleSupplier perpendicularInput) {
-    return new DrivePerpendicularToPoseCommand(
-        drive, AutoConstants.useConstrainedPoseForReef, targetSupplier, perpendicularInput);
+    return new DrivePerpendicularToPoseCommand(drive, false, targetSupplier, perpendicularInput);
   }
 
   public static Command positionToTag(

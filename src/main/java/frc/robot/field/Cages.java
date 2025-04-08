@@ -15,8 +15,16 @@ public class Cages {
   public Cages(AprilTagStruct tag) {
     this.tag = tag;
 
-    this.center = tag.pose().toPose2d().transformBy(new Transform2d(FieldConstants.eventConstants.cageBackOffset, 0, Rotation2d.kZero));
-    this.left = this.center.transformBy(new Transform2d(0, -FieldConstants.eventConstants.cageSideOffset, Rotation2d.kZero));
-    this.right = this.center.transformBy(new Transform2d(0, FieldConstants.eventConstants.cageSideOffset, Rotation2d.kZero));
+    this.center =
+        tag.pose()
+            .toPose2d()
+            .transformBy(
+                new Transform2d(FieldConstants.eventConstants.cageBackOffset, 0, Rotation2d.kZero));
+    this.left =
+        this.center.transformBy(
+            new Transform2d(0, -FieldConstants.eventConstants.cageSideOffset, Rotation2d.kZero));
+    this.right =
+        this.center.transformBy(
+            new Transform2d(0, FieldConstants.eventConstants.cageSideOffset, Rotation2d.kZero));
   }
 }
