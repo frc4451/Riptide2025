@@ -88,12 +88,13 @@ public class Climber extends SubsystemBase {
     Logger.recordOutput(getName() + "/Manual", manual);
   }
 
-  public Command manualCommand(DoubleSupplier volts) {
+  public Command manualCommand(DoubleSupplier volts, boolean softstops) {
     return Commands.sequence(
         runOnce(() -> manual = true),
         run(
             () -> {
-              if (Math.signum(volts.getAsDouble()) == 1
+              if (softstops
+                  && Math.signum(volts.getAsDouble()) == 1
                   && roller.getHeightInches() > ClimberConstants.maxPositionInches) {
                 roller.stop();
               } else {

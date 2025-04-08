@@ -71,6 +71,7 @@ public class RobotContainer {
   // Controller
   public final CommandCustomXboxController driverController = new CommandCustomXboxController(0);
   private final CommandCustomXboxController operatorController = new CommandCustomXboxController(1);
+  private final CommandCustomXboxController resetController = new CommandCustomXboxController(4);
 
   // Dashboard inputs
   private final AutoChooser autoChooser;
@@ -392,9 +393,7 @@ public class RobotContainer {
     driverController
         .x()
         .and(() -> BobotState.climbMode)
-        .onTrue(Commands.parallel(climber.toggleExtend(), climber.deployTrayServo()));
-
-    driverController.y().and(() -> BobotState.climbMode).onTrue(climber.deployHookServo());
+        .onTrue(Commands.parallel(climber.toggleExtend(), climber.deployTrayServo(), climber.deployHookServo()));
 
     // testing only
     // driverController.x().and(() -> BobotState.climbMode).onTrue(climber.toggleExtend());
@@ -403,7 +402,12 @@ public class RobotContainer {
     driverController
         .rightY()
         .and(() -> BobotState.climbMode)
-        .whileTrue(climber.manualCommand(() -> driverController.getRightY() * 10.0));
+        .whileTrue(climber.manualCommand(() -> driverController.getRightY() * 10.0, true));
+
+    resetController
+        .rightY()
+        .and(() -> !DriverStation.isFMSAttached())
+        .whileTrue(climber.manualCommand(() -> resetController.getRightY() * 10.0, false));
   }
 
   private void configureSuperBindings() {
