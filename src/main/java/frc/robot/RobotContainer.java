@@ -15,6 +15,7 @@ package frc.robot;
 
 import choreo.auto.AutoChooser;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -26,6 +27,7 @@ import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.AlignRoutines;
 import frc.robot.commands.DriveCommands;
+import frc.robot.field.Barge;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
 import frc.robot.field.ReefFaces;
@@ -411,6 +413,23 @@ public class RobotContainer {
         .rightY()
         .and(() -> !DriverStation.isFMSAttached())
         .whileTrue(climber.manualCommand(() -> resetController.getRightY() * 10.0, false));
+
+    driverController
+        .leftBumper()
+        .and(() -> BobotState.climbMode)
+        .and(driverController.a().negate())
+        .whileTrue(
+            AlignRoutines.alignToPose(
+                    drive,
+                    () -> Barge.get().left.transformBy(new Transform2d(0, 0, Rotation2d.kPi)),
+                    () -> driverController.getLeftYSquared())
+                .withJoystickRumble(superStructure::getRumbleDistance, alignmentRumble));
+
+    driverController
+        .leftBumper()
+        .and(() -> BobotState.climbMode)
+        .and(driverController.a())
+        .whileTrue(AlignRoutines.positionToPose(drive, () -> Barge.get().left));
   }
 
   private void configureSuperBindings() {
