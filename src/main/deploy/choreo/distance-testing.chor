@@ -31,6 +31,20 @@
      "exp":"4 m / s",
      "val":4.0
     }
+   },
+   "ReefAccel":{
+    "dimension":"LinAcc",
+    "var":{
+     "exp":"2 m / s ^ 2",
+     "val":2.0
+    }
+   },
+   "ReefVel":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"0.5 m / s",
+     "val":0.5
+    }
    }
   },
   "poses":{
@@ -190,8 +204,8 @@
    },
    "FL4":{
     "x":{
-     "exp":"5.4 m",
-     "val":5.4
+     "exp":"5.39 m",
+     "val":5.39
     },
     "y":{
      "exp":"2.77 m",
@@ -424,6 +438,20 @@
     "heading":{
      "exp":"180 deg",
      "val":3.141592653589793
+    }
+   },
+   "StartRight":{
+    "x":{
+     "exp":"7 m",
+     "val":7.0
+    },
+    "y":{
+     "exp":"1.85 m",
+     "val":1.85
+    },
+    "heading":{
+     "exp":"120 deg",
+     "val":2.0943951023931953
     }
    },
    "StartTop":{

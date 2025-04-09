@@ -21,6 +21,7 @@ public enum ChoreoPaths {
   START_BOTTOM_TO_EL4("StartBottom-EL4"),
   START_BOTTOM_TO_FL2("StartBottom-FL2"),
   START_BOTTOM_TO_FL4("StartBottom-FL4"),
+  START_BOTTOM_TO_FL4_NO_STOP("StartBottom-FL4-NoStop"),
 
   // ___ to HPS Right
   BL4_TO_HPS_RIGHT("BL4-HPSRight"),
@@ -37,6 +38,7 @@ public enum ChoreoPaths {
   // HPS Right to ___
   HPS_RIGHT_TO_BL4("HPSRight-BL4"),
   HPS_RIGHT_TO_CL4("HPSRight-CL4"),
+  HPS_RIGHT_TO_CL4_NO_STOP("HPSRight-CL4-NoStop"),
   HPS_RIGHT_TO_DL4("HPSRight-DL4"),
   HPS_RIGHT_TO_EL2("HPSRight-EL2"),
   HPS_RIGHT_TO_EL4("HPSRight-EL4"),

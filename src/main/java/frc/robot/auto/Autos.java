@@ -24,6 +24,8 @@ public class Autos {
   public Autos(Drive drive, SuperStructure superStructure) {
     this.drive = drive;
     this.superStructure = superStructure;
+
+    drive.autoFactory.bind("L4", superStructure.setModeCommand(SuperStructureModes.L4Coral));
   }
 
   // Routines
@@ -261,6 +263,40 @@ public class Autos {
                     AlignRoutines.positionToHPSCenter(
                         drive, () -> HumanPlayerStations.RIGHT.get()))));
 
+    return routine;
+  }
+
+  public AutoRoutine walton() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Walton");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                logRoutine("Walton"),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4_NO_STOP.name)),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    () -> ReefFaces.EF.get().rightPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
+                // HPS
+                superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT_NO_STOP.name)),
+                Commands.deadline(
+                    superStructure.intake(),
+                    AlignRoutines.positionToHPSCenter(
+                        drive, () -> HumanPlayerStations.RIGHT.get())),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4_NO_STOP.name)),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    () -> ReefFaces.CD.get().leftPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset)
+                //
+                ));
     return routine;
   }
 
