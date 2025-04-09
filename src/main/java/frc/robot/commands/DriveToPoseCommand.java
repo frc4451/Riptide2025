@@ -66,8 +66,8 @@ public class DriveToPoseCommand extends Command {
     Logger.recordOutput("Commands/" + getName() + "/Error/Translational", translationalError);
     Logger.recordOutput("Commands/" + getName() + "/Error/Angular", angularError);
     Logger.recordOutput(
-        "Commands/" + getName() + "/AtSetpoint/Translation", distanceController.atGoal());
-    Logger.recordOutput("Commands/" + getName() + "/AtSetpoint/Angle", angleController.atGoal());
+        "Commands/" + getName() + "/AtGoal/Translation", distanceController.atGoal());
+    Logger.recordOutput("Commands/" + getName() + "/AtGoal/Angle", angleController.atGoal());
     Logger.recordOutput("Commands/" + getName() + "/Speeds/Translational", translationalSpeed);
     Logger.recordOutput("Commands/" + getName() + "/Speeds/ChassisSpeeds", speeds);
   }
