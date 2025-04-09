@@ -420,16 +420,47 @@ public class RobotContainer {
         .and(driverController.a().negate())
         .whileTrue(
             AlignRoutines.alignToPose(
-                    drive,
-                    () -> Barge.get().left.transformBy(new Transform2d(0, 0, Rotation2d.kPi)),
-                    () -> driverController.getLeftYSquared())
-                .withJoystickRumble(superStructure::getRumbleDistance, alignmentRumble));
+                drive,
+                () -> Barge.get().left.transformBy(new Transform2d(0, 0, Rotation2d.kPi)),
+                () -> driverController.getLeftYSquared()));
 
     driverController
         .leftBumper()
         .and(() -> BobotState.climbMode)
         .and(driverController.a())
         .whileTrue(AlignRoutines.positionToPose(drive, () -> Barge.get().left));
+
+    driverController
+        .rightBumper()
+        .and(() -> BobotState.climbMode)
+        .and(driverController.a().negate())
+        .whileTrue(
+            AlignRoutines.alignToPose(
+                drive,
+                () -> Barge.get().right.transformBy(new Transform2d(0, 0, Rotation2d.kPi)),
+                () -> driverController.getLeftYSquared()));
+
+    driverController
+        .rightBumper()
+        .and(() -> BobotState.climbMode)
+        .and(driverController.a())
+        .whileTrue(AlignRoutines.positionToPose(drive, () -> Barge.get().right));
+
+    driverController
+        .rightTrigger()
+        .and(() -> BobotState.climbMode)
+        .and(driverController.a().negate())
+        .whileTrue(
+            AlignRoutines.alignToPose(
+                drive,
+                () -> Barge.get().center.transformBy(new Transform2d(0, 0, Rotation2d.kPi)),
+                () -> driverController.getLeftYSquared()));
+
+    driverController
+        .rightTrigger()
+        .and(() -> BobotState.climbMode)
+        .and(driverController.a())
+        .whileTrue(AlignRoutines.positionToPose(drive, () -> Barge.get().center));
   }
 
   private void configureSuperBindings() {

@@ -12,8 +12,8 @@ public enum EventConstants {
       Units.inchesToMeters(20.0),
       Units.inchesToMeters(25.0),
       Units.inchesToMeters(30.0),
-      Units.inchesToMeters(-5.0),
-      Units.inchesToMeters(0.0)),
+      Units.inchesToMeters(24.0),
+      Units.inchesToMeters(44.0)),
   NORTH_CHARLESTON(
       Units.inchesToMeters(-7.0),
       Units.inchesToMeters(8.0),
