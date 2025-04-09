@@ -186,22 +186,26 @@ public class RobotContainer {
   }
 
   private void configureRotationModes() {
-    // Default, auto-align to closest tracker
-    drive.setDefaultCommand(
-        DriveCommands.joystickDriveAtAngle(
+    switch (Constants.driverControl) {
+      case ALIGN:
+        drive.setDefaultCommand(
+            DriveCommands.joystickDriveAtAngle(
+                    drive,
+                    () -> -driverController.getLeftYSquared(),
+                    () -> -driverController.getLeftXSquared(),
+                    () -> BobotState.getCurrentAlignmentTracker().getRotationTarget())
+                .unless(DriverStation::isAutonomous));
+        break;
+      case FREE:
+      default:
+        drive.setDefaultCommand(
+            DriveCommands.joystickDrive(
                 drive,
                 () -> -driverController.getLeftYSquared(),
                 () -> -driverController.getLeftXSquared(),
-                () -> BobotState.getCurrentAlignmentTracker().getRotationTarget())
-            .unless(DriverStation::isAutonomous));
-
-    // No auto-align, manual
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -driverController.getLeftYSquared(),
-    //         () -> -driverController.getLeftXSquared(),
-    //         () -> -driverController.getRightXSquared()));
+                () -> -driverController.getRightXSquared()));
+        break;
+    }
 
     // Normal field-relative drive when overridden via a button
     driverController
@@ -213,12 +217,6 @@ public class RobotContainer {
                 () -> -driverController.getLeftYSquared(),
                 () -> -driverController.getLeftXSquared(),
                 () -> -driverController.getRightXSquared()));
-    // drive.setDefaultCommand(
-    //     DriveCommands.joystickDrive(
-    //         drive,
-    //         () -> -driverController.getLeftYSquared(),
-    //         () -> -driverController.getLeftXSquared(),
-    //         () -> -driverController.getRightXSquared()));
 
     // // Barge
     // driverController
