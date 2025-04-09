@@ -71,7 +71,7 @@ public class ElevatorConstants {
 
   public static final MotionMagicConfigs mmConfig =
       new MotionMagicConfigs()
-          .withMotionMagicCruiseVelocity(50 / inchesPerRotation * reduction)
-          .withMotionMagicAcceleration(200 / inchesPerRotation * reduction)
-          .withMotionMagicJerk(2000 / inchesPerRotation * reduction);
+          .withMotionMagicCruiseVelocity(60 / inchesPerRotation * reduction)
+          .withMotionMagicAcceleration(240 / inchesPerRotation * reduction)
+          .withMotionMagicJerk(2400 / inchesPerRotation * reduction);
 }

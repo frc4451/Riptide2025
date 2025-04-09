@@ -3,9 +3,7 @@ package frc.robot.subsystems.quest;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.VirtualSubsystem;
@@ -15,6 +13,8 @@ import org.littletonrobotics.junction.Logger;
 public class Quest extends VirtualSubsystem {
   private final QuestIO io;
   private final QuestIOInputsAutoLogged inputs = new QuestIOInputsAutoLogged();
+
+  public boolean isPoseReset = false;
 
   private final Alert disconnectedAlert = new Alert("Quest Disconnected!", AlertType.kWarning);
   private final Alert lowBatteryAlert =
@@ -34,15 +34,17 @@ public class Quest extends VirtualSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Oculus", inputs);
 
+    Logger.recordOutput("Oculus/IsPoseReset", isPoseReset);
     disconnectedAlert.set(!inputs.connected);
     lowBatteryAlert.set(inputs.connected && inputs.batteryLevel < 25);
 
     Pose2d fieldToRobot = getFieldToRobot();
 
-    // Only enable this when we know we're ready
-    if (DriverStation.isEnabled() && Constants.currentMode == Constants.Mode.REAL) {
-      BobotState.offerQuestMeasurement(new TimestampedPose(fieldToRobot, inputs.timestamp));
-    }
+    // // Only enable this when we know we're ready
+    // if (DriverStation.isEnabled() && isPoseReset && Constants.currentMode == Constants.Mode.REAL)
+    // {
+    //   BobotState.offerQuestMeasurement(new TimestampedPose(fieldToRobot, inputs.timestamp));
+    // }
 
     // Do this always for now just to confirm our transforms are correct.
     // Or, you may want to always track rotation. Do science.

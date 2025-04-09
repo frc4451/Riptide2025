@@ -90,7 +90,7 @@ public class QuestNav {
     }
   }
 
-  // Zero the relativerobot heading
+  // Zero the robot relative heading
   public void zeroHeading() {
     float[] eulerAngles = questEulerAngles.get();
     resetHeading = Rotation2d.fromDegrees(-Math.IEEEremainder(eulerAngles[1], 360.0));
@@ -115,7 +115,7 @@ public class QuestNav {
   }
 
   public Pose2d getUncorrectedPose() {
-    return new Pose2d(getUncorrectedTranslation(), getUncorrectedYaw());
+    return new Pose2d(getUncorrectedTranslation().rotateBy(resetHeading), getUncorrectedYaw());
   }
 
   public Pose2d getUncorrectedResetPose() {

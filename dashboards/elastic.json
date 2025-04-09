@@ -9,9 +9,9 @@
         "containers": [
           {
             "title": "Alerts",
-            "x": 0.0,
+            "x": 512.0,
             "y": 0.0,
-            "width": 384.0,
+            "width": 256.0,
             "height": 256.0,
             "type": "Alerts",
             "properties": {
@@ -21,9 +21,9 @@
           },
           {
             "title": "Choreo Alerts",
-            "x": 384.0,
+            "x": 768.0,
             "y": 0.0,
-            "width": 384.0,
+            "width": 256.0,
             "height": 256.0,
             "type": "Alerts",
             "properties": {
@@ -34,9 +34,9 @@
           {
             "title": "FrontLeft",
             "x": 0.0,
-            "y": 256.0,
+            "y": 0.0,
             "width": 256.0,
-            "height": 256.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/AprilTagCamera/FrontLeft/Connected",
@@ -45,15 +45,15 @@
               "true_color": 4283215696,
               "false_color": 4294198070,
               "true_icon": "None",
-              "false_icon": "None"
+              "false_icon": "Exclamation Point"
             }
           },
           {
             "title": "FrontRight",
             "x": 256.0,
-            "y": 256.0,
+            "y": 0.0,
             "width": 256.0,
-            "height": 256.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/AprilTagCamera/FrontRight/Connected",
@@ -62,15 +62,15 @@
               "true_color": 4283215696,
               "false_color": 4294198070,
               "true_icon": "None",
-              "false_icon": "None"
+              "false_icon": "Exclamation Point"
             }
           },
           {
             "title": "RearLeft",
             "x": 0.0,
-            "y": 512.0,
+            "y": 128.0,
             "width": 256.0,
-            "height": 256.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/AprilTagCamera/RearLeft/Connected",
@@ -79,15 +79,15 @@
               "true_color": 4283215696,
               "false_color": 4294198070,
               "true_icon": "None",
-              "false_icon": "None"
+              "false_icon": "Exclamation Point"
             }
           },
           {
             "title": "RearRight",
             "x": 256.0,
-            "y": 512.0,
+            "y": 128.0,
             "width": 256.0,
-            "height": 256.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/AprilTagCamera/RearRight/Connected",
@@ -96,15 +96,15 @@
               "true_color": 4283215696,
               "false_color": 4294198070,
               "true_icon": "None",
-              "false_icon": "None"
+              "false_icon": "Exclamation Point"
             }
           },
           {
             "title": "Quest",
-            "x": 512.0,
+            "x": 0.0,
             "y": 256.0,
             "width": 256.0,
-            "height": 512.0,
+            "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/Oculus/Connected",
@@ -113,20 +113,54 @@
               "true_color": 4283215696,
               "false_color": 4294198070,
               "true_icon": "None",
-              "false_icon": "None"
+              "false_icon": "Exclamation Point"
             }
           },
           {
             "title": "Auto Chooser",
-            "x": 768.0,
-            "y": 0.0,
+            "x": 512.0,
+            "y": 256.0,
             "width": 512.0,
-            "height": 640.0,
+            "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
               "topic": "/SmartDashboard/Auto Chooser",
               "period": 0.06,
               "sort_options": true
+            }
+          },
+          {
+            "title": "Climber Mode",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/BobotState/ClimberMode",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4294901937,
+              "false_color": 4294967295,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Hamburgered",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/Oculus/IsPoseReset",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "X"
             }
           }
         ]

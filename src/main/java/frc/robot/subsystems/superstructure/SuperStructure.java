@@ -236,7 +236,8 @@ public class SuperStructure extends SubsystemBase {
   public Command shootCoral() {
     return Commands.sequence(
         setShooterModeCommand(ShooterModes.SHOOT),
-        Commands.sequence(Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.1)),
+        Commands.sequence(
+            Commands.waitUntil(isCoralIntaked().negate()), Commands.waitSeconds(0.125)),
         setShooterModeCommand(ShooterModes.NONE));
   }
 
@@ -258,6 +259,14 @@ public class SuperStructure extends SubsystemBase {
     return isAtMode
         && switch (currentMode) {
           case L2Coral, L3Coral, L4Coral -> true;
+          default -> false;
+        };
+  }
+
+  public boolean shouldGrabAlgae() {
+    return isAtMode
+        && switch (currentMode) {
+          case L2Algae, L3Algae -> true;
           default -> false;
         };
   }

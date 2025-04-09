@@ -50,6 +50,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("Allred L2"),
                 pathAndMode(
                     routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL2.name),
                     SuperStructureModes.L2Coral),
@@ -76,6 +77,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("Ethan"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_TOP_TO_IL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -130,6 +132,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("AllLeft L4"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_TOP_TO_IL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -170,6 +173,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("Callahan"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -180,7 +184,7 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.EF.get().rightPole),
                 // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT.name)),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT_NO_STOP.name)),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(
@@ -195,7 +199,7 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 backupFromReef(() -> ReefFaces.CD.get().leftPole),
                 // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT.name)),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT_NO_STOP.name)),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(
@@ -225,6 +229,7 @@ public class Autos {
         .active()
         .onTrue(
             Commands.sequence(
+                logRoutine("AllRight L4"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -331,10 +336,15 @@ public class Autos {
 
   // New Sequencing
   private Command backupFromReef(Supplier<ReefPole> pole) {
-    return Commands.deadline(
+    return Commands.race(
         AlignRoutines.positionToPoleUntilDone(
             drive, () -> pole.get(), () -> FieldConstants.eventConstants.elevatorDownOffset),
         superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
+  }
+
+  private Command logRoutine(String name) {
+    // AutoRoutine.name should be public chat
+    return Commands.runOnce(() -> Logger.recordOutput("Choreo/Routine", name));
   }
 
   private Command prepAndGo(AutoTrajectory trajectory) {
@@ -348,11 +358,13 @@ public class Autos {
   private Command delayedTuckAndGo(AutoTrajectory trajectory) {
     return Commands.deadline(
         followTrajectory(trajectory),
-        Commands.waitUntil(
+        Commands.sequence(
+            Commands.waitUntil(
                 () ->
                     BobotState.reefTracker.getDistanceMeters()
-                        > AutoConstants.tuckReefOffsetThresholdMeters)
-            .andThen(superStructure.setModeCommand(SuperStructureModes.TUCKED)));
+                        > AutoConstants.tuckReefOffsetThresholdMeters),
+            superStructure.setModeCommand(SuperStructureModes.TUCKED),
+            superStructure.intake()));
   }
 
   // Routine Logic

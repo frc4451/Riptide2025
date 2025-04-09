@@ -76,6 +76,10 @@ public class DrivePerpendicularToPoseCommand extends Command {
             angularSpeed);
 
     drive.runVelocity(speeds);
+
+    Logger.recordOutput(
+        "Commands/" + getName() + "/ParallelAtSetpoint", parallelController.atSetpoint());
+    Logger.recordOutput("Commands/" + getName() + "/AngleAtSetpoint", angleController.atSetpoint());
   }
 
   @Override

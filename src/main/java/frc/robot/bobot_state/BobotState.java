@@ -1,8 +1,6 @@
 package frc.robot.bobot_state;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.bobot_state.varc.BargeTagTracker;
 import frc.robot.bobot_state.varc.HPSTagTracker;
@@ -40,6 +38,8 @@ public class BobotState extends VirtualSubsystem {
   public static final ReefTagTracker reefTracker = new ReefTagTracker();
   public static final HPSTagTracker hpsTracker = new HPSTagTracker();
   public static final BargeTagTracker bargeTracker = new BargeTagTracker();
+
+  public static boolean climbMode = false;
 
   private static List<TargetAngleTracker> autoAlignmentTrackers =
       List.of(BobotState.hpsTracker, BobotState.reefTracker);
@@ -92,28 +92,8 @@ public class BobotState extends VirtualSubsystem {
     return BobotState.questPose;
   }
 
-  public static Trigger onTeamSide() {
-    return new Trigger(
-        () ->
-            FieldUtils.getAlliance() == Alliance.Blue
-                ? getGlobalPose().getX() < FieldConstants.fieldLength / 2.0
-                : getGlobalPose().getX() > FieldConstants.fieldLength / 2.0);
-  }
-
-  public static Rotation2d getRotationToClosestReef() {
-    return BobotState.reefTracker.getRotationTarget();
-  }
-
-  public static Rotation2d getRotationToClosestHPS() {
-    return BobotState.hpsTracker.getRotationTarget();
-  }
-
-  public static Rotation2d getRotationToClosestBarge() {
-    return BobotState.bargeTracker.getRotationTarget();
-  }
-
-  public static double getDistanceMetersFromClosestHPS() {
-    return BobotState.hpsTracker.getDistanceMeters();
+  public static Trigger autoAlignEnabled() {
+    return new Trigger(() -> FieldUtils.onAllianceSide(globalPose, FieldConstants.bargeLength));
   }
 
   public static Trigger humanPlayerShouldThrow() {
@@ -124,14 +104,18 @@ public class BobotState extends VirtualSubsystem {
                 < 0.5);
   }
 
-  public static TargetAngleTracker getClosestAlignmentTracker() {
-    return autoAlignmentTrackers.stream()
-        .reduce((a, b) -> a.getDistanceMeters() < b.getDistanceMeters() ? a : b)
-        .get();
+  public static TargetAngleTracker getCurrentAlignmentTracker() {
+    return climbMode
+        ? bargeTracker
+        : autoAlignmentTrackers.stream()
+            .reduce((a, b) -> a.getDistanceMeters() < b.getDistanceMeters() ? a : b)
+            .get();
   }
 
   @Override
   public void periodic() {
+    Logger.recordOutput(logRoot + "ClimberMode", climbMode);
+
     {
       TimestampedPose[] questPoses = getQuestMeasurments().stream().toArray(TimestampedPose[]::new);
       Logger.recordOutput(logRoot + "Quest/Measurements", questPoses);
@@ -173,9 +157,10 @@ public class BobotState extends VirtualSubsystem {
     }
 
     {
-      String calcLogRoot = logRoot + "ClosestAlignment/";
+      String calcLogRoot = logRoot + "CurrentAlignment/";
+      Logger.recordOutput(calcLogRoot + "Enabled", autoAlignEnabled().getAsBoolean());
       Logger.recordOutput(
-          calcLogRoot + "Type", getClosestAlignmentTracker().getClass().getSimpleName());
+          calcLogRoot + "Type", getCurrentAlignmentTracker().getClass().getSimpleName());
     }
   }
 

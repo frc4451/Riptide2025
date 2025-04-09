@@ -34,7 +34,6 @@ import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
 import frc.robot.subsystems.blinkin.BlinkinState;
 import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberModes;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -72,6 +71,7 @@ public class RobotContainer {
   // Controller
   public final CommandCustomXboxController driverController = new CommandCustomXboxController(0);
   private final CommandCustomXboxController operatorController = new CommandCustomXboxController(1);
+  private final CommandCustomXboxController resetController = new CommandCustomXboxController(4);
 
   // Dashboard inputs
   private final AutoChooser autoChooser;
@@ -191,7 +191,7 @@ public class RobotContainer {
                     drive,
                     () -> -driverController.getLeftYSquared(),
                     () -> -driverController.getLeftXSquared(),
-                    () -> BobotState.getClosestAlignmentTracker().getRotationTarget())
+                    () -> BobotState.getCurrentAlignmentTracker().getRotationTarget())
                 .unless(DriverStation::isAutonomous));
         break;
       case FREE:
@@ -208,7 +208,7 @@ public class RobotContainer {
     // Normal field-relative drive when overridden via a button
     driverController
         .leftTrigger()
-        .or(BobotState.onTeamSide().negate())
+        .or(BobotState.autoAlignEnabled().negate())
         .whileTrue(
             DriveCommands.joystickDrive(
                 drive,
@@ -274,11 +274,21 @@ public class RobotContainer {
                   driverController.rumbleOnOff(1, 0.25, 0.25, 2),
                   operatorController.rumbleOnOff(1, 0.25, 0.25, 2)));
 
+  // Three big booms
+  private final Command climbRumble =
+      Commands.deferredProxy(
+          () ->
+              Commands.parallel(
+                  driverController.rumbleOnOff(1, 0.50, 0.25, 3),
+                  operatorController.rumbleOnOff(1, 0.50, 0.25, 3)));
+
   private void configurePoleBindings() {
     // -- Coral --
     driverController
         .leftBumper()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.a().negate())
+        .and(driverController.b().negate())
         .whileTrue(
             AlignRoutines.alignToPose(
                     drive,
@@ -288,6 +298,7 @@ public class RobotContainer {
 
     driverController
         .leftBumper()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.a())
         .whileTrue(
             AlignRoutines.positionToPole(
@@ -296,9 +307,21 @@ public class RobotContainer {
                     superStructure::getReefOffset)
                 .withJoystickRumble(alignmentRumble));
 
+    // driverController
+    //     .leftBumper()
+    //     .and(driverController.b())
+    //     .whileTrue(
+    //         AlignRoutines.positionToPoleAndScore(
+    //             drive,
+    //             superStructure,
+    //             () -> FieldUtils.getClosestReef().leftPole,
+    //             superStructure::getReefOffset));
+
     driverController
         .rightBumper()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.a().negate())
+        .and(driverController.b().negate())
         .whileTrue(
             AlignRoutines.alignToPose(
                     drive,
@@ -308,6 +331,7 @@ public class RobotContainer {
 
     driverController
         .rightBumper()
+        .and(() -> !BobotState.climbMode)
         .and(driverController.a())
         .whileTrue(
             AlignRoutines.positionToPole(
@@ -316,28 +340,74 @@ public class RobotContainer {
                     superStructure::getReefOffset)
                 .withJoystickRumble(alignmentRumble));
 
+    // driverController
+    //     .rightBumper()
+    //     .and(driverController.b())
+    //     .whileTrue(
+    //         AlignRoutines.positionToPoleAndScore(
+    //             drive,
+    //             superStructure,
+    //             () -> FieldUtils.getClosestReef().rightPole,
+    //             superStructure::getReefOffset));
+
     // -- Algae --
     driverController
         .rightTrigger()
+        .and(() -> !BobotState.climbMode)
         .whileTrue(
             AlignRoutines.alignToPose(
                 drive,
                 () -> FieldUtils.getClosestReef().tag.pose().toPose2d(),
                 () -> -driverController.getLeftYSquared()));
 
+    driverController
+        .rightTrigger()
+        .and(() -> !BobotState.climbMode)
+        .and(driverController.a())
+        .and(superStructure::shouldGrabAlgae)
+        .whileTrue(
+            AlignRoutines.positionToPole(
+                drive,
+                () -> FieldUtils.getClosestReef().center,
+                () -> FieldConstants.eventConstants.algaeOffset));
+
     // -- Human Player Station --
     driverController
-        .x()
+        .a()
+        .and(() -> !BobotState.climbMode)
+        .and(driverController.leftBumper().negate())
+        .and(driverController.rightBumper().negate())
         .whileTrue(AlignRoutines.positionToHPSCenter(drive, () -> FieldUtils.getClosestHPS()));
   }
 
   public void configureCageBindings() {
-    driverController.a().onTrue(climber.setModeCommand(ClimberModes.TUCK));
-    driverController.b().onTrue(climber.setModeCommand(ClimberModes.EXTEND));
-    driverController.y().onTrue(climber.setModeCommand(ClimberModes.GRAB));
+    // Toggle Climber Mode
+    driverController
+        .back()
+        .onTrue(
+            Commands.parallel(
+                Commands.runOnce(() -> BobotState.climbMode = !BobotState.climbMode), climbRumble));
+
+    driverController
+        .x()
+        .and(() -> BobotState.climbMode)
+        .onTrue(
+            Commands.parallel(
+                climber.toggleExtend(), climber.deployTrayServo(), climber.deployHookServo()));
+
+    // testing only
+    // driverController.x().and(() -> BobotState.climbMode).onTrue(climber.toggleExtend());
+    // driverController.y().and(() -> BobotState.climbMode).onTrue(climber.deployTrayServo());
+
     driverController
         .rightY()
-        .whileTrue(climber.manualCommand(() -> -driverController.getRightY() * 10.0));
+        .and(() -> BobotState.climbMode)
+        .whileTrue(climber.manualCommand(() -> driverController.getRightY() * 10.0, true));
+
+    resetController
+        .rightY()
+        .and(() -> !DriverStation.isFMSAttached())
+        .whileTrue(climber.manualCommand(() -> resetController.getRightY() * 10.0, false));
   }
 
   private void configureSuperBindings() {
@@ -371,8 +441,15 @@ public class RobotContainer {
     operatorController
         .povRight()
         .onTrue(superStructure.setModeCommand(SuperStructureModes.FLOOR_ALGAE));
-    operatorController.povDown().onTrue(superStructure.setModeCommand(SuperStructureModes.L2Algae));
-    operatorController.povLeft().onTrue(superStructure.setModeCommand(SuperStructureModes.L3Algae));
+    operatorController
+        .povLeft()
+        .onTrue(
+            Commands.deferredProxy(
+                () ->
+                    superStructure.setModeCommand(
+                        FieldUtils.getClosestReef().isL2Algae
+                            ? SuperStructureModes.L2Algae
+                            : SuperStructureModes.L3Algae)));
     operatorController.povUp().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED_L4));
     operatorController.back().whileTrue(superStructure.scoreAlgae());
     // spotless: on
