@@ -358,6 +358,7 @@ public class RobotContainer {
     driverController
         .rightTrigger()
         .and(() -> !BobotState.climbMode)
+        .and(driverController.a().negate())
         .whileTrue(
             AlignRoutines.alignToPose(
                 drive,
