@@ -46,7 +46,7 @@ public class DriveToPoseCommand extends Command {
     Translation2d translationalError = robot.getTranslation().minus(target.getTranslation());
     Rotation2d angularError = robot.getRotation().minus(target.getRotation());
 
-    // Magnitude of translational speed, meaning that x & y are controlled together
+    // Magnitude of translational velocity, meaning that x & y are controlled together
     double translationalSpeed = distanceController.calculate(translationalError.getNorm(), 0);
     translationalSpeed = !distanceController.atGoal() ? translationalSpeed : 0;
 
@@ -65,13 +65,16 @@ public class DriveToPoseCommand extends Command {
     Logger.recordOutput("Commands/" + getName() + "/Target", target);
     Logger.recordOutput("Commands/" + getName() + "/Error/Translational", translationalError);
     Logger.recordOutput("Commands/" + getName() + "/Error/Angular", angularError);
-    Logger.recordOutput("Commands/" + getName() + "/Speeds/TranslationalSpeed", translationalSpeed);
-    Logger.recordOutput("Commands/" + getName() + "/Speeds/AngularVelocity", anglularVelocity);
+    Logger.recordOutput(
+        "Commands/" + getName() + "/AtSetpoint/Translation", distanceController.atGoal());
+    Logger.recordOutput("Commands/" + getName() + "/AtSetpoint/Angle", angleController.atGoal());
+    Logger.recordOutput("Commands/" + getName() + "/Speeds/Translational", translationalSpeed);
     Logger.recordOutput("Commands/" + getName() + "/Speeds/ChassisSpeeds", speeds);
   }
 
   @Override
   public void end(boolean interrupt) {
+    drive.runVelocity(new ChassisSpeeds());
     distanceController.reset(0);
     angleController.reset(0);
   }
