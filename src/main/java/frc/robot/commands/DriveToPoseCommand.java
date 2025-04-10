@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -9,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveConstants;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -47,7 +49,11 @@ public class DriveToPoseCommand extends Command {
     Rotation2d angularError = robot.getRotation().minus(target.getRotation());
 
     // Magnitude of translational velocity, meaning that x & y are controlled together
-    double translationalSpeed = distanceController.calculate(translationalError.getNorm(), 0);
+    double translationalSpeed =
+        MathUtil.clamp(
+            distanceController.calculate(translationalError.getNorm(), 0),
+            -DriveConstants.maxSpeedMetersPerSec,
+            DriveConstants.maxSpeedMetersPerSec);
     translationalSpeed = !distanceController.atGoal() ? translationalSpeed : 0;
 
     double anglularVelocity = angleController.calculate(angularError.getRadians(), 0);
