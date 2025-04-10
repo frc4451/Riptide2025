@@ -3,6 +3,7 @@ package frc.robot.auto;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.bobot_state.BobotState;
@@ -320,6 +321,33 @@ public class Autos {
     return routine;
   }
 
+  public AutoRoutine algae() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Algae");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                logRoutine("Algae"),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.START_MID_TO_GL4.name)),
+                superStructure.setModeCommand(SuperStructureModes.L4Coral),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    () -> ReefFaces.GH.get().leftPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
+                // Algae
+                backupForAlgae(() -> ReefFaces.GH.get().center),
+                AlignRoutines.positionToPoleAndAlgae(
+                    drive, superStructure, () -> ReefFaces.GH.get().center),
+                backupForBarge(() -> ReefFaces.GH.get().center)
+                //
+                ));
+
+    return routine;
+  }
+
   public AutoRoutine tripleThreat() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Triple Threat");
 
@@ -395,6 +423,18 @@ public class Autos {
     return Commands.race(
         AlignRoutines.positionToPoleUntilDone(
             drive, () -> pole.get(), () -> FieldConstants.eventConstants.elevatorDownOffset),
+        superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
+  }
+
+  private Command backupForAlgae(Supplier<ReefPole> pole) {
+    return Commands.sequence(
+        AlignRoutines.positionToPoleUntilDone(drive, () -> pole.get(), () -> Units.feetToMeters(3)),
+        superStructure.setModeAndWaitCommand(SuperStructureModes.L2Algae));
+  }
+
+  private Command backupForBarge(Supplier<ReefPole> pole) {
+    return Commands.sequence(
+        AlignRoutines.positionToPoleUntilDone(drive, () -> pole.get(), () -> Units.feetToMeters(3)),
         superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
   }
 

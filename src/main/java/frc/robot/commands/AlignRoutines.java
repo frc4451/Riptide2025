@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoConstants;
+import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldConstants.AprilTagStruct;
 import frc.robot.field.HumanPlayerStation;
 import frc.robot.field.ReefPole;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.superstructure.SuperStructure;
 import frc.robot.subsystems.superstructure.modes.SuperStructureModes;
+import frc.robot.subsystems.superstructure.shooter.ShooterModes;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -63,6 +65,15 @@ public class AlignRoutines {
                 Commands.waitUntil(() -> superStructure.shouldShootCoral()),
                 superStructure.shootCoral()),
             positionToPole(drive, poleSupplier, reefOffsetMeters)));
+  }
+
+  public static Command positionToPoleAndAlgae(
+      Drive drive, SuperStructure superStructure, Supplier<ReefPole> poleSupplier) {
+    return Commands.sequence(
+        superStructure.setModeAndWaitCommand(SuperStructureModes.L2Algae),
+        superStructure.setShooterModeCommand(ShooterModes.ALGAE_INTAKING),
+        positionToPoleUntilDone(
+            drive, poleSupplier, () -> FieldConstants.eventConstants.algaeOffset));
   }
 
   public static DriveToPoseCommand positionToPose(Drive drive, Supplier<Pose2d> targetSupplier) {
