@@ -83,10 +83,15 @@ public class DriveToPoseCommand extends Command {
     return new Trigger(() -> distanceController.atSetpoint() && angleController.atSetpoint());
   }
 
-  public Trigger atSetpoint(double distanceTolerance, double rotationTolerance) {
+  public Trigger canShoot(
+      double distanceTolerance, double rotationTolerance, double velocityTolerance) {
     return new Trigger(
         () ->
             Math.abs(distanceController.getPositionError()) < distanceTolerance
-                && Math.abs(angleController.getPositionError()) < rotationTolerance);
+                && Math.abs(angleController.getPositionError()) < rotationTolerance
+                && Math.hypot(
+                        drive.getChassisSpeeds().vxMetersPerSecond,
+                        drive.getChassisSpeeds().vyMetersPerSecond)
+                    < velocityTolerance);
   }
 }

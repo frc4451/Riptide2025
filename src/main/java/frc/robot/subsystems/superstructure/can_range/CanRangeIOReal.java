@@ -22,6 +22,7 @@ public class CanRangeIOReal implements CanRangeIO {
     canRange.optimizeBusUtilization(0.0, 1.0);
 
     CANrangeConfiguration cfg = new CANrangeConfiguration();
+    cfg.ProximityParams.ProximityThreshold = 0.2;
     cfg.ToFParams.withUpdateMode(
         longRange ? UpdateModeValue.LongRangeUserFreq : UpdateModeValue.ShortRangeUserFreq);
     canRange.getConfigurator().apply(cfg);

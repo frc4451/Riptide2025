@@ -7,7 +7,7 @@ public enum EventConstants {
       Units.inchesToMeters(-6.5),
       Units.inchesToMeters(6.5),
       Units.inchesToMeters(17.0),
-      Units.inchesToMeters(21.5),
+      Units.inchesToMeters(21.0),
       Units.inchesToMeters(25.0),
       Units.inchesToMeters(20.0),
       Units.inchesToMeters(25.0),

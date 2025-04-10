@@ -294,7 +294,27 @@ public class Autos {
                     drive,
                     superStructure,
                     () -> ReefFaces.CD.get().leftPole,
-                    () -> FieldConstants.eventConstants.l4ReefOffset)
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
+                // HPS
+                superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT_NO_STOP.name)),
+                Commands.deadline(
+                    superStructure.intake(),
+                    AlignRoutines.positionToHPSCenter(
+                        drive, () -> HumanPlayerStations.RIGHT.get())),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_DL4_NO_STOP.name)),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    () -> ReefFaces.CD.get().rightPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
+                // HPS
+                superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.DL4_TO_HPS_RIGHT_NO_STOP.name)),
+                Commands.deadline(
+                    superStructure.intake(),
+                    AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.RIGHT.get()))
                 //
                 ));
     return routine;

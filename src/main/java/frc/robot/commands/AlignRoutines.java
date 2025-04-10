@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 public class AlignRoutines {
   public static final double distanceShootTolerance = Units.inchesToMeters(0.5);
   public static final double rotationShootTolerance = Units.degreesToRadians(1);
+  public static final double velocityTolerance = 0.2;
 
   public static DriveToPoseCommand positionToPole(
       Drive drive, Supplier<ReefPole> pole, DoubleSupplier reefOffsetMeters) {
@@ -43,9 +44,10 @@ public class AlignRoutines {
       Drive drive, Supplier<ReefPole> pole, DoubleSupplier reefOffsetMeters) {
     DriveToPoseCommand cmd = positionToPole(drive, pole, reefOffsetMeters);
 
-    Trigger atSetpoint = cmd.atSetpoint(distanceShootTolerance, rotationShootTolerance);
+    Trigger canShoot =
+        cmd.canShoot(distanceShootTolerance, rotationShootTolerance, velocityTolerance);
 
-    return cmd.until(atSetpoint).unless(atSetpoint);
+    return cmd.until(canShoot).unless(canShoot);
   }
 
   /** {@link SuperStructureModes} for {@link SuperStructure} must be set beforehand */
