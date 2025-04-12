@@ -2,12 +2,15 @@ package frc.robot.auto;
 
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.AlignRoutines;
+import frc.robot.field.Barge;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.HumanPlayerStations;
 import frc.robot.field.ReefFaces;
@@ -288,7 +291,7 @@ public class Autos {
                 backupForBarge(() -> ReefFaces.GH.get().center),
                 // Score Algae
                 AlignRoutines.positionToBargeAndScore(drive, superStructure),
-                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4)
+                backoffBargeForAutoRP()
                 //
                 ));
 
@@ -332,7 +335,7 @@ public class Autos {
                 backupForBarge(() -> ReefFaces.IJ.get().center),
                 // Score Algae
                 AlignRoutines.positionToBargeAndScore(drive, superStructure),
-                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED)
+                backoffBargeForAutoRP()
                 //
                 ));
 
@@ -425,8 +428,23 @@ public class Autos {
 
   private Command backupForBarge(Supplier<ReefPole> pole) {
     return Commands.sequence(
-        AlignRoutines.positionToPoleUntilDone(drive, () -> pole.get(), () -> Units.feetToMeters(3)),
+        AlignRoutines.positionToPoleUntilDone(
+            drive, () -> pole.get(), () -> Units.feetToMeters(3.1)),
         superStructure.setModeCommand(SuperStructureModes.TUCKED_L4));
+  }
+
+  private Command backoffBargeForAutoRP() {
+    return Commands.sequence(
+        Commands.parallel(
+            AlignRoutines.positionToPose(
+                drive,
+                () ->
+                    Barge.get()
+                        .shot
+                        .transformBy(
+                            new Transform2d(Units.inchesToMeters(12), 0.8, Rotation2d.kPi))),
+            superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4)),
+        superStructure.setModeCommand(SuperStructureModes.TUCKED));
   }
 
   private Command logRoutine(String name) {
