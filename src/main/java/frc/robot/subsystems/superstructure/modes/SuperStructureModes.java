@@ -12,7 +12,7 @@ public enum SuperStructureModes {
   FLOOR_ALGAE(1.0 / 2.0, Rotation2d.fromDegrees(-40.0)),
   L2Algae(23.0 / 2.0, Rotation2d.fromDegrees(-10.0)),
   L3Algae(40.0 / 2.0, Rotation2d.fromDegrees(-10.0)),
-  Barge(50.0 / 2.0, Rotation2d.fromDegrees(90));
+  Barge(50.0 / 2.0, Rotation2d.fromDegrees(65));
 
   public final double elevatorHeightInches;
   public final Rotation2d coralPos;

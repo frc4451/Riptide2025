@@ -383,6 +383,12 @@ public class RobotContainer {
         .and(driverController.rightBumper().negate())
         .and(driverController.rightTrigger().negate())
         .whileTrue(AlignRoutines.positionToHPSCenter(drive, () -> FieldUtils.getClosestHPS()));
+
+    // -- Barge --
+    driverController
+        .x()
+        .and(() -> !BobotState.climbMode)
+        .whileTrue(AlignRoutines.positionToPose(drive, () -> Barge.get().shot));
   }
 
   public void configureCageBindings() {
@@ -504,7 +510,7 @@ public class RobotContainer {
                             ? SuperStructureModes.L2Algae
                             : SuperStructureModes.L3Algae)));
     operatorController.povUp().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED_L4));
-    operatorController.back().whileTrue(superStructure.scoreAlgae());
+    operatorController.back().whileTrue(superStructure.bargeShot());
     // spotless: on
   }
 

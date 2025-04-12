@@ -216,7 +216,7 @@ public class SuperStructure extends SubsystemBase {
         .finallyDo(this::resetModes);
   }
 
-  public Command scoreAlgae() {
+  public Command bargeShot() {
     return Commands.sequence(
             setModeCommand(SuperStructureModes.Barge),
             Commands.waitUntil(() -> elevator.isNear(SuperStructureConstants.shootNetHeight)),

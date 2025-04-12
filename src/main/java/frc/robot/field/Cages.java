@@ -3,6 +3,7 @@ package frc.robot.field;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import frc.robot.field.FieldConstants.AprilTagStruct;
 
 public class Cages {
@@ -11,6 +12,8 @@ public class Cages {
   public final Pose2d left;
   public final Pose2d center;
   public final Pose2d right;
+
+  public final Pose2d shot;
 
   public Cages(AprilTagStruct tag) {
     this.tag = tag;
@@ -26,5 +29,12 @@ public class Cages {
     this.right =
         this.center.transformBy(
             new Transform2d(0, FieldConstants.eventConstants.cageSideOffset, Rotation2d.kZero));
+
+    this.shot =
+        tag.pose()
+            .toPose2d()
+            .transformBy(
+                new Transform2d(
+                    Units.inchesToMeters(36), Units.inchesToMeters(24), Rotation2d.kPi));
   }
 }
