@@ -73,61 +73,6 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine ethanOld() {
-    AutoRoutine routine = drive.autoFactory.newRoutine("EthanOld");
-
-    routine
-        .active()
-        .onTrue(
-            Commands.sequence(
-                logRoutine("EthanOld"),
-                // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.START_TOP_TO_IL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                AlignRoutines.positionToPoleAndScore(
-                    drive,
-                    superStructure,
-                    () -> ReefFaces.IJ.get().leftPole,
-                    () -> FieldConstants.eventConstants.l4ReefOffset),
-                backupFromReef(() -> ReefFaces.IJ.get().leftPole),
-                // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT.name)),
-                Commands.deadline(
-                    superStructure.intake(),
-                    AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get())),
-                // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                AlignRoutines.positionToPoleAndScore(
-                    drive,
-                    superStructure,
-                    () -> ReefFaces.KL.get().rightPole,
-                    () -> FieldConstants.eventConstants.l4ReefOffset),
-                backupFromReef(() -> ReefFaces.KL.get().rightPole),
-                // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.LL4_TO_HPS_LEFT.name)),
-                Commands.deadline(
-                    superStructure.intake(),
-                    AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get())),
-                // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_KL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                AlignRoutines.positionToPoleAndScore(
-                    drive,
-                    superStructure,
-                    () -> ReefFaces.KL.get().leftPole,
-                    () -> FieldConstants.eventConstants.l4ReefOffset),
-                backupFromReef(() -> ReefFaces.KL.get().leftPole),
-                // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.KL4_TO_HPS_LEFT.name)),
-                Commands.deadline(
-                    superStructure.intake(),
-                    AlignRoutines.positionToHPSCenter(
-                        drive, () -> HumanPlayerStations.LEFT.get()))));
-
-    return routine;
-  }
-
   public AutoRoutine allLeftL4() {
     AutoRoutine routine = drive.autoFactory.newRoutine("AllLeft L4");
 
@@ -166,62 +111,6 @@ public class Autos {
                     AlignRoutines.positionToHPSCenter(
                         drive, () -> HumanPlayerStations.LEFT.get()))));
 
-    return routine;
-  }
-
-  public AutoRoutine callahanOld() {
-    AutoRoutine routine = drive.autoFactory.newRoutine("CallahanOld");
-
-    routine
-        .active()
-        .onTrue(
-            Commands.sequence(
-                logRoutine("CallahanOld"),
-                // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                AlignRoutines.positionToPoleAndScore(
-                    drive,
-                    superStructure,
-                    () -> ReefFaces.EF.get().rightPole,
-                    () -> FieldConstants.eventConstants.l4ReefOffset),
-                backupFromReef(() -> ReefFaces.EF.get().rightPole),
-                // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT_NO_STOP.name)),
-                Commands.deadline(
-                    superStructure.intake(),
-                    AlignRoutines.positionToHPSCenter(
-                        drive, () -> HumanPlayerStations.RIGHT.get())),
-                // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                AlignRoutines.positionToPoleAndScore(
-                    drive,
-                    superStructure,
-                    () -> ReefFaces.CD.get().leftPole,
-                    () -> FieldConstants.eventConstants.l4ReefOffset),
-                backupFromReef(() -> ReefFaces.CD.get().leftPole),
-                // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT_NO_STOP.name)),
-                Commands.deadline(
-                    superStructure.intake(),
-                    AlignRoutines.positionToHPSCenter(
-                        drive, () -> HumanPlayerStations.RIGHT.get())),
-                // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_DL4.name)),
-                superStructure.setModeCommand(SuperStructureModes.L4Coral),
-                AlignRoutines.positionToPoleAndScore(
-                    drive,
-                    superStructure,
-                    () -> ReefFaces.CD.get().rightPole,
-                    () -> FieldConstants.eventConstants.l4ReefOffset),
-                backupFromReef(() -> ReefFaces.CD.get().rightPole),
-                // HPS
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.DL4_TO_HPS_RIGHT.name)),
-                Commands.deadline(
-                    superStructure.intake(),
-                    AlignRoutines.positionToHPSCenter(
-                        drive, () -> HumanPlayerStations.RIGHT.get()))));
     return routine;
   }
 
