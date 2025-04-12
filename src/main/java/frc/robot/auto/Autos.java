@@ -330,7 +330,7 @@ public class Autos {
             Commands.sequence(
                 logRoutine("Ethan"),
                 // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.START_LEFT_TO_IL4_NO_STOP.name)),
+                prepAndGo(routine.trajectory(ChoreoPaths.START_RIGHT_TO_FL4_NO_STOP.name)),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
