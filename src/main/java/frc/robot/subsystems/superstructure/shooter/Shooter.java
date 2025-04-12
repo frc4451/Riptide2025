@@ -30,10 +30,12 @@ public class Shooter extends SingleRoller {
           io.stop();
         }
         break;
-      case SHOOT, L4_SHOOT:
+      case SHOOT, L1_SHOOT, L4_SHOOT:
         if (superMode == SuperStructureModes.L4Coral
             || superMode == SuperStructureModes.TUCKED_L4) {
           currentShooterMode = ShooterModes.L4_SHOOT;
+        } else if (superMode == SuperStructureModes.L1Coral) {
+          currentShooterMode = ShooterModes.L1_SHOOT;
         }
         io.runVolts(currentShooterMode.voltage);
         break;

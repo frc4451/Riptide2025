@@ -190,8 +190,12 @@ public class SuperStructure extends SubsystemBase {
     return Commands.runOnce(() -> setCurrentMode(nextMode));
   }
 
+  public void setShooterMode(ShooterModes nextShooterMode) {
+    shooter.setShooterMode(nextShooterMode);
+  }
+
   public Command setShooterModeCommand(ShooterModes nextShooterMode) {
-    return Commands.runOnce(() -> shooter.setShooterMode(nextShooterMode));
+    return Commands.runOnce(() -> setShooterMode(nextShooterMode));
   }
 
   public Trigger isAtMode() {
