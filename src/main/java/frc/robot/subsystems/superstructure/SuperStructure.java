@@ -250,6 +250,10 @@ public class SuperStructure extends SubsystemBase {
     return new Trigger(() -> shooter.isCoralDetected());
   }
 
+  public boolean isL1Coral() {
+    return isAtMode && currentMode == SuperStructureModes.L1Coral;
+  }
+
   public boolean isL4Coral() {
     return currentMode == SuperStructureModes.L4Coral
         || currentMode == SuperStructureModes.TUCKED_L4;

@@ -304,12 +304,21 @@ public class RobotContainer {
         .leftBumper()
         .and(() -> !BobotState.climbMode)
         .and(driverController.a())
+        .and(driverController.b().negate())
         .whileTrue(
             AlignRoutines.positionToPole(
                     drive,
                     () -> FieldUtils.getClosestReef().leftPole,
                     superStructure::getReefOffset)
                 .withJoystickRumble(alignmentRumble));
+
+    driverController
+        .leftBumper()
+        .and(() -> !BobotState.climbMode)
+        .and(driverController.a().negate())
+        .and(driverController.b())
+        .and(superStructure::isL1Coral)
+        .whileTrue(AlignRoutines.positionToPose(drive, () -> FieldUtils.getClosestReef().leftL1));
 
     // driverController
     //     .leftBumper()
@@ -337,12 +346,21 @@ public class RobotContainer {
         .rightBumper()
         .and(() -> !BobotState.climbMode)
         .and(driverController.a())
+        .and(driverController.b().negate())
         .whileTrue(
             AlignRoutines.positionToPole(
                     drive,
                     () -> FieldUtils.getClosestReef().rightPole,
                     superStructure::getReefOffset)
                 .withJoystickRumble(alignmentRumble));
+
+    driverController
+        .rightBumper()
+        .and(() -> !BobotState.climbMode)
+        .and(driverController.a().negate())
+        .and(driverController.b())
+        .and(superStructure::isL1Coral)
+        .whileTrue(AlignRoutines.positionToPose(drive, () -> FieldUtils.getClosestReef().rightL1));
 
     // driverController
     //     .rightBumper()
@@ -359,6 +377,7 @@ public class RobotContainer {
         .rightTrigger()
         .and(() -> !BobotState.climbMode)
         .and(driverController.a().negate())
+        .and(driverController.b().negate())
         .whileTrue(
             AlignRoutines.alignToPose(
                 drive,
@@ -369,6 +388,7 @@ public class RobotContainer {
         .rightTrigger()
         .and(() -> !BobotState.climbMode)
         .and(driverController.a())
+        .and(driverController.b().negate())
         .and(superStructure::shouldGrabAlgae)
         .whileTrue(
             AlignRoutines.positionToPole(
@@ -485,6 +505,7 @@ public class RobotContainer {
         .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
     operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
+    operatorController.start().onTrue(superStructure.setModeCommand(SuperStructureModes.L1Coral));
     operatorController.a().onTrue(superStructure.setModeCommand(SuperStructureModes.L2Coral));
     operatorController.x().onTrue(superStructure.setModeCommand(SuperStructureModes.L3Coral));
     operatorController.y().onTrue(superStructure.setModeCommand(SuperStructureModes.L4Coral));

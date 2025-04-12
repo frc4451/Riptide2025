@@ -6,6 +6,7 @@ import frc.robot.subsystems.superstructure.constants.PivotConstants;
 public enum SuperStructureModes {
   TUCKED(0.9 / 2.0, PivotConstants.intialPosition),
   TUCKED_L4(SuperStructureModes.TUCKED.elevatorHeightInches, Rotation2d.fromDegrees(92)),
+  L1Coral(9.5 / 2.0, Rotation2d.fromDegrees(-60)),
   L2Coral(19.0 / 2.0, SuperStructureModes.TUCKED.coralPos),
   L3Coral(36.0 / 2.0, SuperStructureModes.TUCKED.coralPos),
   L4Coral(50.0 / 2.0, SuperStructureModes.TUCKED_L4.coralPos),

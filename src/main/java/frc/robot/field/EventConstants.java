@@ -1,5 +1,7 @@
 package frc.robot.field;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.util.Units;
 
 public enum EventConstants {
@@ -14,7 +16,11 @@ public enum EventConstants {
       Units.inchesToMeters(23.5),
       Units.inchesToMeters(24.0),
       Units.inchesToMeters(44.0),
-      Units.inchesToMeters(36.0)),
+      Units.inchesToMeters(36.0),
+      new Transform2d(
+          Units.inchesToMeters(22), Units.inchesToMeters(2), Rotation2d.fromDegrees(180 + 30)),
+      new Transform2d(
+          Units.inchesToMeters(22), Units.inchesToMeters(-1), Rotation2d.fromDegrees(180 - 30))),
   NORTH_CHARLESTON(
       Units.inchesToMeters(-7.0),
       Units.inchesToMeters(8.0),
@@ -26,7 +32,9 @@ public enum EventConstants {
       Double.NaN,
       Double.NaN,
       Double.NaN,
-      Double.NaN),
+      Double.NaN,
+      Transform2d.kZero,
+      Transform2d.kZero),
   DCMP(
       Units.inchesToMeters(-6.5),
       Units.inchesToMeters(6.5),
@@ -38,7 +46,10 @@ public enum EventConstants {
       Double.NaN,
       Double.NaN,
       Double.NaN,
-      Double.NaN);
+      Double.NaN,
+      Transform2d.kZero,
+      Transform2d.kZero);
+
   /** Distance from the center of the April Tag on the Face to the center of the Pole */
   public final double tagToReefLeft;
 
@@ -63,6 +74,9 @@ public enum EventConstants {
 
   public final double bargeShotOffset;
 
+  public final Transform2d leftL1;
+  public final Transform2d rightL1;
+
   private EventConstants(
       double tagToReefLeft,
       double tagToReefRight,
@@ -74,7 +88,9 @@ public enum EventConstants {
       double algaeOffsetMeters,
       double cageBackOffset,
       double cageSideOffset,
-      double bargeShotOffset) {
+      double bargeShotOffset,
+      Transform2d leftL1,
+      Transform2d rightL1) {
     this.tagToReefLeft = tagToReefLeft;
     this.tagToReefRight = tagToReefRight;
     this.l2ReefOffset = l2ReefOffsetMeters;
@@ -88,5 +104,7 @@ public enum EventConstants {
     this.cageBackOffset = cageBackOffset;
     this.cageSideOffset = cageSideOffset;
     this.bargeShotOffset = bargeShotOffset;
+    this.leftL1 = leftL1;
+    this.rightL1 = rightL1;
   }
 }
