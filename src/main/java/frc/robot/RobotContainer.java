@@ -16,6 +16,7 @@ package frc.robot;
 import choreo.auto.AutoChooser;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -27,6 +28,7 @@ import frc.robot.auto.Autos;
 import frc.robot.bobot_state.BobotState;
 import frc.robot.commands.AlignRoutines;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.DriveParallellToPoseCommand;
 import frc.robot.field.Barge;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldUtils;
@@ -388,7 +390,18 @@ public class RobotContainer {
     driverController
         .x()
         .and(() -> !BobotState.climbMode)
-        .whileTrue(AlignRoutines.positionToPose(drive, () -> Barge.get().shot));
+        .whileTrue(
+            new DriveParallellToPoseCommand(
+                drive,
+                false,
+                () ->
+                    Barge.get()
+                        .tag
+                        .pose()
+                        .toPose2d()
+                        .transformBy(
+                            new Transform2d(Units.inchesToMeters(36), 0, Rotation2d.kZero)),
+                () -> -driverController.getLeftX()));
   }
 
   public void configureCageBindings() {
