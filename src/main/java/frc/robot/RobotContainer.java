@@ -166,6 +166,7 @@ public class RobotContainer {
     autoChooser.addRoutine("Ethan", autos::ethan);
     autoChooser.addRoutine("Callahan", autos::callahan);
     autoChooser.addRoutine("Algae", autos::algae);
+    autoChooser.addRoutine("Algae 2", autos::algaeTwo);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }

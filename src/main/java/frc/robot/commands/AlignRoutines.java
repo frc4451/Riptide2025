@@ -69,9 +69,12 @@ public class AlignRoutines {
   }
 
   public static Command positionToPoleAndAlgae(
-      Drive drive, SuperStructure superStructure, Supplier<ReefPole> poleSupplier) {
+      Drive drive,
+      SuperStructure superStructure,
+      SuperStructureModes mode,
+      Supplier<ReefPole> poleSupplier) {
     return Commands.sequence(
-        superStructure.setModeAndWaitCommand(SuperStructureModes.L2Algae),
+        superStructure.setModeAndWaitCommand(mode),
         superStructure.setShooterModeCommand(ShooterModes.ALGAE_INTAKING),
         positionToPoleUntilDone(
             drive, poleSupplier, () -> FieldConstants.eventConstants.algaeOffset));
@@ -80,7 +83,7 @@ public class AlignRoutines {
   public static Command positionToBargeAndScore(Drive drive, SuperStructure superStructure) {
     return Commands.sequence(
         positionToPoseUntilDone(
-            drive, () -> Barge.get().shot.transformBy(new Transform2d(0, 0.5, Rotation2d.kPi))),
+            drive, () -> Barge.get().shot.transformBy(new Transform2d(0, 0.8, Rotation2d.kPi))),
         superStructure.bargeShot());
   }
 

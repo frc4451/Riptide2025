@@ -221,7 +221,7 @@ public class SuperStructure extends SubsystemBase {
             setModeCommand(SuperStructureModes.Barge),
             Commands.waitUntil(() -> elevator.isNear(SuperStructureConstants.shootNetHeight)),
             setShooterModeCommand(ShooterModes.ALGAE_SHOOT),
-            Commands.waitSeconds(0.4))
+            Commands.waitSeconds(0.1))
         .finallyDo(
             () -> {
               setCurrentMode(SuperStructureModes.TUCKED_L4);

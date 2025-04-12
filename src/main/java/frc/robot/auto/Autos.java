@@ -390,13 +390,60 @@ public class Autos {
                     () -> ReefFaces.GH.get().leftPole,
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // Grab Algae
-                backupForAlgae(() -> ReefFaces.GH.get().center),
+                backupForAlgae(() -> ReefFaces.GH.get().center, SuperStructureModes.L2Algae),
                 AlignRoutines.positionToPoleAndAlgae(
-                    drive, superStructure, () -> ReefFaces.GH.get().center),
+                    drive,
+                    superStructure,
+                    SuperStructureModes.L2Algae,
+                    () -> ReefFaces.GH.get().center),
                 backupForBarge(() -> ReefFaces.GH.get().center),
                 // Score Algae
                 AlignRoutines.positionToBargeAndScore(drive, superStructure),
                 superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4)
+                //
+                ));
+
+    return routine;
+  }
+
+  public AutoRoutine algaeTwo() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Algae 2");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                logRoutine("Algae 2"),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.START_MID_TO_GL4.name)),
+                superStructure.setModeCommand(SuperStructureModes.L4Coral),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    () -> ReefFaces.GH.get().leftPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
+                // Grab Algae
+                backupForAlgae(() -> ReefFaces.GH.get().center, SuperStructureModes.L2Algae),
+                AlignRoutines.positionToPoleAndAlgae(
+                    drive,
+                    superStructure,
+                    SuperStructureModes.L2Algae,
+                    () -> ReefFaces.GH.get().center),
+                backupForBarge(() -> ReefFaces.GH.get().center),
+                // Score Algae
+                AlignRoutines.positionToBargeAndScore(drive, superStructure),
+                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
+                // Grab Algae
+                backupForAlgae(() -> ReefFaces.IJ.get().center, SuperStructureModes.L3Algae),
+                AlignRoutines.positionToPoleAndAlgae(
+                    drive,
+                    superStructure,
+                    SuperStructureModes.L3Algae,
+                    () -> ReefFaces.IJ.get().center),
+                backupForBarge(() -> ReefFaces.IJ.get().center),
+                // Score Algae
+                AlignRoutines.positionToBargeAndScore(drive, superStructure),
+                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED)
                 //
                 ));
 
@@ -476,21 +523,21 @@ public class Autos {
   // New Sequencing
   private Command backupFromReef(Supplier<ReefPole> pole) {
     return Commands.race(
-        AlignRoutines.positionToPoleUntilDone(
+        AlignRoutines.positionToPoleUntilCloseEnough(
             drive, () -> pole.get(), () -> FieldConstants.eventConstants.elevatorDownOffset),
         superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
   }
 
-  private Command backupForAlgae(Supplier<ReefPole> pole) {
+  private Command backupForAlgae(Supplier<ReefPole> pole, SuperStructureModes mode) {
     return Commands.sequence(
         AlignRoutines.positionToPoleUntilDone(drive, () -> pole.get(), () -> Units.feetToMeters(3)),
-        superStructure.setModeAndWaitCommand(SuperStructureModes.L2Algae));
+        superStructure.setModeAndWaitCommand(mode));
   }
 
   private Command backupForBarge(Supplier<ReefPole> pole) {
     return Commands.sequence(
         AlignRoutines.positionToPoleUntilDone(drive, () -> pole.get(), () -> Units.feetToMeters(3)),
-        superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4));
+        superStructure.setModeCommand(SuperStructureModes.TUCKED_L4));
   }
 
   private Command logRoutine(String name) {
