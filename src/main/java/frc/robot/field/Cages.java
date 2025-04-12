@@ -3,7 +3,6 @@ package frc.robot.field;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.util.Units;
 import frc.robot.field.FieldConstants.AprilTagStruct;
 
 public class Cages {
@@ -35,6 +34,6 @@ public class Cages {
             .toPose2d()
             .transformBy(
                 new Transform2d(
-                    Units.inchesToMeters(36), Units.inchesToMeters(24), Rotation2d.kPi));
+                    FieldConstants.eventConstants.bargeShotOffset, 0, Rotation2d.kZero));
   }
 }
