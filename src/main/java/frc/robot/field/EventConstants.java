@@ -13,7 +13,8 @@ public enum EventConstants {
       Units.inchesToMeters(25.0),
       Units.inchesToMeters(23.5),
       Units.inchesToMeters(24.0),
-      Units.inchesToMeters(44.0)),
+      Units.inchesToMeters(44.0),
+      Units.inchesToMeters(36.0)),
   NORTH_CHARLESTON(
       Units.inchesToMeters(-7.0),
       Units.inchesToMeters(8.0),
@@ -22,6 +23,7 @@ public enum EventConstants {
       Units.inchesToMeters(25.0),
       Units.inchesToMeters(17.0),
       Units.inchesToMeters(25.0),
+      Double.NaN,
       Double.NaN,
       Double.NaN,
       Double.NaN),
@@ -33,6 +35,7 @@ public enum EventConstants {
       Units.inchesToMeters(25.0),
       Units.inchesToMeters(18.0),
       Units.inchesToMeters(25.0),
+      Double.NaN,
       Double.NaN,
       Double.NaN,
       Double.NaN);
@@ -58,6 +61,8 @@ public enum EventConstants {
   public final double cageBackOffset;
   public final double cageSideOffset;
 
+  public final double bargeShotOffset;
+
   private EventConstants(
       double tagToReefLeft,
       double tagToReefRight,
@@ -68,7 +73,8 @@ public enum EventConstants {
       double hpsSideOffsetMeters,
       double algaeOffsetMeters,
       double cageBackOffset,
-      double cageSideOffset) {
+      double cageSideOffset,
+      double bargeShotOffset) {
     this.tagToReefLeft = tagToReefLeft;
     this.tagToReefRight = tagToReefRight;
     this.l2ReefOffset = l2ReefOffsetMeters;
@@ -81,5 +87,6 @@ public enum EventConstants {
     this.algaeOffset = algaeOffsetMeters;
     this.cageBackOffset = cageBackOffset;
     this.cageSideOffset = cageSideOffset;
+    this.bargeShotOffset = bargeShotOffset;
   }
 }
