@@ -73,14 +73,14 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine ethan() {
-    AutoRoutine routine = drive.autoFactory.newRoutine("Ethan");
+  public AutoRoutine ethanOld() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("EthanOld");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                logRoutine("Ethan"),
+                logRoutine("EthanOld"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_TOP_TO_IL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -169,14 +169,14 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine callahan() {
-    AutoRoutine routine = drive.autoFactory.newRoutine("Callahan");
+  public AutoRoutine callahanOld() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("CallahanOld");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                logRoutine("Callahan"),
+                logRoutine("CallahanOld"),
                 // L4
                 prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4.name)),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
@@ -267,16 +267,70 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine walton() {
-    AutoRoutine routine = drive.autoFactory.newRoutine("Walton");
+  public AutoRoutine callahan() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Callahan");
 
     routine
         .active()
         .onTrue(
             Commands.sequence(
-                logRoutine("Walton"),
+                logRoutine("Callahan"),
                 // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.START_BOTTOM_TO_FL4_NO_STOP.name)),
+                prepAndGo(routine.trajectory(ChoreoPaths.START_RIGHT_TO_FL4_NO_STOP.name)),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    () -> ReefFaces.EF.get().rightPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
+                // HPS
+                superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT_NO_STOP.name)),
+                Commands.deadline(
+                    superStructure.intake(),
+                    AlignRoutines.positionToHPSCenter(
+                        drive, () -> HumanPlayerStations.RIGHT.get())),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4_NO_STOP.name)),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    () -> ReefFaces.CD.get().leftPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
+                // HPS
+                superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT_NO_STOP.name)),
+                Commands.deadline(
+                    superStructure.intake(),
+                    AlignRoutines.positionToHPSCenter(
+                        drive, () -> HumanPlayerStations.RIGHT.get())),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_DL4_NO_STOP.name)),
+                AlignRoutines.positionToPoleAndScore(
+                    drive,
+                    superStructure,
+                    () -> ReefFaces.CD.get().rightPole,
+                    () -> FieldConstants.eventConstants.l4ReefOffset),
+                // HPS
+                superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
+                delayedTuckAndGo(routine.trajectory(ChoreoPaths.DL4_TO_HPS_RIGHT_NO_STOP.name)),
+                Commands.deadline(
+                    superStructure.intake(),
+                    AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.RIGHT.get()))
+                //
+                ));
+    return routine;
+  }
+
+  public AutoRoutine ethan() {
+    AutoRoutine routine = drive.autoFactory.newRoutine("Ethan");
+
+    routine
+        .active()
+        .onTrue(
+            Commands.sequence(
+                logRoutine("Ethan"),
+                // L4
+                prepAndGo(routine.trajectory(ChoreoPaths.START_LEFT_TO_IL4_NO_STOP.name)),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
