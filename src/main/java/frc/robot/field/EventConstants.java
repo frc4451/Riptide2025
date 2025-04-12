@@ -16,7 +16,7 @@ public enum EventConstants {
       Units.inchesToMeters(23.5),
       Units.inchesToMeters(24.0),
       Units.inchesToMeters(44.0),
-      Units.inchesToMeters(36.0),
+      Units.inchesToMeters(40.0),
       new Transform2d(
           Units.inchesToMeters(22), Units.inchesToMeters(2), Rotation2d.fromDegrees(180 + 30)),
       new Transform2d(

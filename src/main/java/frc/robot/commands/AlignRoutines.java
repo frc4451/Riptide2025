@@ -79,7 +79,8 @@ public class AlignRoutines {
 
   public static Command positionToBargeAndScore(Drive drive, SuperStructure superStructure) {
     return Commands.sequence(
-        positionToPoseUntilDone(drive, () -> Barge.get().right.transformBy(new Transform2d(0, 0, Rotation2d.k180deg))),
+        positionToPoseUntilDone(
+            drive, () -> Barge.get().shot.transformBy(new Transform2d(0, 0.5, Rotation2d.kPi))),
         superStructure.bargeShot());
   }
 
@@ -92,7 +93,6 @@ public class AlignRoutines {
 
     return cmd.until(cmd.atSetpoint()).unless(cmd.atSetpoint());
   }
-
 
   public static DrivePerpendicularToPoseCommand alignToPose(
       Drive drive, Supplier<Pose2d> targetSupplier, DoubleSupplier perpendicularInput) {
