@@ -40,6 +40,13 @@ public class DriveParallellToPoseCommand extends Command {
     this.parallelInput = parallelInput;
   }
 
+  public DriveParallellToPoseCommand withJoystickRumble(Command rumbleCommand) {
+    atSetpoint(AlignRoutines.distanceShootTolerance, AlignRoutines.rotationShootTolerance)
+        .onTrue(Commands.deferredProxy(() -> rumbleCommand));
+
+    return this;
+  }
+
   public DriveParallellToPoseCommand withJoystickRumble(
       DoubleSupplier rumbleDistance, Command rumbleCommand) {
     atSetpoint(rumbleDistance).onTrue(Commands.deferredProxy(() -> rumbleCommand));
@@ -81,7 +88,7 @@ public class DriveParallellToPoseCommand extends Command {
     Logger.recordOutput("Commands/" + getName() + "/PerpendicularError", perpendicularError);
     Logger.recordOutput("Commands/" + getName() + "/ParallelError", parallelError);
     Logger.recordOutput(
-        "Commands/" + getName() + "/ParallelAtSetpoint", perpendicularController.atSetpoint());
+        "Commands/" + getName() + "/PerpendicularAtSetpoint", perpendicularController.atSetpoint());
     Logger.recordOutput("Commands/" + getName() + "/AngleAtSetpoint", angleController.atSetpoint());
   }
 
@@ -91,11 +98,18 @@ public class DriveParallellToPoseCommand extends Command {
     angleController.reset(0);
   }
 
+  public Trigger atSetpoint(double distanceTolerance, double rotationTolerance) {
+    return new Trigger(
+        () ->
+            Math.abs(perpendicularController.getPositionError()) < distanceTolerance
+                && Math.abs(angleController.getPositionError()) < rotationTolerance);
+  }
+
   public Trigger atSetpoint(DoubleSupplier distance) {
     return new Trigger(
         () ->
             perpendicularController.atSetpoint()
                 && angleController.atSetpoint()
-                && parallelError < distance.getAsDouble());
+                && Math.abs(parallelError) < distance.getAsDouble());
   }
 }

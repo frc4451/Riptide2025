@@ -412,7 +412,9 @@ public class RobotContainer {
         .and(() -> !BobotState.climbMode)
         .whileTrue(
             new DriveParallellToPoseCommand(
-                drive, false, () -> Barge.get().shot, () -> -driverController.getLeftX()));
+                    drive, false, () -> Barge.get().shot, () -> -driverController.getLeftX())
+                .withJoystickRumble(blinkin.addStateCommand(BlinkinState.BARGE)))
+        .onFalse(blinkin.removeStateCommand(BlinkinState.BARGE));
   }
 
   public void configureCageBindings() {

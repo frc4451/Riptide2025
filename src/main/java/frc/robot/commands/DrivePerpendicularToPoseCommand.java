@@ -93,6 +93,6 @@ public class DrivePerpendicularToPoseCommand extends Command {
         () ->
             parallelController.atSetpoint()
                 && angleController.atSetpoint()
-                && perpendicularError < distance.getAsDouble());
+                && Math.abs(perpendicularError) < distance.getAsDouble());
   }
 }
