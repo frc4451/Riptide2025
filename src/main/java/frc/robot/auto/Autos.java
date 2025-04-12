@@ -389,11 +389,14 @@ public class Autos {
                     superStructure,
                     () -> ReefFaces.GH.get().leftPole,
                     () -> FieldConstants.eventConstants.l4ReefOffset),
-                // Algae
+                // Grab Algae
                 backupForAlgae(() -> ReefFaces.GH.get().center),
                 AlignRoutines.positionToPoleAndAlgae(
                     drive, superStructure, () -> ReefFaces.GH.get().center),
-                backupForBarge(() -> ReefFaces.GH.get().center)
+                backupForBarge(() -> ReefFaces.GH.get().center),
+                // Score Algae
+                AlignRoutines.positionToBargeAndScore(drive, superStructure),
+                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4)
                 //
                 ));
 

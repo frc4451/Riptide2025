@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoConstants;
+import frc.robot.field.Barge;
 import frc.robot.field.FieldConstants;
 import frc.robot.field.FieldConstants.AprilTagStruct;
 import frc.robot.field.HumanPlayerStation;
@@ -76,9 +77,22 @@ public class AlignRoutines {
             drive, poleSupplier, () -> FieldConstants.eventConstants.algaeOffset));
   }
 
+  public static Command positionToBargeAndScore(Drive drive, SuperStructure superStructure) {
+    return Commands.sequence(
+        positionToPoseUntilDone(drive, () -> Barge.get().shot.transformBy(new Transform2d(0, 0, Rotation2d.k180deg))),
+        superStructure.bargeShot());
+  }
+
   public static DriveToPoseCommand positionToPose(Drive drive, Supplier<Pose2d> targetSupplier) {
     return new DriveToPoseCommand(drive, false, targetSupplier);
   }
+
+  public static Command positionToPoseUntilDone(Drive drive, Supplier<Pose2d> targetSupplier) {
+    DriveToPoseCommand cmd = positionToPose(drive, targetSupplier);
+
+    return cmd.until(cmd.atSetpoint()).unless(cmd.atSetpoint());
+  }
+
 
   public static DrivePerpendicularToPoseCommand alignToPose(
       Drive drive, Supplier<Pose2d> targetSupplier, DoubleSupplier perpendicularInput) {
