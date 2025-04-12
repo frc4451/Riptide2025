@@ -15,7 +15,7 @@ public class ClimberConstants {
 
   public static final double moi = 1.0;
 
-  public static final double maxPositionInches = 3.0;
+  public static final double maxPositionInches = 2.5;
 
   public static final boolean invert = true;
   public static final double currentLimitAmps = 50.0;
