@@ -35,6 +35,7 @@ import frc.robot.field.ReefFaces;
 import frc.robot.subsystems.blinkin.Blinkin;
 import frc.robot.subsystems.blinkin.BlinkinIO;
 import frc.robot.subsystems.blinkin.BlinkinIOSim;
+import frc.robot.subsystems.blinkin.BlinkinIOSpark;
 import frc.robot.subsystems.blinkin.BlinkinState;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drive.Drive;
@@ -96,8 +97,7 @@ public class RobotContainer {
                 new ModuleIOSpark(3));
         quest = new Quest(new QuestIOReal());
 
-        // not attached to the robot yet
-        blinkin = new Blinkin(new BlinkinIO() {});
+        blinkin = new Blinkin(new BlinkinIOSpark() {});
         break;
 
       case SIM:
@@ -497,13 +497,18 @@ public class RobotContainer {
     // -- Coral --
     operatorController
         .leftTrigger()
+        .and(BobotState.humanPlayerShouldThrow().negate())
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
         .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
     operatorController
         .rightTrigger()
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.SHOOT))
-        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+        .onFalse(
+            Commands.either(
+                superStructure.setShooterModeCommand(ShooterModes.INTAKE),
+                superStructure.setShooterModeCommand(ShooterModes.NONE),
+                BobotState.humanPlayerShouldThrow().and(superStructure.isCoralIntaked().negate())));
 
     operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
     operatorController.start().onTrue(superStructure.setModeCommand(SuperStructureModes.L1Coral));
