@@ -79,7 +79,7 @@ public class AlignRoutines {
 
   public static Command positionToBargeAndScore(Drive drive, SuperStructure superStructure) {
     return Commands.sequence(
-        positionToPoseUntilDone(drive, () -> Barge.get().shot.transformBy(new Transform2d(0, 0, Rotation2d.k180deg))),
+        positionToPoseUntilDone(drive, () -> Barge.get().right.transformBy(new Transform2d(0, 0, Rotation2d.k180deg))),
         superStructure.bargeShot());
   }
 
