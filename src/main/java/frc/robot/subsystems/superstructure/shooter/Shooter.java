@@ -66,4 +66,12 @@ public class Shooter extends SingleRoller {
   public boolean isCoralDetected() {
     return coralSensor.isDetected();
   }
+
+  public boolean isCoralIntaking() {
+    return currentShooterMode == ShooterModes.INTAKE;
+  }
+
+  public boolean isNotShooting() {
+    return currentShooterMode == ShooterModes.NONE;
+  }
 }

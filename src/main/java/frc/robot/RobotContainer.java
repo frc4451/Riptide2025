@@ -240,8 +240,16 @@ public class RobotContainer {
       // to the human player station, taking some mental load off the drive team.
       BobotState.humanPlayerShouldThrow()
           .and(superStructure.isCoralIntaked().negate())
-          .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
-          .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+          .and(superStructure.isNotShooting())
+          .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE));
+
+      // Stop intaking when leaving HPS zone if there's no coral in the robot
+      BobotState.humanPlayerShouldThrow()
+          .negate()
+          .and(superStructure.isCoralIntaked().negate())
+          .and(superStructure.isCoralIntaking())
+          .and(operatorController.leftTrigger().negate()) // operator intake button
+          .onTrue(superStructure.setShooterModeCommand(ShooterModes.NONE));
 
       // Automatically stop intake & signal to drive team once the coral is in the robot.
       // This will mean the drive team's coral pick up loop will look like:
@@ -496,21 +504,25 @@ public class RobotContainer {
   }
 
   private void configureSuperBindings() {
+    Command turnOffShooter =
+        Commands.deferredProxy(
+            () ->
+                Commands.either(
+                    superStructure.setShooterModeCommand(ShooterModes.INTAKE),
+                    superStructure.setShooterModeCommand(ShooterModes.NONE),
+                    BobotState.humanPlayerShouldThrow()
+                        .and(superStructure.isCoralIntaked().negate())));
+
     // -- Coral --
     operatorController
         .leftTrigger()
-        .and(BobotState.humanPlayerShouldThrow().negate())
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.INTAKE))
-        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+        .onFalse(turnOffShooter);
 
     operatorController
         .rightTrigger()
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.SHOOT))
-        .onFalse(
-            Commands.either(
-                superStructure.setShooterModeCommand(ShooterModes.INTAKE),
-                superStructure.setShooterModeCommand(ShooterModes.NONE),
-                BobotState.humanPlayerShouldThrow().and(superStructure.isCoralIntaked().negate())));
+        .onFalse(turnOffShooter);
 
     operatorController.b().onTrue(superStructure.setModeCommand(SuperStructureModes.TUCKED));
     operatorController.start().onTrue(superStructure.setModeCommand(SuperStructureModes.L1Coral));
@@ -526,7 +538,7 @@ public class RobotContainer {
     operatorController
         .rightBumper()
         .onTrue(superStructure.setShooterModeCommand(ShooterModes.ALGAE_SHOOT))
-        .onFalse(superStructure.setShooterModeCommand(ShooterModes.NONE));
+        .onFalse(turnOffShooter);
 
     // spotless: off
     operatorController

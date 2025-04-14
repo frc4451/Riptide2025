@@ -254,6 +254,14 @@ public class SuperStructure extends SubsystemBase {
     return new Trigger(() -> shooter.isCoralDetected());
   }
 
+  public Trigger isCoralIntaking() {
+    return new Trigger(() -> shooter.isCoralIntaking());
+  }
+
+  public Trigger isNotShooting() {
+    return new Trigger(() -> shooter.isNotShooting());
+  }
+
   public boolean isL1Coral() {
     return isAtMode && currentMode == SuperStructureModes.L1Coral;
   }
