@@ -40,8 +40,18 @@ public class Quest extends VirtualSubsystem {
 
     Pose2d fieldToRobot = getFieldToRobot();
 
+    /*
+     * "Does the Quest leave the field?"
+     * 
+     * Check previous Global Pose and compare to the new compensated Quest pose.
+     */
+    double measuredPoseDelta = fieldToRobot.minus(BobotState.getGlobalPose()).getTranslation().getNorm();
+    boolean isPoseWithinTolerance =  measuredPoseDelta < QuestConstants.acceptableDistanceTolerance;
+
+    Logger.recordOutput("Oculus/IsPoseWithinTolerance", isPoseWithinTolerance);
+
     // // Only enable this when we know we're ready
-    // if (DriverStation.isEnabled() && isPoseReset && Constants.currentMode == Constants.Mode.REAL)
+    // if (DriverStation.isEnabled() && isPoseReset && isPoseWithinTolerance && Constants.currentMode == Constants.Mode.REAL)
     // {
     //   BobotState.offerQuestMeasurement(new TimestampedPose(fieldToRobot, inputs.timestamp));
     // }
