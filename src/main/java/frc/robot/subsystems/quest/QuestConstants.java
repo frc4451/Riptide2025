@@ -16,4 +16,18 @@ public class QuestConstants {
           Rotation2d.kCCW_90deg);
 
   public static final Matrix<N3, N1> stdDevs = VecBuilder.fill(0, 0, 0);
+
+  /**
+   * "Tolerance" for how far QuestNav should travel relative to the previous known Global Pose. This
+   * number will need to be tuned. However, we can guess that with the following math we should find
+   * the maximum wheel odometry travel distance and use that as our starting point.
+   *
+   * <p>maxSpeedMetersPerSec (4.4) / 1000 * 20 -> (0.088 meters / 3.465 inches) /robot loop.
+   *
+   * <p>Make sure to compensate for other robots pushing around.
+   *
+   * <p>This an incredibly hacky solution for checking if the headset somehow "teleports off the
+   * field" again.
+   */
+  public static final double acceptableDistanceTolerance = Units.inchesToMeters(4);
 }
