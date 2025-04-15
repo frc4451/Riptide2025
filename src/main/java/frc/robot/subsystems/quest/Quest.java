@@ -48,6 +48,7 @@ public class Quest extends VirtualSubsystem {
     double measuredPoseDelta = fieldToRobot.minus(BobotState.getGlobalPose()).getTranslation().getNorm();
     boolean isPoseWithinTolerance =  measuredPoseDelta < QuestConstants.acceptableDistanceTolerance;
 
+    Logger.recordOutput("Oculus/MeasuredPoseDelta", measuredPoseDelta);
     Logger.recordOutput("Oculus/IsPoseWithinTolerance", isPoseWithinTolerance);
 
     // // Only enable this when we know we're ready
