@@ -162,6 +162,8 @@ public class BobotState extends VirtualSubsystem {
       Logger.recordOutput(
           calcLogRoot + "Type", getCurrentAlignmentTracker().getClass().getSimpleName());
     }
+
+    Logger.recordOutput(logRoot + "OnAllianceSide", FieldUtils.onAllianceSide(globalPose, 0));
   }
 
   @Override
