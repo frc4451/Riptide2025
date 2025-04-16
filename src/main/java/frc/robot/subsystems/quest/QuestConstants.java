@@ -29,5 +29,5 @@ public class QuestConstants {
    * <p>This an incredibly hacky solution for checking if the headset somehow "teleports off the
    * field" again.
    */
-  public static final double acceptableDistanceTolerance = Units.inchesToMeters(4);
+  public static final double acceptableDistanceTolerance = Units.inchesToMeters(15);
 }
