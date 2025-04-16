@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.PoseUtils;
 import java.util.function.DoubleSupplier;
@@ -78,7 +79,9 @@ public class DriveParallellToPoseCommand extends Command {
     ChassisSpeeds speeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
             -perpendicularSpeed * translationalError.getAngle().getCos(),
-            parallelInput.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec(),
+            FieldUtils.getFlipped()
+                * parallelInput.getAsDouble()
+                * drive.getMaxLinearSpeedMetersPerSec(),
             angularSpeed,
             drive.getRotation());
 
