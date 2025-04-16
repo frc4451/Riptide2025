@@ -49,7 +49,7 @@ public enum EventConstants {
       Double.NaN,
       Transform2d.kZero,
       Transform2d.kZero),
-    WORLDS(
+  WORLDS(
       Units.inchesToMeters(-6.5),
       Units.inchesToMeters(6.5),
       Units.inchesToMeters(17.0),
