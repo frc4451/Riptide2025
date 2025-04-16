@@ -7,7 +7,7 @@
       "height": 744,
       "state": {
         "sidebar": {
-          "width": 500,
+          "width": 347,
           "expanded": [
             "/RealOutputs/Odometry/Robot/translation",
             "/RealOutputs/Odometry/Robot/rotation",
@@ -20,7 +20,6 @@
             "/AdvantageKit/Oculus/Pose/translation",
             "/AdvantageKit/Oculus/Pose",
             "/AdvantageKit/RealOutputs",
-            "/DriverStation/Joystick1",
             "/DriverStation/Joystick1/AxisValues",
             "/Drive/Module3/TurnPosition",
             "/Drive/Module1/TurnPosition",
@@ -42,7 +41,6 @@
             "/RealOutputs/Commands/DriveToPoseCommand/Error/rotation",
             "/RealOutputs/Commands/DriveToPoseCommand/Error/translation",
             "/RealOutputs/Superstructure/Algae/Pivot",
-            "/Superstructure/Shooter/CoralSensor",
             "/RealOutputs/Superstructure/Shooter/CoralSensor",
             "/RealOutputs/Superstructure/CoralSensor",
             "/RealOutputs/Faces",
@@ -99,12 +97,9 @@
             "/AprilTagCamera/RearLeft/ValidAprilTagPoses/0",
             "/AprilTagCamera/RearLeft/ValidPoseObservations/1",
             "/Oculus/QuestPose/rotation",
-            "/RealOutputs/Odometry/Choreo/Sample/PoseError",
             "/Oculus/RawPose/rotation",
             "/Oculus/Pose",
-            "/RealOutputs/Commands/DrivePerpendicularToPoseCommand/targetPose",
             "/RealOutputs/Commands/DrivePerpendicularToPoseCommand/targetPose/translation",
-            "/RealOutputs/Commands/DriveToPoseCommand/TargetPose",
             "/RealOutputs/Commands/DriveToPoseCommand/TargetPose/translation",
             "/RealOutputs/Superstructure/Climber",
             "/RealOutputs/Superstructure/Climber/Mechanism2d",
@@ -127,19 +122,28 @@
             "/AdvantageKit/Drive/Gyro/YawPosition",
             "/AdvantageKit",
             "/questnav",
-            "/RealOutputs/Odometry/Choreo",
             "/RealOutputs/Odometry/Choreo/Sample",
             "/RealOutputs/Climber/Winch/Profile/GoalInches",
             "/RealOutputs/Climber/Winch/Profile/SetpointInches",
-            "/RealOutputs/Climber/Winch",
             "/Climber/Tray",
-            "/Climber/Hook",
             "/RealOutputs/BobotState/CurrentAlignment",
-            "/Climber"
+            "/RealOutputs/Quest/FieldToRobot",
+            "/RealOutputs/Quest/FieldToRobot/translation",
+            "/Climber/Hook",
+            "/RealOutputs/SwerveChassisSpeeds/Measured",
+            "/RealOutputs/SwerveChassisSpeeds/Setpoints",
+            "/RealOutputs/Commands/DriveToPoseCommand/TargetPose",
+            "/RealOutputs",
+            "/RealOutputs/Odometry/Choreo",
+            "/RealOutputs/Superstructure/Shooter",
+            "/RealOutputs/Blinkin/CurrentState",
+            "/RealOutputs/Blinkin/CurrentState/Pattern",
+            "/RealOutputs/Commands",
+            "/RealOutputs/Commands/DriveToPoseCommand"
           ]
         },
         "tabs": {
-          "selected": 9,
+          "selected": 5,
           "tabs": [
             {
               "type": 0,
@@ -179,26 +183,30 @@
                     "type": "alerts",
                     "logKey": "/RealOutputs/Alerts",
                     "logType": "Alerts",
-                    "visible": true,
+                    "visible": false,
                     "options": {}
                   },
                   {
                     "type": "alerts",
                     "logKey": "/RealOutputs/Choreo Alerts",
                     "logType": "Alerts",
-                    "visible": true,
+                    "visible": false,
                     "options": {}
                   }
                 ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
-                  "type": null,
-                  "factor": 1
+                  "type": "length",
+                  "factor": 1,
+                  "from": "meters",
+                  "to": "inches"
                 },
                 "rightUnitConversion": {
-                  "type": null,
-                  "factor": 1
+                  "type": "angle",
+                  "factor": 1,
+                  "from": "radians",
+                  "to": "degrees"
                 },
                 "leftFilter": 0,
                 "rightFilter": 0
@@ -300,7 +308,7 @@
                     "type": "ghost",
                     "logKey": "/RealOutputs/Quest/FieldToRobot",
                     "logType": "Pose2d",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#00ffff"
                     }
@@ -360,6 +368,43 @@
                     "options": {
                       "color": "#ffff00"
                     }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "/RealOutputs/Odometry/Choreo/Trajectory",
+                    "logType": "Pose2d[]",
+                    "visible": false,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Commands/DriveToPoseCommand/TargetPose",
+                    "logType": "Pose2d",
+                    "visible": false,
+                    "options": {
+                      "color": "#0000ff"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Commands/DriveParallellToPoseCommand/targetPose",
+                    "logType": "Pose2d",
+                    "visible": false,
+                    "options": {
+                      "color": "#ffff00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Commands/DriveToPoseCommand/Target",
+                    "logType": "Pose2d",
+                    "visible": false,
+                    "options": {
+                      "color": "#ffff00"
+                    }
                   }
                 ],
                 "game": "2025 Field (Welded)",
@@ -370,7 +415,148 @@
               },
               "controllerUUID": "mjyz650skeqo2f2dik2aa5t9deaiiwov",
               "renderer": null,
-              "controlsHeight": 246
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Shooter",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/Superstructure/Shooter/AppliedVoltage",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/RealOutputs/Superstructure/Shooter/ShooterMode",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "etpehxccn43ep91brcpv22q24fa928gw",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [],
+                "rightSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "/Oculus/Connected",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "adyoq1ak1im1f2775xsxjt7zufynqj9y",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "/RealOutputs/Odometry/Robot",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "Crab Bot"
+                    }
+                  },
+                  {
+                    "type": "mechanism",
+                    "logKey": "/RealOutputs/Superstructure/Measured/Mechanism2d",
+                    "logType": "Mechanism2d",
+                    "visible": true,
+                    "options": {}
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "/RealOutputs/Odometry/Choreo/Sample/Pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2025 KitBot",
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "/RealOutputs/Odometry/Choreo/Trajectory",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "game": "2025 Field (Welded)",
+                "origin": "blue"
+              },
+              "controllerUUID": "2o2bfnoao6lm5jb9zgzaosvphiodkmoq",
+              "renderer": {
+                "cameraIndex": -2,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  0.6984860602364528,
+                  2.9861977003677738,
+                  1.5099288361070977
+                ],
+                "cameraTarget": [
+                  0,
+                  0.5,
+                  0
+                ]
+              },
+              "controlsHeight": 304
             },
             {
               "type": 1,
@@ -381,7 +567,7 @@
                     "type": "stepped",
                     "logKey": "/RealOutputs/Odometry/Choreo/Sample/Pose/translation/x",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
@@ -391,7 +577,7 @@
                     "type": "stepped",
                     "logKey": "/RealOutputs/Odometry/Robot/translation/x",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#af2437",
                       "size": "normal"
@@ -401,7 +587,7 @@
                     "type": "stepped",
                     "logKey": "/RealOutputs/Odometry/Robot/translation/y",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e5b31b",
                       "size": "normal"
@@ -413,7 +599,7 @@
                     "type": "stepped",
                     "logKey": "/Drive/Gyro/YawPosition/value",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e48b32",
                       "size": "normal"
@@ -437,6 +623,72 @@
                 "rightFilter": 0
               },
               "controllerUUID": "47y823kyi3m9c1w8au1ekb2ja2dstzvk",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "DriveToPose",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Odometry/Robot/translation/x",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Commands/DriveToPoseCommand/TargetPose/translation/x",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Odometry/Robot/translation/y",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "/RealOutputs/Commands/DriveToPoseCommand/TargetPose/translation/y",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "rightUnitConversion": {
+                  "type": null,
+                  "factor": 1
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "bcz847k0sdd0pjb68n1y0v49ghzl7tbc",
               "renderer": null,
               "controlsHeight": 200
             },
@@ -494,68 +746,6 @@
               },
               "controllerUUID": "v37eeehsgzbted5hhhunxjup58fpfqi5",
               "renderer": null,
-              "controlsHeight": 200
-            },
-            {
-              "type": 3,
-              "title": "3D Field",
-              "controller": {
-                "sources": [
-                  {
-                    "type": "robot",
-                    "logKey": "/RealOutputs/Odometry/Robot",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "Duck Bot"
-                    }
-                  },
-                  {
-                    "type": "mechanism",
-                    "logKey": "/RealOutputs/Superstructure/Measured/Mechanism2d",
-                    "logType": "Mechanism2d",
-                    "visible": true,
-                    "options": {}
-                  },
-                  {
-                    "type": "ghost",
-                    "logKey": "/RealOutputs/Odometry/Choreo/Sample/Pose",
-                    "logType": "Pose2d",
-                    "visible": true,
-                    "options": {
-                      "model": "2025 KitBot",
-                      "color": "#00ff00"
-                    }
-                  },
-                  {
-                    "type": "trajectory",
-                    "logKey": "/RealOutputs/Odometry/Choreo/Trajectory",
-                    "logType": "Pose2d[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ff00",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "game": "2025 Field (Welded)",
-                "origin": "blue"
-              },
-              "controllerUUID": "2o2bfnoao6lm5jb9zgzaosvphiodkmoq",
-              "renderer": {
-                "cameraIndex": -2,
-                "orbitFov": 50,
-                "cameraPosition": [
-                  0.36393416040723003,
-                  1.6097999706905348,
-                  -5.148995645710405
-                ],
-                "cameraTarget": [
-                  0.038963147278255485,
-                  0.35128748316009545,
-                  -1.0102239957998504
-                ]
-              },
               "controlsHeight": 200
             },
             {
@@ -651,7 +841,7 @@
               },
               "controllerUUID": "417z0xxcifc863il48q5kr6323qbrs2j",
               "renderer": null,
-              "controlsHeight": 301
+              "controlsHeight": 390
             },
             {
               "type": 1,
@@ -727,7 +917,7 @@
               },
               "controllerUUID": "iuwq3g6af4s24bpzalaltdqhf0bb61mr",
               "renderer": null,
-              "controlsHeight": 205
+              "controlsHeight": 355
             },
             {
               "type": 1,
