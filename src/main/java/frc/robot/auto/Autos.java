@@ -25,7 +25,7 @@ public class Autos {
   private final Drive drive;
   private final SuperStructure superStructure;
 
-  //   private final AutoRoutine callahan;
+  //private final AutoRoutine callahan;
 
   public Autos(Drive drive, SuperStructure superStructure) {
     this.drive = drive;
@@ -228,6 +228,7 @@ public class Autos {
             Commands.sequence(
                 logRoutine("Ethan"),
                 // L4
+                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
                 prepAndGo(routine.trajectory(ChoreoPaths.START_LEFT_TO_IL4_NO_STOP.name)),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
