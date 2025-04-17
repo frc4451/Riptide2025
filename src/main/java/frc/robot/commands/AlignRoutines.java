@@ -21,9 +21,9 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 public class AlignRoutines {
-  public static final double distanceShootTolerance = Units.inchesToMeters(0.5);
+  public static final double distanceShootTolerance = Units.inchesToMeters(0.4);
   public static final double rotationShootTolerance = Units.degreesToRadians(1);
-  public static final double velocityTolerance = 0.2;
+  public static final double velocityTolerance = 0.15;
 
   public static DriveToPoseCommand positionToPole(
       Drive drive, Supplier<ReefPole> pole, DoubleSupplier reefOffsetMeters) {
