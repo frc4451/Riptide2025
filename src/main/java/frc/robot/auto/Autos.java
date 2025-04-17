@@ -25,15 +25,11 @@ public class Autos {
   private final Drive drive;
   private final SuperStructure superStructure;
 
-  // private final AutoRoutine callahan;
-
   public Autos(Drive drive, SuperStructure superStructure) {
     this.drive = drive;
     this.superStructure = superStructure;
 
     drive.autoFactory.bind("L4", superStructure.setModeCommand(SuperStructureModes.L4Coral));
-
-    // this.callahan = drive.autoFactory.newRoutine("Callahan");
   }
 
   // Routines
@@ -166,6 +162,19 @@ public class Autos {
   public AutoRoutine callahan() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Callahan");
 
+    AutoTrajectory START_RIGHT_TO_FL4_NO_STOP =
+        routine.trajectory(ChoreoPaths.START_RIGHT_TO_FL4_NO_STOP.name);
+    AutoTrajectory FL4_TO_HPS_RIGHT_NO_STOP =
+        routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT_NO_STOP.name);
+    AutoTrajectory HPS_RIGHT_TO_CL4_NO_STOP =
+        routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4_NO_STOP.name);
+    AutoTrajectory CL4_TO_HPS_RIGHT_NO_STOP =
+        routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT_NO_STOP.name);
+    AutoTrajectory HPS_RIGHT_TO_DL4_NO_STOP =
+        routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_DL4_NO_STOP.name);
+    AutoTrajectory DL4_TO_HPS_RIGHT_NO_STOP =
+        routine.trajectory(ChoreoPaths.DL4_TO_HPS_RIGHT_NO_STOP.name);
+
     routine
         .active()
         .onTrue(
@@ -173,7 +182,7 @@ public class Autos {
                 logRoutine("Callahan"),
                 // L4
                 superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
-                prepAndGo(routine.trajectory(ChoreoPaths.START_RIGHT_TO_FL4_NO_STOP.name)),
+                prepAndGo(START_RIGHT_TO_FL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
@@ -181,13 +190,13 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT_NO_STOP.name)),
+                delayedTuckAndGo(FL4_TO_HPS_RIGHT_NO_STOP),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(
                         drive, () -> HumanPlayerStations.RIGHT.get())),
                 // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4_NO_STOP.name)),
+                prepAndGo(HPS_RIGHT_TO_CL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
@@ -195,13 +204,13 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.CL4_TO_HPS_RIGHT_NO_STOP.name)),
+                delayedTuckAndGo(CL4_TO_HPS_RIGHT_NO_STOP),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(
                         drive, () -> HumanPlayerStations.RIGHT.get())),
                 // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_DL4_NO_STOP.name)),
+                prepAndGo(HPS_RIGHT_TO_DL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
@@ -209,7 +218,7 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.DL4_TO_HPS_RIGHT_NO_STOP.name)),
+                delayedTuckAndGo(DL4_TO_HPS_RIGHT_NO_STOP),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.RIGHT.get()))
@@ -222,6 +231,19 @@ public class Autos {
   public AutoRoutine ethan() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Ethan");
 
+    AutoTrajectory START_LEFT_TO_IL4_NO_STOP =
+        routine.trajectory(ChoreoPaths.START_LEFT_TO_IL4_NO_STOP.name);
+    AutoTrajectory IL4_TO_HPS_LEFT_NO_STOP =
+        routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT_NO_STOP.name);
+    AutoTrajectory HPS_LEFT_TO_LL4_NO_STOP =
+        routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4_NO_STOP.name);
+    AutoTrajectory LL4_TO_HPS_LEFT_NO_STOP =
+        routine.trajectory(ChoreoPaths.LL4_TO_HPS_LEFT_NO_STOP.name);
+    AutoTrajectory HPS_LEFT_TO_KL4_NO_STOP =
+        routine.trajectory(ChoreoPaths.HPS_LEFT_TO_KL4_NO_STOP.name);
+    AutoTrajectory KL4_TO_HPS_LEFT_NO_STOP =
+        routine.trajectory(ChoreoPaths.KL4_TO_HPS_LEFT_NO_STOP.name);
+
     routine
         .active()
         .onTrue(
@@ -229,7 +251,7 @@ public class Autos {
                 logRoutine("Ethan"),
                 // L4
                 superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
-                prepAndGo(routine.trajectory(ChoreoPaths.START_LEFT_TO_IL4_NO_STOP.name)),
+                prepAndGo(START_LEFT_TO_IL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
@@ -237,12 +259,12 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT_NO_STOP.name)),
+                delayedTuckAndGo(IL4_TO_HPS_LEFT_NO_STOP),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get())),
                 // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4_NO_STOP.name)),
+                prepAndGo(HPS_LEFT_TO_LL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
@@ -250,12 +272,12 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.LL4_TO_HPS_LEFT_NO_STOP.name)),
+                delayedTuckAndGo(LL4_TO_HPS_LEFT_NO_STOP),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get())),
                 // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.HPS_LEFT_TO_KL4_NO_STOP.name)),
+                prepAndGo(HPS_LEFT_TO_KL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
@@ -263,7 +285,7 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
-                delayedTuckAndGo(routine.trajectory(ChoreoPaths.KL4_TO_HPS_LEFT_NO_STOP.name)),
+                delayedTuckAndGo(KL4_TO_HPS_LEFT_NO_STOP),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get()))
@@ -275,13 +297,15 @@ public class Autos {
   public AutoRoutine algae() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Algae");
 
+    AutoTrajectory START_MID_TO_GL4 = routine.trajectory(ChoreoPaths.START_MID_TO_GL4.name);
+
     routine
         .active()
         .onTrue(
             Commands.sequence(
                 logRoutine("Algae"),
                 // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.START_MID_TO_GL4.name)),
+                prepAndGo(START_MID_TO_GL4),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
@@ -308,13 +332,15 @@ public class Autos {
   public AutoRoutine algaeTwo() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Algae 2");
 
+    AutoTrajectory START_MID_TO_GL4 = routine.trajectory(ChoreoPaths.START_MID_TO_GL4.name);
+
     routine
         .active()
         .onTrue(
             Commands.sequence(
                 logRoutine("Algae 2"),
                 // L4
-                prepAndGo(routine.trajectory(ChoreoPaths.START_MID_TO_GL4.name)),
+                prepAndGo(START_MID_TO_GL4),
                 superStructure.setModeCommand(SuperStructureModes.L4Coral),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
