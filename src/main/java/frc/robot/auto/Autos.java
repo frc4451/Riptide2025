@@ -25,11 +25,15 @@ public class Autos {
   private final Drive drive;
   private final SuperStructure superStructure;
 
+  //   private final AutoRoutine callahan;
+
   public Autos(Drive drive, SuperStructure superStructure) {
     this.drive = drive;
     this.superStructure = superStructure;
 
     drive.autoFactory.bind("L4", superStructure.setModeCommand(SuperStructureModes.L4Coral));
+
+    // this.callahan = drive.autoFactory.newRoutine("Callahan");
   }
 
   // Routines
@@ -168,6 +172,7 @@ public class Autos {
             Commands.sequence(
                 logRoutine("Callahan"),
                 // L4
+                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
                 prepAndGo(routine.trajectory(ChoreoPaths.START_RIGHT_TO_FL4_NO_STOP.name)),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
@@ -210,6 +215,7 @@ public class Autos {
                     AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.RIGHT.get()))
                 //
                 ));
+
     return routine;
   }
 
@@ -367,13 +373,14 @@ public class Autos {
 
   // Helpers
   private Command followTrajectory(AutoTrajectory trajectory) {
-    return Commands.sequence(
+    return Commands.parallel(
         Commands.runOnce(
             () ->
                 Logger.recordOutput(
                     "Odometry/Choreo/Trajectory", trajectory.getRawTrajectory().getPoses())),
-        trajectory.cmd(),
-        Commands.runOnce(() -> drive.runVelocity(new ChassisSpeeds()), drive));
+        Commands.sequence(
+            trajectory.cmd(),
+            Commands.runOnce(() -> drive.runVelocity(new ChassisSpeeds()), drive)));
   }
 
   private Command resetOdometry(AutoTrajectory trajectory) {
