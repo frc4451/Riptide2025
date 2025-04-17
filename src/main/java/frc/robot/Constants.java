@@ -26,7 +26,7 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
-  public static final DriverControl driverControl = DriverControl.ALIGN;
+  public static final DriverControl driverControl = DriverControl.FREE;
 
   public static enum Mode {
     /** Running on a real robot. */
