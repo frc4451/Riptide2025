@@ -38,7 +38,7 @@ public class DriveConstants {
   // When calibrating, hold the metal bar to each wheel,
   // using the flat side (without gear) to the right of the robot
   public static final Rotation2d frontLeftZeroRotation =
-      new Rotation2d(Constants.isGuido ? -1.5332492033587857 : 0.0);
+      new Rotation2d(Constants.isGuido ? -1.5332492033587857 : -1.9194672743426724);
   public static final Rotation2d frontRightZeroRotation =
       new Rotation2d(Constants.isGuido ? -3.137842957173483 : 1.587 + Math.PI);
   public static final Rotation2d backLeftZeroRotation =
