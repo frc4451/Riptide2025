@@ -59,8 +59,7 @@ public class Autos {
         drive.autoFactory.trajectoryCmd(ChoreoPaths.HPS_LEFT_TO_KL4_NO_STOP.name);
     var KL4_TO_HPS_LEFT_NO_STOP =
         drive.autoFactory.trajectoryCmd(ChoreoPaths.KL4_TO_HPS_LEFT_NO_STOP.name);
-    var START_MID_TO_GL4 =
-        drive.autoFactory.trajectoryCmd(ChoreoPaths.START_MID_TO_GL4.name);
+    var START_MID_TO_GL4 = drive.autoFactory.trajectoryCmd(ChoreoPaths.START_MID_TO_GL4.name);
   }
 
   // Routines
@@ -212,7 +211,6 @@ public class Autos {
             Commands.sequence(
                 logRoutine("Callahan"),
                 // L4
-                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
                 prepAndGo(START_RIGHT_TO_FL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
@@ -281,7 +279,6 @@ public class Autos {
             Commands.sequence(
                 logRoutine("Ethan"),
                 // L4
-                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
                 prepAndGo(START_LEFT_TO_IL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
