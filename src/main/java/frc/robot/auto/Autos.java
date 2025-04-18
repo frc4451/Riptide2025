@@ -361,7 +361,6 @@ public class Autos {
                 // Grab Algae
                 followTrajectory(BARGE_IJ),
                 superStructure.setModeCommand(SuperStructureModes.L3Algae),
-                
                 backupForAlgae(() -> ReefFaces.IJ.get().center, SuperStructureModes.L3Algae),
                 AlignRoutines.positionToPoleAndAlgae(
                     drive,
