@@ -163,10 +163,10 @@ public class RobotContainer {
     autoChooser.addRoutine("Allred L2", autos::allredL2);
     autoChooser.addRoutine("AllRight L4", autos::allRightL4);
     autoChooser.addRoutine("AllLeft L4", autos::allLeftL4);
-    autoChooser.addRoutine("Ethan", () -> autos.ethan);
-    autoChooser.addRoutine("Callahan", () -> autos.callahan);
+    autoChooser.addRoutine("Ethan", autos::ethan);
+    autoChooser.addRoutine("Callahan", autos::callahan);
     autoChooser.addRoutine("Algae", autos::algae);
-    autoChooser.addRoutine("Algae 2", () -> autos.algaeTwo);
+    autoChooser.addRoutine("Algae 2", autos::algaeTwo);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
   }
