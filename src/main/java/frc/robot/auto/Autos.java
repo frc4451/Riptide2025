@@ -181,6 +181,7 @@ public class Autos {
             Commands.sequence(
                 logRoutine("Callahan"),
                 // L4
+                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
                 prepAndGo(START_RIGHT_TO_FL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
@@ -249,6 +250,7 @@ public class Autos {
             Commands.sequence(
                 logRoutine("Ethan"),
                 // L4
+                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
                 prepAndGo(START_LEFT_TO_IL4_NO_STOP),
                 AlignRoutines.positionToPoleAndScore(
                     drive,
@@ -355,7 +357,7 @@ public class Autos {
                 backupForBarge(() -> ReefFaces.GH.get().center),
                 // Score Algae
                 AlignRoutines.positionToBargeAndScore(drive, superStructure),
-                superStructure.setModeAndWaitCommand(SuperStructureModes.TUCKED_L4),
+                Commands.waitUntil(superStructure.belowHeight(SuperStructureModes.L3Coral.elevatorHeightInches)),
                 // Grab Algae
                 backupForAlgae(() -> ReefFaces.IJ.get().center, SuperStructureModes.L3Algae),
                 AlignRoutines.positionToPoleAndAlgae(

@@ -237,6 +237,10 @@ public class SuperStructure extends SubsystemBase {
     return Commands.sequence(setModeCommand(mode), Commands.waitUntil(isAtMode()));
   }
 
+  public Trigger belowHeight(double heightInches) {
+    return new Trigger(() -> elevator.getHeightInches() <= heightInches);
+  }
+
   public Command shootCoral() {
     return Commands.sequence(
         setShooterModeCommand(ShooterModes.SHOOT),
