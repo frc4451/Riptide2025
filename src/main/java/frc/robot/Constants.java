@@ -28,7 +28,7 @@ public final class Constants {
 
   public static final DriverControl driverControl = DriverControl.ALIGN;
 
-  public static final double loopOverrunWarningTimout = 1;
+  public static final double loopOverrunWarningTimoutSeconds = 1;
 
   public static enum Mode {
     /** Running on a real robot. */
