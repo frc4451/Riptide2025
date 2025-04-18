@@ -357,8 +357,6 @@ public class Autos {
                 backupForBarge(() -> ReefFaces.GH.get().center),
                 // Score Algae
                 AlignRoutines.positionToBargeAndScore(drive, superStructure),
-                Commands.waitUntil(
-                    superStructure.belowHeight(SuperStructureModes.L3Coral.elevatorHeightInches)),
                 // Grab Algae
                 backupForAlgae(() -> ReefFaces.IJ.get().center, SuperStructureModes.L3Algae),
                 AlignRoutines.positionToPoleAndAlgae(
