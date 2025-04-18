@@ -159,7 +159,9 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine callahan() {
+  public final AutoRoutine callahan = callahan();
+
+  private AutoRoutine callahan() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Callahan");
 
     AutoTrajectory START_RIGHT_TO_FL4_NO_STOP =
@@ -228,7 +230,9 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine ethan() {
+  public final AutoRoutine ethan = ethan();
+
+  private AutoRoutine ethan() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Ethan");
 
     AutoTrajectory START_LEFT_TO_IL4_NO_STOP =
@@ -329,7 +333,9 @@ public class Autos {
     return routine;
   }
 
-  public AutoRoutine algaeTwo() {
+  public final AutoRoutine algaeTwo = algaeTwo();
+
+  private AutoRoutine algaeTwo() {
     AutoRoutine routine = drive.autoFactory.newRoutine("Algae 2");
 
     AutoTrajectory START_MID_TO_GL4 = routine.trajectory(ChoreoPaths.START_MID_TO_GL4.name);
