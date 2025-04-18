@@ -164,8 +164,8 @@ public class Autos {
 
     AutoTrajectory START_RIGHT_TO_FL4_NO_STOP =
         routine.trajectory(ChoreoPaths.START_RIGHT_TO_FL4_NO_STOP.name);
-    AutoTrajectory FL4_TO_HPS_RIGHT_NO_STOP =
-        routine.trajectory(ChoreoPaths.FL4_TO_HPS_RIGHT_NO_STOP.name);
+    AutoTrajectory EL4_TO_HPS_RIGHT_NO_STOP =
+        routine.trajectory(ChoreoPaths.EL4_TO_HPS_RIGHT_NO_STOP.name);
     AutoTrajectory HPS_RIGHT_TO_CL4_NO_STOP =
         routine.trajectory(ChoreoPaths.HPS_RIGHT_TO_CL4_NO_STOP.name);
     AutoTrajectory CL4_TO_HPS_RIGHT_NO_STOP =
@@ -190,7 +190,7 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
-                delayedTuckAndGo(FL4_TO_HPS_RIGHT_NO_STOP),
+                delayedTuckAndGo(EL4_TO_HPS_RIGHT_NO_STOP),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(
@@ -233,8 +233,8 @@ public class Autos {
 
     AutoTrajectory START_LEFT_TO_IL4_NO_STOP =
         routine.trajectory(ChoreoPaths.START_LEFT_TO_IL4_NO_STOP.name);
-    AutoTrajectory IL4_TO_HPS_LEFT_NO_STOP =
-        routine.trajectory(ChoreoPaths.IL4_TO_HPS_LEFT_NO_STOP.name);
+    AutoTrajectory JL4_TO_HPS_LEFT_NO_STOP =
+        routine.trajectory(ChoreoPaths.JL4_TO_HPS_LEFT_NO_STOP.name);
     AutoTrajectory HPS_LEFT_TO_LL4_NO_STOP =
         routine.trajectory(ChoreoPaths.HPS_LEFT_TO_LL4_NO_STOP.name);
     AutoTrajectory LL4_TO_HPS_LEFT_NO_STOP =
@@ -259,7 +259,7 @@ public class Autos {
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
-                delayedTuckAndGo(IL4_TO_HPS_LEFT_NO_STOP),
+                delayedTuckAndGo(JL4_TO_HPS_LEFT_NO_STOP),
                 Commands.deadline(
                     superStructure.intake(),
                     AlignRoutines.positionToHPSCenter(drive, () -> HumanPlayerStations.LEFT.get())),
@@ -357,7 +357,8 @@ public class Autos {
                 backupForBarge(() -> ReefFaces.GH.get().center),
                 // Score Algae
                 AlignRoutines.positionToBargeAndScore(drive, superStructure),
-                Commands.waitUntil(superStructure.belowHeight(SuperStructureModes.L3Coral.elevatorHeightInches)),
+                Commands.waitUntil(
+                    superStructure.belowHeight(SuperStructureModes.L3Coral.elevatorHeightInches)),
                 // Grab Algae
                 backupForAlgae(() -> ReefFaces.IJ.get().center, SuperStructureModes.L3Algae),
                 AlignRoutines.positionToPoleAndAlgae(
