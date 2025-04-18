@@ -186,7 +186,7 @@ public class Autos {
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
-                    () -> ReefFaces.EF.get().rightPole,
+                    () -> ReefFaces.EF.get().leftPole,
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
@@ -255,7 +255,7 @@ public class Autos {
                 AlignRoutines.positionToPoleAndScore(
                     drive,
                     superStructure,
-                    () -> ReefFaces.IJ.get().leftPole,
+                    () -> ReefFaces.IJ.get().rightPole,
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // HPS
                 superStructure.setModeCommand(SuperStructureModes.TUCKED_L4),
