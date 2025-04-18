@@ -30,6 +30,37 @@ public class Autos {
     this.superStructure = superStructure;
 
     drive.autoFactory.bind("L4", superStructure.setModeCommand(SuperStructureModes.L4Coral));
+
+    loadTrajectories();
+  }
+
+  private void loadTrajectories() {
+    var START_RIGHT_TO_FL4_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.START_RIGHT_TO_FL4_NO_STOP.name);
+    var EL4_TO_HPS_RIGHT_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.EL4_TO_HPS_RIGHT_NO_STOP.name);
+    var HPS_RIGHT_TO_CL4_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.HPS_RIGHT_TO_CL4_NO_STOP.name);
+    var CL4_TO_HPS_RIGHT_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.CL4_TO_HPS_RIGHT_NO_STOP.name);
+    var HPS_RIGHT_TO_DL4_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.HPS_RIGHT_TO_DL4_NO_STOP.name);
+    var DL4_TO_HPS_RIGHT_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.DL4_TO_HPS_RIGHT_NO_STOP.name);
+    var START_LEFT_TO_IL4_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.START_LEFT_TO_IL4_NO_STOP.name);
+    var JL4_TO_HPS_LEFT_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.JL4_TO_HPS_LEFT_NO_STOP.name);
+    var HPS_LEFT_TO_LL4_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.HPS_LEFT_TO_LL4_NO_STOP.name);
+    var LL4_TO_HPS_LEFT_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.LL4_TO_HPS_LEFT_NO_STOP.name);
+    var HPS_LEFT_TO_KL4_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.HPS_LEFT_TO_KL4_NO_STOP.name);
+    var KL4_TO_HPS_LEFT_NO_STOP =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.KL4_TO_HPS_LEFT_NO_STOP.name);
+    var START_MID_TO_GL4 =
+        drive.autoFactory.trajectoryCmd(ChoreoPaths.START_MID_TO_GL4.name);
   }
 
   // Routines
