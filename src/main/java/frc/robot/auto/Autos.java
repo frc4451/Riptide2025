@@ -333,6 +333,7 @@ public class Autos {
     AutoRoutine routine = drive.autoFactory.newRoutine("Algae 2");
 
     AutoTrajectory START_MID_TO_GL4 = routine.trajectory(ChoreoPaths.START_MID_TO_GL4.name);
+    AutoTrajectory BARGE_IJ = routine.trajectory(ChoreoPaths.BARGE_IJ.name);
 
     routine
         .active()
@@ -348,6 +349,7 @@ public class Autos {
                     () -> ReefFaces.GH.get().leftPole,
                     () -> FieldConstants.eventConstants.l4ReefOffset),
                 // Grab Algae
+                followTrajectory(BARGE_IJ),
                 backupForAlgae(() -> ReefFaces.GH.get().center, SuperStructureModes.L2Algae),
                 AlignRoutines.positionToPoleAndAlgae(
                     drive,
@@ -358,6 +360,7 @@ public class Autos {
                 // Score Algae
                 AlignRoutines.positionToBargeAndScore(drive, superStructure),
                 // Grab Algae
+                
                 backupForAlgae(() -> ReefFaces.IJ.get().center, SuperStructureModes.L3Algae),
                 AlignRoutines.positionToPoleAndAlgae(
                     drive,

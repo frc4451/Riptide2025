@@ -66,6 +66,8 @@ public enum ChoreoPaths {
   HPS_LEFT_TO_KL4_NO_STOP("HPSLeft-KL4-NoStop"),
   HPS_LEFT_TO_LL4("HPSLeft-LL4"),
   HPS_LEFT_TO_LL4_NO_STOP("HPSLeft-LL4-NoStop"),
+
+  BARGE_IJ("Barge-IJ"),
 //
 ;
 
