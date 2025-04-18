@@ -14,6 +14,7 @@ public enum ChoreoPaths {
 
   // Start Mid to ___
   START_MID_TO_GL4("StartMid-GL4"),
+  START_MID_TO_GL4_NO_STOP("StartMid-GL4-NoStop"),
   START_MID_TO_HL4("StartMid-HL4"),
 
   // Start Bottom to ___
