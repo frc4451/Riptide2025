@@ -56,6 +56,10 @@ public class Elevator extends FollowRollers {
     return MathUtil.isNear(getHeightInches(), heightInches, isNearToleranceInches);
   }
 
+  public boolean isAbove(double heightInches) {
+    return getHeightInches() >= heightInches;
+  }
+
   public boolean atGoal() {
     return isNear(inputs.positionGoalRotations * inchesPerRotation);
   }
