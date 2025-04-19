@@ -21,7 +21,7 @@ public class HumanPlayerStation {
         tagPose.transformBy(
             new Transform2d(
                 FieldConstants.eventConstants.hpsOffset,
-                -FieldConstants.eventConstants.hpsSideOffset,
+                FieldConstants.eventConstants.hpsSideOffset,
                 Rotation2d.kZero));
 
     this.center =
@@ -32,7 +32,7 @@ public class HumanPlayerStation {
         tagPose.transformBy(
             new Transform2d(
                 FieldConstants.eventConstants.hpsOffset,
-                FieldConstants.eventConstants.hpsSideOffset,
+                -FieldConstants.eventConstants.hpsSideOffset,
                 Rotation2d.kZero));
   }
 

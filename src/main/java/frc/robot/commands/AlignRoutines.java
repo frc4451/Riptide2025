@@ -122,7 +122,7 @@ public class AlignRoutines {
   }
 
   public static Command positionToHPSCenter(Drive drive, Supplier<HumanPlayerStation> hps) {
-    return new DriveToPoseCommand(drive, false, () -> hps.get().center);
+    return new DriveToPoseCommand(drive, false, () -> hps.get().left);
   }
 
   public static Command positionToHPSClosest(Drive drive, Supplier<HumanPlayerStation> hps) {
