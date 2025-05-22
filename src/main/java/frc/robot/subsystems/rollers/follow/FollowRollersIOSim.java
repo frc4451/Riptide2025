@@ -64,7 +64,8 @@ public class FollowRollersIOSim implements FollowRollersIO {
       setVolts(feedforward + feedback);
     }
 
-    inputs.connected = true;
+    inputs.leaderConnected = true;
+    inputs.followerConnected = true;
     leader.update(Constants.loopPeriodSecs);
 
     inputs.leaderPositionRotations = leader.getAngularPositionRotations();

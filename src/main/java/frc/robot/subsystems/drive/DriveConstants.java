@@ -38,13 +38,13 @@ public class DriveConstants {
   // When calibrating, hold the metal bar to each wheel,
   // using the flat side (without gear) to the right of the robot
   public static final Rotation2d frontLeftZeroRotation =
-      new Rotation2d(Constants.isGuido ? -1.5332492033587857 : 1.422 + Math.PI);
+      new Rotation2d(Constants.isGuido ? -1.5332492033587857 : -1.9194672743426724);
   public static final Rotation2d frontRightZeroRotation =
       new Rotation2d(Constants.isGuido ? -3.137842957173483 : 1.587 + Math.PI);
   public static final Rotation2d backLeftZeroRotation =
       new Rotation2d(Constants.isGuido ? -3.138901297246115 : 5.186 + Math.PI);
   public static final Rotation2d backRightZeroRotation =
-      new Rotation2d(Constants.isGuido ? 1.5813666582107544 : 3.353 + Math.PI);
+      new Rotation2d(Constants.isGuido ? 1.5813666582107544 : 0.11636602878570557);
 
   public static final double gyroTrimScalar = Constants.isGuido ? 1.501 : 0.0;
 

@@ -79,15 +79,15 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
     leaderTorqueCurrentAmps = leader.getTorqueCurrent();
     leaderTempCelsius = leader.getDeviceTemp();
 
+    positionSetpointRotations = leader.getClosedLoopReference();
+    velocitySetpointRotationsPerSec = leader.getClosedLoopReferenceSlope();
+
     followerPosition = follower.getPosition();
     followerVelocity = follower.getVelocity();
     followerVoltage = follower.getMotorVoltage();
     followerSupplyCurrentAmps = follower.getSupplyCurrent();
     followerTorqueCurrentAmps = follower.getTorqueCurrent();
     followerTempCelsius = follower.getDeviceTemp();
-
-    positionSetpointRotations = leader.getClosedLoopReference();
-    velocitySetpointRotationsPerSec = leader.getClosedLoopReferenceSlope();
 
     TalonFXConfiguration cfg = new TalonFXConfiguration();
     // spotless:off
@@ -126,7 +126,7 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
 
   @Override
   public void updateInputs(FollowRollersMagicIOInputs inputs) {
-    inputs.connected =
+    inputs.leaderConnected =
         BaseStatusSignal.refreshAll(
                 leaderPosition,
                 leaderVelocity,
@@ -134,14 +134,18 @@ public class FollowRollersIOTalonFX implements FollowRollersIO {
                 leaderSupplyCurrentAmps,
                 leaderTorqueCurrentAmps,
                 leaderTempCelsius,
+                positionSetpointRotations,
+                velocitySetpointRotationsPerSec)
+            .isOK();
+
+    inputs.followerConnected =
+        BaseStatusSignal.refreshAll(
                 followerPosition,
                 followerVelocity,
                 followerVoltage,
                 followerSupplyCurrentAmps,
                 followerTorqueCurrentAmps,
-                followerTempCelsius,
-                positionSetpointRotations,
-                velocitySetpointRotationsPerSec)
+                followerTempCelsius)
             .isOK();
 
     inputs.leaderPositionRotations = leaderPosition.getValueAsDouble() / reduction;

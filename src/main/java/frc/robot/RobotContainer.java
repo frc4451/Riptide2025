@@ -197,7 +197,8 @@ public class RobotContainer {
                     () -> -driverController.getLeftYSquared(),
                     () -> -driverController.getLeftXSquared(),
                     () -> BobotState.getCurrentAlignmentTracker().getRotationTarget())
-                .unless(DriverStation::isAutonomous));
+                .unless(DriverStation::isAutonomous)
+                .unless(driverController.x().and(() -> !BobotState.climbMode)));
         break;
       case FREE:
       default:

@@ -9,7 +9,7 @@ public class FieldConstants {
   /** AdvantageKit-safe loggable version of `AprilTag` that contains data we want without lookups */
   public static record AprilTagStruct(int fiducialId, Pose3d pose) {}
 
-  public static final EventConstants eventConstants = EventConstants.HOME;
+  public static final EventConstants eventConstants = EventConstants.WORLDS;
 
   public static final double fieldLength = Units.inchesToMeters(690.876);
   public static final double bargeLength = Units.feetToMeters(4);
@@ -30,6 +30,8 @@ public class FieldConstants {
   public static final Integer blueProcessor = 16;
   public static final AprilTagStruct blueBarge =
       new AprilTagStruct(14, VisionConstants.fieldLayout.getTagPose(14).get());
+  public static final AprilTagStruct blueBargeOpposing =
+      new AprilTagStruct(4, VisionConstants.fieldLayout.getTagPose(4).get());
 
   // See Allred's sheet for why they're AB/CD/EF/etc
   public static final ReefFace blueReefAB =
@@ -52,7 +54,9 @@ public class FieldConstants {
 
   public static final Integer redProcessor = 3;
   public static final AprilTagStruct redBarge =
-      new AprilTagStruct(4, VisionConstants.fieldLayout.getTagPose(4).get());
+      new AprilTagStruct(5, VisionConstants.fieldLayout.getTagPose(5).get());
+  public static final AprilTagStruct redBargeOpposing =
+      new AprilTagStruct(15, VisionConstants.fieldLayout.getTagPose(15).get());
 
   public static final ReefFace redReefAB =
       new ReefFace(new AprilTagStruct(7, VisionConstants.fieldLayout.getTagPose(7).get()), false);

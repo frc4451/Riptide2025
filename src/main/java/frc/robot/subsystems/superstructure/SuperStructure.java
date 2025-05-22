@@ -223,7 +223,10 @@ public class SuperStructure extends SubsystemBase {
   public Command bargeShot() {
     return Commands.sequence(
             setModeCommand(SuperStructureModes.Barge),
-            Commands.waitUntil(() -> elevator.isNear(SuperStructureConstants.shootNetHeight)),
+            Commands.waitUntil(
+                () ->
+                    elevator.isAbove(
+                        SuperStructureConstants.shootNetHeight - Elevator.isNearToleranceInches)),
             setShooterModeCommand(ShooterModes.ALGAE_SHOOT),
             Commands.waitSeconds(0.05))
         .finallyDo(
@@ -235,6 +238,10 @@ public class SuperStructure extends SubsystemBase {
 
   public Command setModeAndWaitCommand(SuperStructureModes mode) {
     return Commands.sequence(setModeCommand(mode), Commands.waitUntil(isAtMode()));
+  }
+
+  public Trigger belowHeight(double heightInches) {
+    return new Trigger(() -> elevator.getHeightInches() <= heightInches);
   }
 
   public Command shootCoral() {

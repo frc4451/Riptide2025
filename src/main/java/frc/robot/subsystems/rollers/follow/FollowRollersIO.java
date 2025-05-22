@@ -5,7 +5,8 @@ import org.littletonrobotics.junction.AutoLog;
 public interface FollowRollersIO {
   @AutoLog
   public static class FollowRollersMagicIOInputs {
-    public boolean connected = false;
+    public boolean leaderConnected = false;
+    public boolean followerConnected = false;
 
     public double leaderPositionRotations = 0.0;
     public double leaderVelocityRotationsPerSec = 0.0;

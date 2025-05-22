@@ -48,7 +48,23 @@ public enum EventConstants {
       Double.NaN,
       Double.NaN,
       Transform2d.kZero,
-      Transform2d.kZero);
+      Transform2d.kZero),
+  WORLDS(
+      Units.inchesToMeters(-6.5),
+      Units.inchesToMeters(6.5),
+      Units.inchesToMeters(17.0),
+      Units.inchesToMeters(18.5),
+      Units.inchesToMeters(25.0),
+      Units.inchesToMeters(18.25),
+      Units.inchesToMeters(22.0),
+      Units.inchesToMeters(23.5),
+      Units.inchesToMeters(24.0),
+      Units.inchesToMeters(44.0),
+      Units.inchesToMeters(40.0),
+      new Transform2d(
+          Units.inchesToMeters(22), Units.inchesToMeters(2), Rotation2d.fromDegrees(180 + 30)),
+      new Transform2d(
+          Units.inchesToMeters(22), Units.inchesToMeters(-1), Rotation2d.fromDegrees(180 - 30)));
 
   /** Distance from the center of the April Tag on the Face to the center of the Pole */
   public final double tagToReefLeft;

@@ -8,14 +8,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.field.FieldUtils;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.util.PoseUtils;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveParallellToPoseCommand extends Command {
-  private final ProfiledPIDController perpendicularController =
+  private final ProfiledPIDController xController =
       DriveCommandConstants.makeTranslationController();
 
   private final ProfiledPIDController angleController = DriveCommandConstants.makeAngleController();
@@ -25,7 +25,7 @@ public class DriveParallellToPoseCommand extends Command {
   private final Supplier<Pose2d> targetPoseSupplier;
   private final DoubleSupplier parallelInput;
 
-  private double parallelError = 0;
+  private double yError = 0;
 
   public DriveParallellToPoseCommand(
       Drive drive,
@@ -56,60 +56,58 @@ public class DriveParallellToPoseCommand extends Command {
 
   @Override
   public void execute() {
-    Pose2d robotPose = useConstrainedPose ? drive.getConstrainedPose() : drive.getGlobalPose();
-    Pose2d targetPose = targetPoseSupplier.get();
-    Logger.recordOutput("Commands/" + getName() + "/targetPose", targetPose);
+    Pose2d robot = useConstrainedPose ? drive.getConstrainedPose() : drive.getGlobalPose();
+    Pose2d target = targetPoseSupplier.get();
 
-    Translation2d translationalError =
-        robotPose.getTranslation().minus(targetPose.getTranslation());
+    Translation2d translationalError = robot.getTranslation().minus(target.getTranslation());
 
-    Rotation2d desiredTheta = targetPose.getRotation().plus(Rotation2d.kPi);
-    double thetaError = robotPose.getRotation().minus(desiredTheta).getRadians();
+    Rotation2d desiredTheta = target.getRotation().plus(Rotation2d.kPi);
+    double angularError = robot.getRotation().minus(desiredTheta).getRadians();
 
-    double perpendicularError = PoseUtils.getPerpendicularError(robotPose, targetPose);
-    double perpendicularSpeed = perpendicularController.calculate(-perpendicularError, 0);
-    perpendicularSpeed = !perpendicularController.atSetpoint() ? perpendicularSpeed : 0;
+    double xSpeed = xController.calculate(translationalError.getX(), 0);
+    xSpeed = !xController.atSetpoint() ? xSpeed : 0;
 
-    parallelError = PoseUtils.getParallelError(robotPose, targetPose);
-
-    double angularSpeed = angleController.calculate(thetaError, 0);
-    angularSpeed = !angleController.atSetpoint() ? angularSpeed : 0;
+    double angularVelocity = angleController.calculate(angularError, 0);
+    angularVelocity = !angleController.atSetpoint() ? angularVelocity : 0;
 
     ChassisSpeeds speeds =
         ChassisSpeeds.fromFieldRelativeSpeeds(
-            -perpendicularSpeed * translationalError.getAngle().getCos(),
-            parallelInput.getAsDouble() * drive.getMaxLinearSpeedMetersPerSec(),
-            angularSpeed,
+            xSpeed,
+            FieldUtils.getFlipped()
+                * parallelInput.getAsDouble()
+                * drive.getMaxLinearSpeedMetersPerSec(),
+            angularVelocity,
             drive.getRotation());
 
     drive.runVelocity(speeds);
 
-    Logger.recordOutput("Commands/" + getName() + "/ThetaError", thetaError);
-    Logger.recordOutput("Commands/" + getName() + "/PerpendicularError", perpendicularError);
-    Logger.recordOutput("Commands/" + getName() + "/ParallelError", parallelError);
-    Logger.recordOutput(
-        "Commands/" + getName() + "/PerpendicularAtSetpoint", perpendicularController.atSetpoint());
-    Logger.recordOutput("Commands/" + getName() + "/AngleAtSetpoint", angleController.atSetpoint());
+    Logger.recordOutput("Commands/" + getName() + "/Robot", robot);
+    Logger.recordOutput("Commands/" + getName() + "/Target", target);
+    Logger.recordOutput("Commands/" + getName() + "/Error/Translational", translationalError);
+    Logger.recordOutput("Commands/" + getName() + "/Error/Angular", angularError);
+    Logger.recordOutput("Commands/" + getName() + "/AtGoal/X", xController.atGoal());
+    Logger.recordOutput("Commands/" + getName() + "/AtGoal/Angle", angleController.atGoal());
+    Logger.recordOutput("Commands/" + getName() + "/Speeds/ChassisSpeeds", speeds);
   }
 
   @Override
   public void end(boolean interrupt) {
-    perpendicularController.reset(0);
+    xController.reset(0);
     angleController.reset(0);
   }
 
   public Trigger atSetpoint(double distanceTolerance, double rotationTolerance) {
     return new Trigger(
         () ->
-            Math.abs(perpendicularController.getPositionError()) < distanceTolerance
+            Math.abs(xController.getPositionError()) < distanceTolerance
                 && Math.abs(angleController.getPositionError()) < rotationTolerance);
   }
 
   public Trigger atSetpoint(DoubleSupplier distance) {
     return new Trigger(
         () ->
-            perpendicularController.atSetpoint()
+            xController.atSetpoint()
                 && angleController.atSetpoint()
-                && Math.abs(parallelError) < distance.getAsDouble());
+                && Math.abs(yError) < distance.getAsDouble());
   }
 }
