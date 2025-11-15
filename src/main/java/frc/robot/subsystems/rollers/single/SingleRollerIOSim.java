@@ -79,6 +79,12 @@ public class SingleRollerIOSim implements SingleRollerIO {
   }
 
   @Override
+  public void runVelocity(double velocityRotationsPerSec) {
+    isClosedLoop = false;
+    sim.setAngularVelocity(Units.rotationsToRadians(velocityRotationsPerSec));
+  }
+
+  @Override
   public void setGoal(double positionRotations) {
     isClosedLoop = true;
     controller.setGoal(new TrapezoidProfile.State(positionRotations, 0));

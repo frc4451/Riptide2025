@@ -15,8 +15,8 @@ import frc.robot.subsystems.rollers.follow.FollowRollersIO;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOSim;
 import frc.robot.subsystems.rollers.follow.FollowRollersIOTalonFX;
 import frc.robot.subsystems.rollers.single.SingleRollerIO;
-import frc.robot.subsystems.rollers.single.SingleRollerIOSim;
 import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFX;
+import frc.robot.subsystems.rollers.single.SingleRollerIOTalonFXSim;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIO;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIOReal;
 import frc.robot.subsystems.superstructure.can_range.CanRangeIOSim;
@@ -104,24 +104,29 @@ public class SuperStructure extends SubsystemBase {
                 ElevatorConstants.gains,
                 ElevatorConstants.mmConfig,
                 new EmptyFeedforwardController());
-
         pivotIO =
-            new SingleRollerIOSim(
-                PivotConstants.gearbox,
+            new SingleRollerIOTalonFXSim(
+                PivotConstants.canId,
                 PivotConstants.reduction,
-                PivotConstants.moi,
+                PivotConstants.currentLimitAmps,
+                PivotConstants.invert,
+                PivotConstants.isBrakeMode,
+                PivotConstants.foc,
                 PivotConstants.gains,
                 PivotConstants.mmConfig,
-                new EmptyFeedforwardController());
+                PivotConstants.gearbox);
 
         shooterIO =
-            new SingleRollerIOSim(
-                ShooterConstants.gearbox,
+            new SingleRollerIOTalonFXSim(
+                ShooterConstants.canId,
                 ShooterConstants.reduction,
-                ShooterConstants.moi,
+                ShooterConstants.currentLimitAmps,
+                ShooterConstants.invert,
+                ShooterConstants.isBrakeMode,
+                ShooterConstants.foc,
                 new Slot0Configs(),
                 new MotionMagicConfigs(),
-                new EmptyFeedforwardController());
+                ShooterConstants.gearbox);
 
         coralSensorIO = new CanRangeIOSim();
         break;
